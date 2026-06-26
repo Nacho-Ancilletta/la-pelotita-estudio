@@ -1,0 +1,68 @@
+"use client";
+
+import { useState } from "react";
+import TacticoTab from "@/components/tabs/TacticoTab";
+import RefuerzosTab from "@/components/tabs/RefuerzosTab";
+import EnVivoTab from "@/components/tabs/EnVivoTab";
+import ApiQuotaCounter from "@/components/ApiQuotaCounter";
+
+const TABS = [
+  { id: "tactico",   label: "AYUDANTE TÁCTICO",       badge: "01" },
+  { id: "refuerzos", label: "BUSCADOR DE REFUERZOS",   badge: "02" },
+  { id: "vivo",      label: "SALA EN VIVO",            badge: "●" },
+] as const;
+
+type TabId = (typeof TABS)[number]["id"];
+
+export default function Home() {
+  const [activeTab, setActiveTab] = useState<TabId>("tactico");
+
+  return (
+    <div className="flex flex-col flex-1">
+      {/* ── Barra de tabs + contador de cuota ── */}
+      <div className="flex items-stretch border-b border-bg-card">
+        <nav className="flex flex-1 font-mono text-xs">
+          {TABS.map((tab) => {
+            const isActive = activeTab === tab.id;
+            const isLive   = tab.id === "vivo";
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={[
+                  "flex items-center gap-2 px-5 py-3 tracking-wider transition-all border-b-2",
+                  isActive
+                    ? "bg-bg-card text-orange border-orange"
+                    : "text-cream/40 border-transparent hover:text-cream/70 hover:bg-bg-card/40",
+                ].join(" ")}
+              >
+                <span
+                  className={[
+                    "font-bold",
+                    isLive && isActive ? "text-orange animate-pulse" : "",
+                    isLive && !isActive ? "text-cream/30" : "",
+                  ].join(" ")}
+                >
+                  {tab.badge}
+                </span>
+                {tab.label}
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* Contador de cuota API — siempre visible */}
+        <div className="flex items-center px-4 border-l border-bg-card">
+          <ApiQuotaCounter />
+        </div>
+      </div>
+
+      {/* ── Contenido del tab activo ── */}
+      <div className="flex-1 overflow-auto">
+        {activeTab === "tactico"   && <TacticoTab />}
+        {activeTab === "refuerzos" && <RefuerzosTab />}
+        {activeTab === "vivo"      && <EnVivoTab />}
+      </div>
+    </div>
+  );
+}

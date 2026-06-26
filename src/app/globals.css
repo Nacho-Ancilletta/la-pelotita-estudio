@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+@theme inline {
+  /* Paleta La Pelotita Estudio */
+  --color-bg-deep:    #1C1008;
+  --color-bg-card:    #3E2723;
+  --color-cream:      #FFEDAC;
+  --color-orange:     #C8651B;
+  --color-warm-white: #FAF6ED;
+
+  /* Tipografía */
+  --font-mono: var(--font-space-mono);
+  --font-sans: var(--font-geist-sans);
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background-color: #1C1008;
+  color: #FFEDAC;
+  font-family: var(--font-geist-sans), sans-serif;
+}
+
+/* Scrollbar temática */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #1C1008; }
+::-webkit-scrollbar-thumb { background: #3E2723; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #C8651B; }
