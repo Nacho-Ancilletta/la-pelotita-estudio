@@ -97,6 +97,10 @@ export default function TacticoTab() {
   const [arrowStart, setArrowStart] = useState<{ x: number; y: number } | null>(null);
   const pitchRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    if (mode !== "arrow") { setLive(null); setArrowStart(null); }
+  }, [mode]);
+
   function toCoords(clientX: number, clientY: number) {
     const r = pitchRef.current!.getBoundingClientRect();
     return {
