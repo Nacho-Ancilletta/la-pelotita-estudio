@@ -7,9 +7,9 @@ import EnVivoTab from "@/components/tabs/EnVivoTab";
 import ApiQuotaCounter from "@/components/ApiQuotaCounter";
 
 const TABS = [
-  { id: "tactico",   label: "AYUDANTE TÁCTICO",       badge: "01" },
-  { id: "refuerzos", label: "BUSCADOR DE REFUERZOS",   badge: "02" },
-  { id: "vivo",      label: "SALA EN VIVO",            badge: "●" },
+  { id: "tactico",   label: "AYUDANTE TÁCTICO" },
+  { id: "refuerzos", label: "BUSCADOR DE REFUERZOS" },
+  { id: "vivo",      label: "FIXTURE" },
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
@@ -24,7 +24,6 @@ export default function Home() {
         <nav className="flex flex-1 font-mono text-xs">
           {TABS.map((tab) => {
             const isActive = activeTab === tab.id;
-            const isLive   = tab.id === "vivo";
             return (
               <button
                 key={tab.id}
@@ -36,15 +35,6 @@ export default function Home() {
                     : "text-cream/40 border-transparent hover:text-cream/70 hover:bg-bg-card/40",
                 ].join(" ")}
               >
-                <span
-                  className={[
-                    "font-bold",
-                    isLive && isActive ? "text-orange animate-pulse" : "",
-                    isLive && !isActive ? "text-cream/30" : "",
-                  ].join(" ")}
-                >
-                  {tab.badge}
-                </span>
                 {tab.label}
               </button>
             );

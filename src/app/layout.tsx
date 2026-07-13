@@ -35,8 +35,7 @@ export default function RootLayout({
           <span className="font-mono text-sm font-bold tracking-[0.25em] text-cream">
             LA PELOTITA ESTUDIO
           </span>
-          <span className="font-mono text-xs text-orange flex items-center gap-2">
-            <span className="inline-block w-2 h-2 rounded-full bg-orange opacity-40" />
+          <span className="font-mono text-xs text-orange">
             PRE-MATCH
           </span>
         </header>
