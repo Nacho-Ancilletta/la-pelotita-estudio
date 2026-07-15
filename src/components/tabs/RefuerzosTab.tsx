@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import type { PlayerStat, PlayerPool } from "@/types/football";
 import { savePool, loadPool, clearPool, timeAgo } from "@/lib/playerCache";
 import { SOFA_TOURNAMENTS, getSeasons, getPlayerStats, type SofaSeason, type SofaPosition } from "@/lib/sofascore";
+import RefuerzosFootballPanel from "@/components/tabs/RefuerzosFootballPanel";
 
 // ── Ligas disponibles ──────────────────────────────────────────
 const LEAGUES = [
@@ -106,9 +107,12 @@ function Select({
 // ── Componente principal ───────────────────────────────────────
 
 export default function RefuerzosTab() {
+  const [mode, setMode] = useState<"sofa" | "football">("sofa");
+
   const [pool, setPool]         = useState<PlayerPool | null>(null);
   const [loading, setLoading]   = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [blocked, setBlocked]   = useState(false);
 
   const [leagueId, setLeagueId] = useState("128");
   const [seasons,  setSeasons]  = useState<SofaSeason[]>([]);
@@ -182,6 +186,7 @@ export default function RefuerzosTab() {
     if (seasonId == null) return;
     setLoading(true);
     setLoadError(null);
+    setBlocked(false);
     setSortCol(null);
     setSortDir("desc");
 
@@ -222,7 +227,9 @@ export default function RefuerzosTab() {
       savePool(newPool);
       setPool(newPool);
     } catch (err) {
-      setLoadError(err instanceof Error ? err.message : "Error desconocido");
+      const msg = err instanceof Error ? err.message : "Error desconocido";
+      setLoadError(msg);
+      if (/403|503/.test(msg)) setBlocked(true);
     } finally {
       setLoading(false);
     }
@@ -238,15 +245,28 @@ export default function RefuerzosTab() {
   return (
     <div className="flex flex-col h-full">
       {/* ── Header del tab ── */}
-      <div className="border-b border-bg-card px-6 py-2.5">
-        <h2 className="font-mono text-orange text-xs tracking-widest mb-0.5">
-          TRACK 02 · BUSCADOR DE REFUERZOS
-        </h2>
-        <p className="text-cream/50 text-xs">
-          Elegí posición y categoría · top 10 de Sofascore, 1 pedido por búsqueda
-        </p>
+      <div className="border-b border-bg-card px-6 py-2.5 flex items-center justify-between">
+        <div>
+          <h2 className="font-mono text-orange text-xs tracking-widest mb-0.5">
+            TRACK 02 · BUSCADOR DE REFUERZOS
+          </h2>
+          <p className="text-cream/50 text-xs">
+            Elegí posición y categoría · top 10 de Sofascore, 1 pedido por búsqueda
+          </p>
+        </div>
+        {mode === "sofa" && (
+          <button
+            onClick={() => setMode("football")}
+            className="shrink-0 text-[10px] font-mono text-cream/30 hover:text-red-400 border border-bg-card hover:border-red-900/50 rounded px-2 py-1 transition-colors"
+          >
+            ver modo respaldo →
+          </button>
+        )}
       </div>
 
+      {mode === "football" ? (
+        <RefuerzosFootballPanel onVolverSofa={() => setMode("sofa")} />
+      ) : (
       <div className="flex flex-1 overflow-hidden">
         {/* ── Sidebar izquierdo ── */}
         <aside className="w-64 shrink-0 border-r border-bg-card overflow-y-auto flex flex-col">
@@ -304,8 +324,16 @@ export default function RefuerzosTab() {
             </button>
 
             {loadError && (
-              <div className="text-red-400 font-mono text-[10px] bg-red-900/20 rounded p-2 border border-red-900/40">
-                {loadError}
+              <div className="text-red-400 font-mono text-[10px] bg-red-900/20 rounded p-2 border border-red-900/40 space-y-1.5">
+                <div>{loadError}</div>
+                {blocked && (
+                  <button
+                    onClick={() => setMode("football")}
+                    className="w-full bg-red-900/40 border border-red-700/50 text-cream/80 font-mono text-[10px] py-1.5 rounded hover:bg-red-900/60 transition-colors"
+                  >
+                    Sofascore bloqueado acá → usar respaldo API-FOOTBALL
+                  </button>
+                )}
               </div>
             )}
           </div>
@@ -401,6 +429,7 @@ export default function RefuerzosTab() {
           )}
         </main>
       </div>
+      )}
     </div>
   );
 }

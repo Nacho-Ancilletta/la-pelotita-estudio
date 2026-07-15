@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { SFS_BASE, getHeadToHead, summarizeH2H, type SofaH2HMatch, type SofaH2HSummary } from "@/lib/sofascore";
+import { getMatchDetails, type H2HMatch, type H2HSummary, type MatchStats } from "@/lib/espn";
 
 // ── Ligas ESPN ────────────────────────────────────────────────
 
@@ -17,22 +17,6 @@ const LEAGUES = [
   { id: "fra.1",                 name: "Ligue 1",           flag: "FRA" },
   { id: "uefa.champions",        name: "Champions League",  flag: "UEFA" },
 ];
-
-// Liga ESPN → tournamentId de Sofascore. Verificado uno por uno contra la API real:
-// no existe un endpoint global "partidos de esta fecha" en Sofascore — hay que
-// pedirlo por torneo vía /unique-tournament/{id}/scheduled-events/{fecha}.
-const ESPN_TO_SOFA_TOURNAMENT: Record<string, number> = {
-  "arg.1":                 155,
-  "conmebol.libertadores": 384,
-  "conmebol.sudamericana": 480,
-  "bra.1":                 325,
-  "eng.1":                 17,
-  "esp.1":                 8,
-  "ger.1":                 35,
-  "ita.1":                 23,
-  "fra.1":                 34,
-  "uefa.champions":        7,
-};
 
 // ── Cache ─────────────────────────────────────────────────────
 
@@ -71,25 +55,15 @@ interface EspnEvent {
   competitions: EspnCompetition[];
 }
 
-// ── Sofascore stats ───────────────────────────────────────────
-
-interface SfsStats {
-  possession: [number, number];
-  shots: [number, number];
-  shotsOnTarget: [number, number];
-  corners: [number, number];
-  fouls: [number, number];
-}
-
 function h2hDate(ts: number) {
   return new Date(ts * 1000).toLocaleDateString("es-AR", { day: "2-digit", month: "2-digit", year: "2-digit" });
 }
 
 // ── Tarjeta de partido ──────────────────────────────────────────
 
-function MatchCard({ ev, leagueName, onClick, expanded, sfsStats, sfsLoading, h2h, h2hSummary, h2hCardLoading }:
-  { ev: EspnEvent; leagueName?: string; onClick: () => void; expanded: boolean; sfsStats: SfsStats | null; sfsLoading: boolean;
-    h2h: SofaH2HMatch[] | null; h2hSummary: SofaH2HSummary | null; h2hCardLoading: boolean }) {
+function MatchCard({ ev, leagueName, onClick, expanded, matchStats, statsLoading, h2h, h2hSummary, h2hCardLoading }:
+  { ev: EspnEvent; leagueName?: string; onClick: () => void; expanded: boolean; matchStats: MatchStats | null; statsLoading: boolean;
+    h2h: H2HMatch[] | null; h2hSummary: H2HSummary | null; h2hCardLoading: boolean }) {
   const comp = ev.competitions[0];
   const home = comp?.competitors.find(c => c.homeAway === "home");
   const away = comp?.competitors.find(c => c.homeAway === "away");
@@ -150,33 +124,22 @@ function MatchCard({ ev, leagueName, onClick, expanded, sfsStats, sfsLoading, h2
             {referee && <span>árb. {referee}</span>}
           </div>
         )}
-
-        {/* Resumen H2H — siempre visible */}
-        <div className={["pt-2 text-center font-mono text-[9px] text-cream/30", hasExtra ? "" : "mt-3 border-t border-bg-card/40"].join(" ")}>
-          {h2hCardLoading && <span className="text-cream/15">buscando cruces...</span>}
-          {!h2hCardLoading && h2hSummary && (
-            <span>{home.team.name} {h2hSummary.homeWins}V · {h2hSummary.draws}E · {h2hSummary.awayWins}V {away.team.name}</span>
-          )}
-          {!h2hCardLoading && !h2hSummary && (
-            <span className="text-cream/15">Sin cruces registrados</span>
-          )}
-        </div>
       </button>
 
       {/* Expandido: stats en vivo/post + H2H */}
       {expanded && (
         <div className="px-4 pb-4">
-          {sfsLoading && <div className="text-cream/25 font-mono text-[9px] py-1">buscando datos...</div>}
-          {!sfsLoading && !sfsStats && hasScore &&
+          {statsLoading && <div className="text-cream/25 font-mono text-[9px] py-1">buscando datos...</div>}
+          {!statsLoading && !matchStats && hasScore &&
             <div className="text-cream/20 font-mono text-[9px] py-1">sin stats disponibles</div>}
-          {sfsStats && (
+          {matchStats && (
             <div className="space-y-0.5 mb-2">
               {([
-                ["POSESIÓN", sfsStats.possession, true, (v: number) => `${v}%`],
-                ["REMATES",  sfsStats.shots,      true],
-                ["AL ARCO",  sfsStats.shotsOnTarget, true],
-                ["CÓRNERS",  sfsStats.corners,    true],
-                ["FALTAS",   sfsStats.fouls,      false],
+                ["POSESIÓN", matchStats.possession, true, (v: number) => `${v}%`],
+                ["REMATES",  matchStats.shots,      true],
+                ["AL ARCO",  matchStats.shotsOnTarget, true],
+                ["CÓRNERS",  matchStats.corners,    true],
+                ["FALTAS",   matchStats.fouls,      false],
               ] as const).map(([label, [a, b], hiB, fmt]) => {
                 const max  = Math.max(a, b, 1);
                 const aW   = hiB ? a > b : a < b;
@@ -206,6 +169,11 @@ function MatchCard({ ev, leagueName, onClick, expanded, sfsStats, sfsLoading, h2
           <div className="pt-2 border-t border-bg-deep/60">
             <div className="font-mono text-[8px] text-orange/60 tracking-widest mb-1">H2H · ÚLTIMOS CRUCES</div>
             {h2hCardLoading && <div className="text-cream/25 font-mono text-[9px] py-1">buscando historial...</div>}
+            {!h2hCardLoading && h2hSummary && (
+              <div className="text-center font-mono text-[9px] text-cream/30 pb-1.5">
+                {home.team.name} {h2hSummary.homeWins}V · {h2hSummary.draws}E · {h2hSummary.awayWins}V {away.team.name}
+              </div>
+            )}
             {!h2hCardLoading && !h2hSummary && <div className="text-cream/20 font-mono text-[9px] py-1">sin historial disponible</div>}
             {!h2hCardLoading && h2h && h2h.length > 0 && (
               <div className="space-y-0.5">
@@ -226,31 +194,6 @@ function MatchCard({ ev, leagueName, onClick, expanded, sfsStats, sfsLoading, h2
   );
 }
 
-// ── Sofascore stats fetcher ───────────────────────────────────
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function parseSfsStats(data: any): SfsStats | null {
-  try {
-    const groups = data?.statistics?.[0]?.groups ?? [];
-    function stat(name: string): [number, number] {
-      for (const g of groups) {
-        for (const item of g.statisticsItems ?? []) {
-          if (item.name?.toLowerCase().includes(name.toLowerCase()))
-            return [parseFloat(item.home ?? "0"), parseFloat(item.away ?? "0")];
-        }
-      }
-      return [0, 0];
-    }
-    return {
-      possession:    stat("ball possession"),
-      shots:         stat("total shots"),
-      shotsOnTarget: stat("shots on target"),
-      corners:       stat("corner kicks"),
-      fouls:         stat("fouls"),
-    };
-  } catch { return null; }
-}
-
 // ── Main component ────────────────────────────────────────────
 
 export default function EspnFixtures() {
@@ -260,10 +203,10 @@ export default function EspnFixtures() {
   const [loading,     setLoading]     = useState(false);
   const [error,       setError]       = useState<string | null>(null);
   const [expandedId,  setExpandedId]  = useState<string | null>(null);
-  const [sfsStats,    setSfsStats]    = useState<Record<string, SfsStats | null>>({});
-  const [sfsLoading,  setSfsLoading]  = useState<string | null>(null);
-  const [h2h,         setH2h]         = useState<Record<string, SofaH2HMatch[] | null>>({});
-  const [h2hSummary,  setH2hSummary]  = useState<Record<string, SofaH2HSummary | null>>({});
+  const [matchStats,  setMatchStats]  = useState<Record<string, MatchStats | null>>({});
+  const [statsLoading, setStatsLoading] = useState<string | null>(null);
+  const [h2h,         setH2h]         = useState<Record<string, H2HMatch[] | null>>({});
+  const [h2hSummary,  setH2hSummary]  = useState<Record<string, H2HSummary | null>>({});
   const [h2hCardLoading, setH2hCardLoading] = useState<Record<string, boolean>>({});
 
   // Auto-fetch when league/date changes
@@ -271,13 +214,6 @@ export default function EspnFixtures() {
     fetchFixtures();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [leagueId, date]);
-
-  // Apenas hay partidos, trae el resumen H2H de cada uno para mostrarlo
-  // siempre en la tarjeta (no solo cuando se expande).
-  useEffect(() => {
-    events.forEach(ev => { fetchH2H(ev); });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [events]);
 
   async function fetchFixtures() {
     setError(null); setExpandedId(null);
@@ -300,90 +236,33 @@ export default function EspnFixtures() {
     }
   }
 
-  // Busca el evento equivalente en Sofascore por nombre de equipo, dentro del
-  // torneo correcto. Sofascore no tiene un endpoint global "partidos de esta
-  // fecha" — hay que pedirlo por torneo (ver ESPN_TO_SOFA_TOURNAMENT arriba).
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async function matchSfsEvent(ev: EspnEvent): Promise<any | null> {
-    const tournamentId = ESPN_TO_SOFA_TOURNAMENT[leagueId];
-    if (!tournamentId) return null;
-
-    const dateStr = date;
-    const sfsCacheKey = `pelotita_sfs_events_${tournamentId}_${dateStr}`;
-    let sfsDay = cacheGet<unknown[]>(sfsCacheKey);
-    if (!sfsDay) {
-      const res = await fetch(`${SFS_BASE}/unique-tournament/${tournamentId}/scheduled-events/${dateStr}`);
-      if (!res.ok) { sfsDay = []; } else {
-        const data = await res.json();
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        sfsDay = data?.events ?? [];
-      }
-      cacheSet(sfsCacheKey, sfsDay);
-    }
-    const comp = ev.competitions[0];
-    const home = comp?.competitors.find(c => c.homeAway === "home")?.team.name?.toLowerCase() ?? "";
-    const away = comp?.competitors.find(c => c.homeAway === "away")?.team.name?.toLowerCase() ?? "";
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (sfsDay as any[]).find((e: any) => {
-      const hn = (e.homeTeam?.name ?? "").toLowerCase();
-      const an = (e.awayTeam?.name ?? "").toLowerCase();
-      return (hn.includes(home.split(" ")[0]) || home.includes(hn.split(" ")[0])) &&
-             (an.includes(away.split(" ")[0]) || away.includes(an.split(" ")[0]));
-    }) ?? null;
-  }
-
-  // H2H — se pide para TODAS las tarjetas apenas cargan, no solo al expandir.
-  async function fetchH2H(ev: EspnEvent) {
+  // Stats + H2H — solo al expandir la tarjeta (no en todas apenas cargan: el
+  // summary de ESPN pesa harto y no vale la pena bajarlo de entrada para cada
+  // partido del día). getMatchDetails ya cachea 90s en localStorage.
+  async function fetchDetails(ev: EspnEvent) {
     const evId = ev.id;
-    if (h2h[evId] !== undefined || h2hCardLoading[evId]) return; // ya lo tenemos (o ya se está pidiendo)
+    if (matchStats[evId] !== undefined) return; // ya lo tenemos
+    setStatsLoading(evId);
     setH2hCardLoading(p => ({ ...p, [evId]: true }));
     try {
-      const match = await matchSfsEvent(ev);
-      if (!match) {
-        setH2h(p => ({ ...p, [evId]: null }));
-        setH2hSummary(p => ({ ...p, [evId]: null }));
-        return;
-      }
-      const homeId = match.homeTeam.id, awayId = match.awayTeam.id;
-      const h2hKey = `pelotita_sofa_h2h_${homeId}_${awayId}`;
-      let h2hList = cacheGet<SofaH2HMatch[]>(h2hKey);
-      if (!h2hList) {
-        h2hList = await getHeadToHead(homeId, awayId, 10);
-        cacheSet(h2hKey, h2hList);
-      }
-      setH2h(p => ({ ...p, [evId]: h2hList }));
-      setH2hSummary(p => ({ ...p, [evId]: h2hList.length ? summarizeH2H(h2hList, homeId, awayId) : null }));
+      const details = await getMatchDetails(leagueId, evId);
+      setMatchStats(p => ({ ...p, [evId]: details.stats }));
+      setH2h(p => ({ ...p, [evId]: details.h2h }));
+      setH2hSummary(p => ({ ...p, [evId]: details.h2hSummary }));
     } catch {
+      setMatchStats(p => ({ ...p, [evId]: null }));
       setH2h(p => ({ ...p, [evId]: null }));
       setH2hSummary(p => ({ ...p, [evId]: null }));
     } finally {
+      setStatsLoading(null);
       setH2hCardLoading(p => ({ ...p, [evId]: false }));
-    }
-  }
-
-  // Stats en vivo/post — solo al expandir la tarjeta, no aplica a partidos que no arrancaron.
-  async function fetchStats(ev: EspnEvent) {
-    const evId = ev.id;
-    if (sfsStats[evId] !== undefined) return;
-    if (ev.status.type.state === "pre") { setSfsStats(p => ({ ...p, [evId]: null })); return; }
-    setSfsLoading(evId);
-    try {
-      const match = await matchSfsEvent(ev);
-      if (!match) { setSfsStats(p => ({ ...p, [evId]: null })); return; }
-      const statsRes  = await fetch(`${SFS_BASE}/event/${match.id}/statistics`);
-      const statsData = await statsRes.json();
-      setSfsStats(p => ({ ...p, [evId]: parseSfsStats(statsData) }));
-    } catch {
-      setSfsStats(p => ({ ...p, [evId]: null }));
-    } finally {
-      setSfsLoading(null);
     }
   }
 
   function toggleEvent(ev: EspnEvent) {
     if (expandedId === ev.id) { setExpandedId(null); return; }
     setExpandedId(ev.id);
-    fetchStats(ev);
+    fetchDetails(ev);
   }
 
   function shiftDate(days: number) {
@@ -439,8 +318,8 @@ export default function EspnFixtures() {
                 leagueName={league?.name}
                 onClick={() => toggleEvent(ev)}
                 expanded={expandedId === ev.id}
-                sfsStats={sfsStats[ev.id] ?? null}
-                sfsLoading={sfsLoading === ev.id}
+                matchStats={matchStats[ev.id] ?? null}
+                statsLoading={statsLoading === ev.id}
                 h2h={h2h[ev.id] ?? null}
                 h2hSummary={h2hSummary[ev.id] ?? null}
                 h2hCardLoading={!!h2hCardLoading[ev.id]}

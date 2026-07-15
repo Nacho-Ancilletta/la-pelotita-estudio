@@ -6,28 +6,36 @@ import { ArrowsOverlay } from "@/components/pitch/ArrowsOverlay";
 import { makeTeam, clamp } from "@/components/pitch/formations";
 import type { Player, Arrow } from "@/components/pitch/formations";
 import {
-  SOFA_TOURNAMENTS, teamLogoUrl,
-  getSeasons, getStandings, getTeamOverall, getHeadToHead, summarizeH2H,
-  type SofaSeason, type SofaStandingRow, type SofaOverall, type SofaH2HMatch,
-} from "@/lib/sofascore";
+  getStandings, getHeadToHead, summarizeH2H, espnTeamLogoUrl,
+  type StandingRow, type H2HMatch,
+} from "@/lib/espn";
 
 type Mode = "move" | "arrow";
 
 const PIZARRA_FORMATIONS = ["4-3-3", "4-4-2", "5-3-2"];
 
+// Mismos ids que usaba Sofascore (para no romper caché/estado viejo), ahora
+// mapeados a slug ESPN en vez de tournament id.
 const LEAGUES = [
-  { id: "128", name: "Argentina — Primera División" },
-  { id: "131", name: "Copa Libertadores" },
-  { id: "71",  name: "Brasil — Série A" },
-  { id: "262", name: "México — Liga MX" },
-  { id: "39",  name: "Inglaterra — Premier League" },
-  { id: "140", name: "España — La Liga" },
-  { id: "135", name: "Italia — Serie A" },
-  { id: "78",  name: "Alemania — Bundesliga" },
-  { id: "61",  name: "Francia — Ligue 1" },
-  { id: "2",   name: "Champions League" },
-  { id: "3",   name: "Europa League" },
+  { id: "128", name: "Argentina — Primera División", espn: "arg.1" },
+  { id: "131", name: "Copa Libertadores",             espn: "conmebol.libertadores" },
+  { id: "71",  name: "Brasil — Série A",               espn: "bra.1" },
+  { id: "262", name: "México — Liga MX",               espn: "mex.1" },
+  { id: "39",  name: "Inglaterra — Premier League",    espn: "eng.1" },
+  { id: "140", name: "España — La Liga",               espn: "esp.1" },
+  { id: "135", name: "Italia — Serie A",                espn: "ita.1" },
+  { id: "78",  name: "Alemania — Bundesliga",           espn: "ger.1" },
+  { id: "61",  name: "Francia — Ligue 1",               espn: "fra.1" },
+  { id: "2",   name: "Champions League",                espn: "uefa.champions" },
+  { id: "3",   name: "Europa League",                   espn: "uefa.europa" },
 ];
+
+// ESPN llama "season" al año de inicio de la temporada (2025 → "2025-26").
+const CURRENT_YEAR = new Date().getFullYear();
+const SEASON_YEARS = Array.from({ length: 6 }, (_, i) => CURRENT_YEAR - i);
+function seasonLabel(y: number) {
+  return `${y}-${String((y + 1) % 100).padStart(2, "0")}`;
+}
 
 // ── Cache ──────────────────────────────────────────────────────
 function cacheGet<T>(key: string): T | null {
@@ -78,8 +86,6 @@ function TextRow({ label, a, b }: { label: string; a: string; b: string }) {
     </div>
   );
 }
-
-interface SofaCombined { row: SofaStandingRow; overall: SofaOverall }
 
 export default function TacticoTab() {
   // ── Pizarra state ──────────────────────────────────────────
@@ -148,54 +154,33 @@ export default function TacticoTab() {
   function onPlayerUp() { setDraggingId(null); }
 
   // ── Equipos: local / visitante compartidos entre pizarra, comparador y H2H ──
-  const [leagueId, setLeagueId] = useState("128");
-  const [seasons,  setSeasons]  = useState<SofaSeason[]>([]);
-  const [seasonId, setSeasonId] = useState<number | null>(null);
-  const [teams,    setTeams]    = useState<SofaStandingRow[]>([]);
+  const [leagueId,   setLeagueId]   = useState("128");
+  const [seasonYear, setSeasonYear] = useState(CURRENT_YEAR - 1);
+  const [teams,    setTeams]    = useState<StandingRow[]>([]);
   const [teamAId,  setTeamAId]  = useState(""); // local
   const [teamBId,  setTeamBId]  = useState(""); // visitante
-  const [statsA,   setStatsA]   = useState<SofaCombined | null>(null);
-  const [statsB,   setStatsB]   = useState<SofaCombined | null>(null);
-  const [h2h,      setH2h]      = useState<SofaH2HMatch[] | null>(null);
-  const [loading,  setLoading]  = useState<"seasons" | "teams" | "stats" | null>(null);
+  const [statsA,   setStatsA]   = useState<StandingRow | null>(null);
+  const [statsB,   setStatsB]   = useState<StandingRow | null>(null);
+  const [h2h,      setH2h]      = useState<H2HMatch[] | null>(null);
+  const [loading,  setLoading]  = useState<"teams" | "stats" | null>(null);
   const [error,    setError]    = useState<string | null>(null);
+
+  const leagueSlug = LEAGUES.find(l => l.id === leagueId)?.espn ?? "";
 
   useEffect(() => {
     setTeamAId(""); setTeamBId("");
     setStatsA(null); setStatsB(null); setH2h(null);
-    setError(null); setTeams([]); setSeasons([]); setSeasonId(null);
-
-    const tournamentId = SOFA_TOURNAMENTS[leagueId];
-    if (!tournamentId) { setError("Esta liga todavía no tiene mapeo a Sofascore"); return; }
-
-    const key = `pelotita_sofa_seasons_${tournamentId}`;
-    const cached = cacheGet<SofaSeason[]>(key);
-    if (cached && cached.length) {
-      setSeasons(cached);
-      setSeasonId(cached[0].id);
-      return;
-    }
-    setLoading("seasons");
-    getSeasons(tournamentId, 2020)
-      .then(list => {
-        cacheSet(key, list);
-        setSeasons(list);
-        setSeasonId(list[0]?.id ?? null);
-      })
-      .catch(e => setError(e instanceof Error ? e.message : "Error cargando temporadas"))
-      .finally(() => setLoading(null));
+    setError(null); setTeams([]);
   }, [leagueId]);
 
   async function cargarEquipos() {
-    if (seasonId == null) return;
     setError(null);
-    const tournamentId = SOFA_TOURNAMENTS[leagueId];
     setLoading("teams");
     try {
-      const key = `pelotita_sofa_standings_${tournamentId}_${seasonId}`;
-      let rows = cacheGet<SofaStandingRow[]>(key);
+      const key = `pelotita_espn_standings_${leagueSlug}_${seasonYear}`;
+      let rows = cacheGet<StandingRow[]>(key);
       if (!rows || !rows.length) {
-        rows = await getStandings(tournamentId, seasonId);
+        rows = await getStandings(leagueSlug, seasonYear);
         cacheSet(key, rows);
       }
       setTeams(rows);
@@ -208,40 +193,20 @@ export default function TacticoTab() {
     }
   }
 
-  async function fetchOverall(teamId: string): Promise<SofaCombined> {
-    const tournamentId = SOFA_TOURNAMENTS[leagueId];
-    if (seasonId == null) throw new Error("Elegí una temporada");
-    // Siempre trae standings de la liga/temporada ACTUAL (no confía en `teams`
-    // del estado, que puede haber quedado de una temporada anterior) — esto es
-    // lo que evita que posición/puntos/PJ queden pegados al torneo viejo.
-    const standingsKey = `pelotita_sofa_standings_${tournamentId}_${seasonId}`;
-    let rows = cacheGet<SofaStandingRow[]>(standingsKey);
-    if (!rows || !rows.length) {
-      rows = await getStandings(tournamentId, seasonId);
-      cacheSet(standingsKey, rows);
-    }
-    const row = rows.find(t => String(t.team.id) === teamId);
-    if (!row) throw new Error("Equipo no encontrado en esta temporada");
-    const key = `pelotita_sofa_overall_${teamId}_${tournamentId}_${seasonId}`;
-    const cached = cacheGet<SofaOverall>(key);
-    if (cached) return { row, overall: cached };
-    const overall = await getTeamOverall(row.team.id, tournamentId, seasonId);
-    cacheSet(key, overall);
-    return { row, overall };
-  }
-
   async function armarClave() {
     if (!teamAId || !teamBId) return;
     setError(null);
     setLoading("stats");
     try {
-      const [a, b] = await Promise.all([fetchOverall(teamAId), fetchOverall(teamBId)]);
-      setStatsA(a); setStatsB(b);
+      const rowA = teams.find(t => String(t.team.id) === teamAId);
+      const rowB = teams.find(t => String(t.team.id) === teamBId);
+      if (!rowA || !rowB) throw new Error("Equipo no encontrado en esta temporada");
+      setStatsA(rowA); setStatsB(rowB);
 
-      const h2hKey = `pelotita_sofa_h2h_${teamAId}_${teamBId}`;
-      let list = cacheGet<SofaH2HMatch[]>(h2hKey);
+      const h2hKey = `pelotita_espn_h2h_${leagueSlug}_${teamAId}_${teamBId}_${seasonYear}`;
+      let list = cacheGet<H2HMatch[]>(h2hKey);
       if (!list) {
-        list = await getHeadToHead(Number(teamAId), Number(teamBId), 10);
+        list = await getHeadToHead(leagueSlug, Number(teamAId), rowA.team.name, Number(teamBId), rowB.team.name, seasonYear, 10);
         cacheSet(h2hKey, list);
       }
       setH2h(list);
@@ -295,11 +260,11 @@ export default function TacticoTab() {
             </button>
           ))}
           <div className="ml-auto flex gap-2">
-            <button onClick={() => setArrows([])}
+            <button onClick={() => { setArrows([]); setArrowStart(null); setLive(null); }}
               className="px-2 py-1 rounded border border-bg-card text-[10px] font-mono text-cream/30 hover:text-red-400 transition-colors">
               ✕ flechas
             </button>
-            <button onClick={() => { setPlayers([...makeTeam(localF, "local"), ...makeTeam(visitorF, "visitor")]); setArrows([]); setPlayerNames({}); }}
+            <button onClick={() => { setPlayers([...makeTeam(localF, "local"), ...makeTeam(visitorF, "visitor")]); setArrows([]); setPlayerNames({}); setArrowStart(null); setLive(null); }}
               className="px-2 py-1 rounded border border-bg-card text-[10px] font-mono text-cream/30 hover:text-red-400 transition-colors">
               ↺ reset
             </button>
@@ -324,27 +289,24 @@ export default function TacticoTab() {
               <div className="grid grid-cols-[1fr_100px_1fr] gap-2 mb-3 pb-3 border-b border-bg-card/60">
                 <div className="flex items-center justify-end gap-2">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={teamLogoUrl(statsA.row.team.id)} alt="" className="w-6 h-6 object-contain" />
-                  <span className="font-mono text-xs font-bold text-orange text-right leading-tight">{statsA.row.team.name}</span>
+                  <img src={espnTeamLogoUrl(statsA.team.id)} alt="" className="w-6 h-6 object-contain" />
+                  <span className="font-mono text-xs font-bold text-orange text-right leading-tight">{statsA.team.name}</span>
                 </div>
                 <div className="font-mono text-[10px] text-cream/20 text-center self-center">VS</div>
                 <div className="flex items-center gap-2">
-                  <span className="font-mono text-xs font-bold text-cream leading-tight">{statsB.row.team.name}</span>
+                  <span className="font-mono text-xs font-bold text-cream leading-tight">{statsB.team.name}</span>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={teamLogoUrl(statsB.row.team.id)} alt="" className="w-6 h-6 object-contain" />
+                  <img src={espnTeamLogoUrl(statsB.team.id)} alt="" className="w-6 h-6 object-contain" />
                 </div>
               </div>
-              <TextRow label="POSICIÓN"        a={`#${statsA.row.position}`} b={`#${statsB.row.position}`} />
-              <StatRow label="PUNTOS"          a={statsA.row.points}  b={statsB.row.points} />
-              <StatRow label="PJ"              a={statsA.row.matches} b={statsB.row.matches} />
-              <StatRow label="VICTORIAS"       a={statsA.row.wins}    b={statsB.row.wins} />
-              <StatRow label="EMPATES"         a={statsA.row.draws}   b={statsB.row.draws} />
-              <StatRow label="DERROTAS"        a={statsA.row.losses}  b={statsB.row.losses} higherIsBetter={false} />
-              <StatRow label="GOLES A FAVOR"   a={statsA.row.scoresFor}     b={statsB.row.scoresFor} />
-              <StatRow label="GOLES EN CONTRA" a={statsA.row.scoresAgainst} b={statsB.row.scoresAgainst} higherIsBetter={false} />
-              <StatRow label="ARCO EN 0"       a={statsA.overall.cleanSheets} b={statsB.overall.cleanSheets} />
-              <StatRow label="RATING PROM."    a={Number(statsA.overall.avgRating.toFixed(2))} b={Number(statsB.overall.avgRating.toFixed(2))} fmt={v => v.toFixed(2)} />
-              <StatRow label="POSESIÓN %"      a={Math.round(statsA.overall.averageBallPossession)} b={Math.round(statsB.overall.averageBallPossession)} fmt={v => `${v}%`} />
+              <TextRow label="POSICIÓN"        a={`#${statsA.position}`} b={`#${statsB.position}`} />
+              <StatRow label="PUNTOS"          a={statsA.points}  b={statsB.points} />
+              <StatRow label="PJ"              a={statsA.matches} b={statsB.matches} />
+              <StatRow label="VICTORIAS"       a={statsA.wins}    b={statsB.wins} />
+              <StatRow label="EMPATES"         a={statsA.draws}   b={statsB.draws} />
+              <StatRow label="DERROTAS"        a={statsA.losses}  b={statsB.losses} higherIsBetter={false} />
+              <StatRow label="GOLES A FAVOR"   a={statsA.scoresFor}     b={statsB.scoresFor} />
+              <StatRow label="GOLES EN CONTRA" a={statsA.scoresAgainst} b={statsB.scoresAgainst} higherIsBetter={false} />
             </div>
           )}
         </div>
@@ -387,7 +349,9 @@ export default function TacticoTab() {
             <span className="font-mono text-[10px] text-cream/30 tracking-widest">{visitorTeamName ?? "VISITANTE"} ▼</span>
             <div ref={pitchRef} className="relative select-none"
               style={{ aspectRatio: "68 / 105", height: "clamp(300px, calc(100vh - 200px), 560px)", cursor: "default" }}
-              onPointerDown={onPitchDown} onPointerMove={onPitchMove} onPointerUp={onPitchUp}>
+              onPointerDown={onPitchDown} onPointerMove={onPitchMove} onPointerUp={onPitchUp}
+              onPointerCancel={onPitchUp}
+              onPointerLeave={() => { if (mode === "arrow" && !draggingId) { setArrowStart(null); setLive(null); } }}>
               <PitchSVG />
               <ArrowsOverlay arrows={arrows} live={live} onRemove={id => setArrows(prev => prev.filter(a => a.id !== id))} eraseMode={false} />
               {players.map(p => {
@@ -442,14 +406,14 @@ export default function TacticoTab() {
           </label>
           <label className="flex flex-col gap-1">
             <span className="font-mono text-[10px] text-orange/70 tracking-widest">TEMPORADA</span>
-            <select value={seasonId ?? ""} onChange={e => setSeasonId(Number(e.target.value))} disabled={!seasons.length}
-              className="bg-bg-deep border border-bg-card text-cream text-xs font-mono rounded px-2 py-1.5 focus:outline-none focus:border-orange/50 disabled:opacity-40">
-              {seasons.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+            <select value={seasonYear} onChange={e => setSeasonYear(Number(e.target.value))}
+              className="bg-bg-deep border border-bg-card text-cream text-xs font-mono rounded px-2 py-1.5 focus:outline-none focus:border-orange/50">
+              {SEASON_YEARS.map(y => <option key={y} value={y}>{seasonLabel(y)}</option>)}
             </select>
           </label>
-          <button onClick={cargarEquipos} disabled={loading === "teams" || seasonId == null}
+          <button onClick={cargarEquipos} disabled={loading === "teams"}
             className="w-full py-1.5 border border-orange text-orange font-mono text-[10px] rounded tracking-wider hover:bg-orange/20 transition-colors disabled:opacity-40">
-            {loading === "seasons" ? "BUSCANDO TEMPORADAS..." : loading === "teams" ? "CARGANDO..." : "⚽ CARGAR EQUIPOS"}
+            {loading === "teams" ? "CARGANDO..." : "⚽ CARGAR EQUIPOS"}
           </button>
           {hasTeams && <span className="font-mono text-[10px] text-cream/30">{teams.length} equipos · caché</span>}
 

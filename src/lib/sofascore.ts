@@ -43,10 +43,23 @@ export interface SofaOverall {
   accuratePassesPercentage: number;
 }
 
+function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Cloudflare devuelve 403/503 en los primeros pedidos de una sesión nueva
+// (challenge transitorio) y después empieza a responder 200 sin más cambios.
+// Reintentamos un par de veces con backoff antes de darnos por vencidos.
 async function sofaGet<T>(path: string): Promise<T> {
-  const res = await fetch(`${SFS_BASE}/${path}`);
-  if (!res.ok) throw new Error(`Sofascore ${res.status}`);
-  return res.json();
+  let lastStatus = 0;
+  for (let attempt = 0; attempt < 4; attempt++) {
+    if (attempt > 0) await sleep(400 * attempt);
+    const res = await fetch(`${SFS_BASE}/${path}`);
+    if (res.ok) return res.json();
+    lastStatus = res.status;
+    if (res.status !== 403 && res.status !== 503) break;
+  }
+  throw new Error(`Sofascore ${lastStatus}`);
 }
 
 export function teamLogoUrl(teamId: number) {

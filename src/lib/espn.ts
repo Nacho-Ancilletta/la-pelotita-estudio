@@ -1,0 +1,249 @@
+// Stats de partido y H2H desde el endpoint /summary de ESPN, vía el proxy
+// existente (src/app/api/espn/route.ts). Mismo ev.id que ya usa EspnFixtures
+// — no hace falta matchear contra otro proveedor por nombre de equipo.
+// Reemplaza el uso de Sofascore en ese componente (bloqueado por Cloudflare).
+//
+// También expone standings y H2H reconstruido (para Ayudante Táctico) desde
+// site.web.api.espn.com/.../standings y .../teams/{id}/schedule — ver el
+// parámetro `api=web` que soporta el proxy.
+
+export interface MatchStats {
+  possession: [number, number];
+  shots: [number, number];
+  shotsOnTarget: [number, number];
+  corners: [number, number];
+  fouls: [number, number];
+}
+
+export interface H2HMatch {
+  id: number;
+  homeTeam: string;
+  homeTeamId: number;
+  awayTeam: string;
+  awayTeamId: number;
+  homeScore: number;
+  awayScore: number;
+  timestamp: number;
+  tournament: string;
+}
+
+export interface H2HSummary {
+  homeWins: number;
+  awayWins: number;
+  draws: number;
+}
+
+export interface MatchDetails {
+  stats: MatchStats | null;
+  h2h: H2HMatch[] | null;
+  h2hSummary: H2HSummary | null;
+}
+
+export interface StandingRow {
+  team: { id: number; name: string };
+  position: number;
+  matches: number;
+  wins: number;
+  draws: number;
+  losses: number;
+  points: number;
+  scoresFor: number;
+  scoresAgainst: number;
+}
+
+export function espnTeamLogoUrl(teamId: number | string) {
+  return `https://a.espncdn.com/i/teamlogos/soccer/500/${teamId}.png`;
+}
+
+export function summarizeH2H(matches: H2HMatch[], teamAId: number, teamBId: number): H2HSummary {
+  let homeWins = 0, awayWins = 0, draws = 0;
+  for (const m of matches) {
+    if (m.homeScore === m.awayScore) { draws++; continue; }
+    const winnerId = m.homeScore > m.awayScore ? m.homeTeamId : m.awayTeamId;
+    if (winnerId === teamAId) homeWins++;
+    else if (winnerId === teamBId) awayWins++;
+  }
+  return { homeWins, awayWins, draws };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function statValue(statistics: any[] | undefined, name: string): number {
+  const item = statistics?.find((s) => s.name === name);
+  return item ? parseFloat(item.displayValue) || 0 : 0;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function parseStats(boxscore: any): MatchStats | null {
+  const teams = boxscore?.teams;
+  if (!teams || teams.length < 2) return null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const home = teams.find((t: any) => t.homeAway === "home");
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const away = teams.find((t: any) => t.homeAway === "away");
+  if (!home || !away) return null;
+  return {
+    possession:    [statValue(home.statistics, "possessionPct"), statValue(away.statistics, "possessionPct")],
+    shots:         [statValue(home.statistics, "totalShots"), statValue(away.statistics, "totalShots")],
+    shotsOnTarget: [statValue(home.statistics, "shotsOnTarget"), statValue(away.statistics, "shotsOnTarget")],
+    corners:       [statValue(home.statistics, "wonCorners"), statValue(away.statistics, "wonCorners")],
+    fouls:         [statValue(home.statistics, "foulsCommitted"), statValue(away.statistics, "foulsCommitted")],
+  };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function parseSummaryH2H(headToHeadGames: any): { matches: H2HMatch[]; summary: H2HSummary } | null {
+  const block = headToHeadGames?.[0];
+  if (!block?.events?.length) return null;
+  const meId = Number(block.team.id);
+  const meName: string = block.team.displayName ?? "";
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const matches: H2HMatch[] = block.events.map((e: any) => {
+    const homeId = Number(e.homeTeamId);
+    const awayId = Number(e.awayTeamId);
+    const oppName: string = e.opponent?.displayName ?? "";
+    return {
+      id: Number(e.id),
+      homeTeamId: homeId,
+      awayTeamId: awayId,
+      homeTeam: homeId === meId ? meName : oppName,
+      awayTeam: awayId === meId ? meName : oppName,
+      homeScore: Number(e.homeTeamScore) || 0,
+      awayScore: Number(e.awayTeamScore) || 0,
+      timestamp: Math.floor(new Date(e.gameDate).getTime() / 1000),
+      tournament: e.leagueName ?? e.competitionName ?? "",
+    };
+  });
+
+  const oppId = Number(block.events[0]?.opponent?.id);
+  return { matches, summary: summarizeH2H(matches, meId, oppId) };
+}
+
+// Cache corta en localStorage — durante una grabación en vivo la tarjeta se
+// puede expandir/colapsar varias veces; no repetimos el pedido si pasaron
+// menos de 90s, pero tampoco lo dejamos pegado como los datos de fixtures.
+const CACHE_TTL_MS = 90_000;
+
+function summaryCacheKey(league: string, eventId: string) {
+  return `pelotita_espn_summary_${league}_${eventId}`;
+}
+
+function readCache(key: string): MatchDetails | null {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return null;
+    const { data, ts } = JSON.parse(raw) as { data: MatchDetails; ts: number };
+    if (Date.now() - ts > CACHE_TTL_MS) return null;
+    return data;
+  } catch { return null; }
+}
+
+function writeCache(key: string, data: MatchDetails) {
+  try { localStorage.setItem(key, JSON.stringify({ data, ts: Date.now() })); }
+  catch { /* localStorage lleno o deshabilitado — no es crítico */ }
+}
+
+export async function getMatchDetails(league: string, eventId: string): Promise<MatchDetails> {
+  const key = summaryCacheKey(league, eventId);
+  const cached = readCache(key);
+  if (cached) return cached;
+
+  const res = await fetch(`/api/espn?league=${league}&endpoint=summary&event=${eventId}`);
+  if (!res.ok) return { stats: null, h2h: null, h2hSummary: null };
+
+  const data = await res.json();
+  const h2h = parseSummaryH2H(data.headToHeadGames);
+  const details: MatchDetails = {
+    stats: parseStats(data.boxscore),
+    h2h: h2h?.matches ?? null,
+    h2hSummary: h2h?.summary ?? null,
+  };
+  writeCache(key, details);
+  return details;
+}
+
+// ── Standings ────────────────────────────────────────────────
+
+export async function getStandings(league: string, season: number): Promise<StandingRow[]> {
+  const res = await fetch(`/api/espn?league=${league}&endpoint=standings&api=web&season=${season}`);
+  if (!res.ok) throw new Error(`Standings ESPN ${res.status}`);
+  const data = await res.json();
+  // Algunas ligas (ej. Argentina) devuelven la tabla partida en grupos/zonas
+  // en vez de un único bloque — hay que juntarlos todos o se pierde la mitad
+  // de los equipos.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const groups: any[] = data?.children ?? [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const entries: any[] = groups.flatMap((g) => g?.standings?.entries ?? []);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return entries.map((e: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const stat = (name: string) => e.stats?.find((s: any) => s.name === name)?.value ?? 0;
+    return {
+      team: { id: Number(e.team.id), name: e.team.displayName },
+      position: stat("rank"),
+      matches: stat("gamesPlayed"),
+      wins: stat("wins"),
+      draws: stat("ties"),
+      losses: stat("losses"),
+      points: stat("points"),
+      scoresFor: stat("pointsFor"),
+      scoresAgainst: stat("pointsAgainst"),
+    };
+  }).sort((a, b) => a.team.name.localeCompare(b.team.name));
+}
+
+// ── H2H reconstruido desde el fixture histórico de un equipo ───────────────
+// ESPN no tiene un endpoint directo "cruces A vs B" — se pide el calendario
+// de un equipo temporada por temporada y se filtra por el rival, igual idea
+// que usaba Sofascore pero sin bloqueo.
+
+export async function getHeadToHead(
+  league: string,
+  meId: number, meName: string,
+  oppId: number, oppName: string,
+  fromSeason: number,
+  limit = 10,
+): Promise<H2HMatch[]> {
+  const matches: H2HMatch[] = [];
+  const seenIds = new Set<number>();
+
+  for (let i = 0; i < 5 && matches.length < limit; i++) {
+    const season = fromSeason - i;
+    const res = await fetch(`/api/espn?league=${league}&endpoint=teams/${meId}/schedule&season=${season}`);
+    if (!res.ok) continue;
+    const data = await res.json();
+    for (const ev of data.events ?? []) {
+      const comp = ev.competitions?.[0];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const competitors: any[] = comp?.competitors ?? [];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const home = competitors.find((c: any) => c.homeAway === "home");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const away = competitors.find((c: any) => c.homeAway === "away");
+      if (!home || !away) continue;
+      const homeId = Number(home.team.id);
+      const awayId = Number(away.team.id);
+      if (homeId !== oppId && awayId !== oppId) continue; // no es contra el rival buscado
+      if (home.score?.value == null || away.score?.value == null) continue; // no jugado todavía
+      const id = Number(ev.id);
+      if (seenIds.has(id)) continue;
+      seenIds.add(id);
+      matches.push({
+        id,
+        homeTeamId: homeId,
+        awayTeamId: awayId,
+        homeTeam: homeId === meId ? meName : oppName,
+        awayTeam: awayId === meId ? meName : oppName,
+        homeScore: home.score.value,
+        awayScore: away.score.value,
+        timestamp: Math.floor(new Date(ev.date).getTime() / 1000),
+        tournament: ev.season?.displayName ?? "",
+      });
+    }
+  }
+
+  matches.sort((a, b) => b.timestamp - a.timestamp);
+  return matches.slice(0, limit);
+}
