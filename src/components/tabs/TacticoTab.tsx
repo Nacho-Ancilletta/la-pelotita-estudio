@@ -16,31 +16,98 @@ const PIZARRA_FORMATIONS = ["4-3-3", "4-4-2", "5-3-2"];
 
 // Mismos ids que usaba Sofascore (para no romper caché/estado viejo), ahora
 // mapeados a slug ESPN en vez de tournament id.
+// `type` distingue liga de clubes (temporada en rango, "25-26") de selecciones
+// nacionales en torneos internacionales (año único, "2026").
 const LEAGUES = [
-  { id: "128", name: "Argentina — Primera División", espn: "arg.1" },
-  { id: "131", name: "Copa Libertadores",             espn: "conmebol.libertadores" },
-  { id: "71",  name: "Brasil — Série A",               espn: "bra.1" },
-  { id: "262", name: "México — Liga MX",               espn: "mex.1" },
-  { id: "39",  name: "Inglaterra — Premier League",    espn: "eng.1" },
-  { id: "140", name: "España — La Liga",               espn: "esp.1" },
-  { id: "135", name: "Italia — Serie A",                espn: "ita.1" },
-  { id: "78",  name: "Alemania — Bundesliga",           espn: "ger.1" },
-  { id: "61",  name: "Francia — Ligue 1",               espn: "fra.1" },
-  { id: "2",   name: "Champions League",                espn: "uefa.champions" },
-  { id: "3",   name: "Europa League",                   espn: "uefa.europa" },
-  { id: "wc",  name: "Mundial",                         espn: "fifa.world" },
-  { id: "wcq-conmebol", name: "Eliminatorias Sudamericanas", espn: "fifa.worldq.conmebol" },
-  { id: "wcq-uefa",     name: "Eliminatorias Europeas",      espn: "fifa.worldq.uefa" },
-  { id: "copa-america", name: "Copa América",                espn: "conmebol.america" },
-  { id: "euro",         name: "Eurocopa",                    espn: "uefa.euro" },
+  { id: "128", name: "Argentina — Primera División", espn: "arg.1",                type: "club" as const },
+  { id: "131", name: "Copa Libertadores",             espn: "conmebol.libertadores", type: "club" as const },
+  { id: "71",  name: "Brasil — Série A",               espn: "bra.1",                type: "club" as const },
+  { id: "262", name: "México — Liga MX",               espn: "mex.1",                type: "club" as const },
+  { id: "39",  name: "Inglaterra — Premier League",    espn: "eng.1",                type: "club" as const },
+  { id: "140", name: "España — La Liga",               espn: "esp.1",                type: "club" as const },
+  { id: "135", name: "Italia — Serie A",                espn: "ita.1",                type: "club" as const },
+  { id: "78",  name: "Alemania — Bundesliga",           espn: "ger.1",                type: "club" as const },
+  { id: "61",  name: "Francia — Ligue 1",               espn: "fra.1",                type: "club" as const },
+  { id: "2",   name: "Champions League",                espn: "uefa.champions",       type: "club" as const },
+  { id: "3",   name: "Europa League",                   espn: "uefa.europa",          type: "club" as const },
+  { id: "wc",  name: "Mundial · selecciones",           espn: "fifa.world",           type: "intl" as const },
+  { id: "wcq-conmebol", name: "Eliminatorias Sudamericanas · selecciones", espn: "fifa.worldq.conmebol", type: "intl" as const },
+  { id: "wcq-uefa",     name: "Eliminatorias Europeas · selecciones",      espn: "fifa.worldq.uefa",     type: "intl" as const },
+  { id: "copa-america", name: "Copa América · selecciones",                espn: "conmebol.america",     type: "intl" as const },
+  { id: "euro",         name: "Eurocopa · selecciones",                    espn: "uefa.euro",            type: "intl" as const },
 ];
 
-// ESPN llama "season" al año de inicio de la temporada (2025 → "2025-26").
+// ESPN llama "season" al año de inicio de la temporada (2025 → "2025-26"),
+// eso rige solo para ligas de clubes.
 const CURRENT_YEAR = new Date().getFullYear();
 const SEASON_YEARS = Array.from({ length: 6 }, (_, i) => CURRENT_YEAR - i);
 function seasonLabel(y: number) {
   return `${y}-${String((y + 1) % 100).padStart(2, "0")}`;
 }
+
+// Ediciones reales de cada torneo de selecciones — no es un rango continuo
+// como una liga. `value` es el "season" que hay que pedirle a ESPN, `label`
+// el año que se ve en pantalla (no siempre coinciden: Eurocopa y Copa América
+// 2020 se jugaron en 2021 por la pandemia pero ESPN las sigue indexando con
+// season=2020; las Eliminatorias se indexan por el año de ARRANQUE del ciclo,
+// no por el Mundial al que apuntan). Listas sacadas de lo que ESPN realmente
+// expone para cada torneo — nada inventado por patrón de 4 en 4.
+interface Edition { value: number; label: string; }
+
+const WORLD_CUP_EDITIONS: Edition[] = [
+  2026, 2022, 2018, 2014, 2010, 2006, 2002, 1998, 1994, 1990,
+  1986, 1982, 1978, 1974, 1970, 1966, 1962, 1958, 1954, 1950, 1930,
+].map(y => ({ value: y, label: String(y) }));
+
+const EURO_EDITIONS: Edition[] = [
+  { value: 2024, label: "2024" },
+  { value: 2020, label: "2021" }, // Euro 2020 — jugada en 2021 por la pandemia
+  { value: 2016, label: "2016" },
+  { value: 2012, label: "2012" },
+  { value: 2008, label: "2008" },
+  { value: 2004, label: "2004" },
+];
+
+const COPA_AMERICA_EDITIONS: Edition[] = [
+  { value: 2024, label: "2024" },
+  { value: 2020, label: "2021" }, // ciclo 2020 pospuesto, jugada en 2021
+  { value: 2019, label: "2019" },
+  { value: 2016, label: "2016" },
+  { value: 2015, label: "2015" },
+  { value: 2011, label: "2011" },
+  { value: 2007, label: "2007" },
+  { value: 2004, label: "2004" },
+  { value: 2001, label: "2001" },
+];
+
+// Eliminatorias: `label` es el rango real del ciclo clasificatorio (según lo
+// que devuelve ESPN), no el año del Mundial al que apuntan.
+const WCQ_CONMEBOL_EDITIONS: Edition[] = [
+  { value: 2023, label: "2023-25" },
+  { value: 2020, label: "2020-22" },
+  { value: 2015, label: "2015-17" },
+  { value: 2013, label: "2010-14" },
+  { value: 2009, label: "2009-10" },
+  { value: 2006, label: "2003-04" },
+];
+
+const WCQ_UEFA_EDITIONS: Edition[] = [
+  { value: 2025, label: "2025-26" },
+  { value: 2021, label: "2021-22" },
+  { value: 2015, label: "2015-17" },
+  { value: 2013, label: "2013-14" },
+  { value: 2012, label: "2012-13" },
+  { value: 2009, label: "2009-10" },
+  { value: 2006, label: "2003-06" },
+];
+
+const INTL_EDITIONS: Record<string, Edition[]> = {
+  wc: WORLD_CUP_EDITIONS,
+  euro: EURO_EDITIONS,
+  "copa-america": COPA_AMERICA_EDITIONS,
+  "wcq-conmebol": WCQ_CONMEBOL_EDITIONS,
+  "wcq-uefa": WCQ_UEFA_EDITIONS,
+};
 
 // ── Cache ──────────────────────────────────────────────────────
 function cacheGet<T>(key: string): T | null {
@@ -170,12 +237,17 @@ export default function TacticoTab() {
   const [loading,  setLoading]  = useState<"teams" | "stats" | null>(null);
   const [error,    setError]    = useState<string | null>(null);
 
-  const leagueSlug = LEAGUES.find(l => l.id === leagueId)?.espn ?? "";
+  const selectedLeague = LEAGUES.find(l => l.id === leagueId);
+  const leagueSlug = selectedLeague?.espn ?? "";
+  const leagueType = selectedLeague?.type ?? "club";
+  const yearOptions: Edition[] = INTL_EDITIONS[leagueId] ?? SEASON_YEARS.map(y => ({ value: y, label: seasonLabel(y) }));
 
   useEffect(() => {
     setTeamAId(""); setTeamBId("");
     setStatsA(null); setStatsB(null); setH2h(null);
     setError(null); setTeams([]);
+    const opts = INTL_EDITIONS[leagueId] ?? SEASON_YEARS.map(y => ({ value: y, label: seasonLabel(y) }));
+    setSeasonYear(prev => opts.some(o => o.value === prev) ? prev : opts[0].value);
   }, [leagueId]);
 
   async function cargarEquipos() {
@@ -410,10 +482,12 @@ export default function TacticoTab() {
             </select>
           </label>
           <label className="flex flex-col gap-1">
-            <span className="font-mono text-[10px] text-orange/70 tracking-widest">TEMPORADA</span>
+            <span className="font-mono text-[10px] text-orange/70 tracking-widest">
+              {leagueType === "intl" ? "AÑO" : "TEMPORADA"}
+            </span>
             <select value={seasonYear} onChange={e => setSeasonYear(Number(e.target.value))}
               className="bg-bg-deep border border-bg-card text-cream text-xs font-mono rounded px-2 py-1.5 focus:outline-none focus:border-orange/50">
-              {SEASON_YEARS.map(y => <option key={y} value={y}>{seasonLabel(y)}</option>)}
+              {yearOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
             </select>
           </label>
           <button onClick={cargarEquipos} disabled={loading === "teams"}
