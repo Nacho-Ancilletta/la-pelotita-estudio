@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getMatchDetails, type H2HMatch, type H2HSummary, type MatchStats } from "@/lib/espn";
+import { getMatchDetails, type H2HMatch, type H2HSummary, type MatchStats, type GoalEvent } from "@/lib/espn";
 
 // ── Ligas ESPN ────────────────────────────────────────────────
 
@@ -16,6 +16,11 @@ const LEAGUES = [
   { id: "ita.1",                 name: "Serie A",           flag: "ITA" },
   { id: "fra.1",                 name: "Ligue 1",           flag: "FRA" },
   { id: "uefa.champions",        name: "Champions League",  flag: "UEFA" },
+  { id: "fifa.world",            name: "Mundial",                     flag: "FIFA" },
+  { id: "fifa.worldq.conmebol",  name: "Eliminatorias Sudamericanas", flag: "CON" },
+  { id: "fifa.worldq.uefa",      name: "Eliminatorias Europeas",      flag: "UEFA" },
+  { id: "conmebol.america",      name: "Copa América",                flag: "CON" },
+  { id: "uefa.euro",             name: "Eurocopa",                    flag: "UEFA" },
 ];
 
 // ── Cache ─────────────────────────────────────────────────────
@@ -33,7 +38,7 @@ function cacheSet(key: string, d: unknown) {
 
 // ── Types ─────────────────────────────────────────────────────
 
-interface EspnTeam { name: string; abbreviation: string; logo: string; }
+interface EspnTeam { id: string; name: string; abbreviation: string; logo: string; }
 interface EspnCompetitor { homeAway: "home" | "away"; team: EspnTeam; score: string; }
 interface EspnStatus {
   type: { state: "pre" | "in" | "post"; completed: boolean; shortDetail: string; };
@@ -61,9 +66,9 @@ function h2hDate(ts: number) {
 
 // ── Tarjeta de partido ──────────────────────────────────────────
 
-function MatchCard({ ev, leagueName, onClick, expanded, matchStats, statsLoading, h2h, h2hSummary, h2hCardLoading }:
+function MatchCard({ ev, leagueName, onClick, expanded, matchStats, statsLoading, goals, h2h, h2hSummary, h2hCardLoading }:
   { ev: EspnEvent; leagueName?: string; onClick: () => void; expanded: boolean; matchStats: MatchStats | null; statsLoading: boolean;
-    h2h: H2HMatch[] | null; h2hSummary: H2HSummary | null; h2hCardLoading: boolean }) {
+    goals: GoalEvent[] | null; h2h: H2HMatch[] | null; h2hSummary: H2HSummary | null; h2hCardLoading: boolean }) {
   const comp = ev.competitions[0];
   const home = comp?.competitors.find(c => c.homeAway === "home");
   const away = comp?.competitors.find(c => c.homeAway === "away");
@@ -129,6 +134,26 @@ function MatchCard({ ev, leagueName, onClick, expanded, matchStats, statsLoading
       {/* Expandido: stats en vivo/post + H2H */}
       {expanded && (
         <div className="px-4 pb-4">
+          {!statsLoading && goals && goals.length > 0 && (
+            <div className="mb-2 pb-2 border-b border-bg-deep/60 space-y-0.5">
+              <div className="font-mono text-[8px] text-orange/60 tracking-widest mb-1">GOLES</div>
+              {goals.map(g => {
+                const isHome = String(g.teamId) === String(home.team.id);
+                const label = `${g.scorer}${g.ownGoal ? " (en contra)" : ""}${g.penalty ? " (pen)" : ""}`;
+                return (
+                  <div key={g.id} className="grid grid-cols-[1fr_34px_1fr] items-center text-[9px] font-mono">
+                    <div className={isHome ? "text-right text-cream/70 truncate" : "text-right text-cream/20"}>
+                      {isHome ? label : ""}
+                    </div>
+                    <div className="text-center text-orange/70 tabular-nums">⚽ {g.minute}</div>
+                    <div className={!isHome ? "text-left text-cream/70 truncate" : "text-left text-cream/20"}>
+                      {!isHome ? label : ""}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
           {statsLoading && <div className="text-cream/25 font-mono text-[9px] py-1">buscando datos...</div>}
           {!statsLoading && !matchStats && hasScore &&
             <div className="text-cream/20 font-mono text-[9px] py-1">sin stats disponibles</div>}
@@ -204,6 +229,7 @@ export default function EspnFixtures() {
   const [error,       setError]       = useState<string | null>(null);
   const [expandedId,  setExpandedId]  = useState<string | null>(null);
   const [matchStats,  setMatchStats]  = useState<Record<string, MatchStats | null>>({});
+  const [goals,       setGoals]       = useState<Record<string, GoalEvent[] | null>>({});
   const [statsLoading, setStatsLoading] = useState<string | null>(null);
   const [h2h,         setH2h]         = useState<Record<string, H2HMatch[] | null>>({});
   const [h2hSummary,  setH2hSummary]  = useState<Record<string, H2HSummary | null>>({});
@@ -247,10 +273,12 @@ export default function EspnFixtures() {
     try {
       const details = await getMatchDetails(leagueId, evId);
       setMatchStats(p => ({ ...p, [evId]: details.stats }));
+      setGoals(p => ({ ...p, [evId]: details.goals }));
       setH2h(p => ({ ...p, [evId]: details.h2h }));
       setH2hSummary(p => ({ ...p, [evId]: details.h2hSummary }));
     } catch {
       setMatchStats(p => ({ ...p, [evId]: null }));
+      setGoals(p => ({ ...p, [evId]: null }));
       setH2h(p => ({ ...p, [evId]: null }));
       setH2hSummary(p => ({ ...p, [evId]: null }));
     } finally {
@@ -320,6 +348,7 @@ export default function EspnFixtures() {
                 expanded={expandedId === ev.id}
                 matchStats={matchStats[ev.id] ?? null}
                 statsLoading={statsLoading === ev.id}
+                goals={goals[ev.id] ?? null}
                 h2h={h2h[ev.id] ?? null}
                 h2hSummary={h2hSummary[ev.id] ?? null}
                 h2hCardLoading={!!h2hCardLoading[ev.id]}

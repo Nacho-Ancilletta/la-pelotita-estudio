@@ -28,6 +28,11 @@ const LEAGUES = [
   { id: "61",  name: "Francia — Ligue 1",               espn: "fra.1" },
   { id: "2",   name: "Champions League",                espn: "uefa.champions" },
   { id: "3",   name: "Europa League",                   espn: "uefa.europa" },
+  { id: "wc",  name: "Mundial",                         espn: "fifa.world" },
+  { id: "wcq-conmebol", name: "Eliminatorias Sudamericanas", espn: "fifa.worldq.conmebol" },
+  { id: "wcq-uefa",     name: "Eliminatorias Europeas",      espn: "fifa.worldq.uefa" },
+  { id: "copa-america", name: "Copa América",                espn: "conmebol.america" },
+  { id: "euro",         name: "Eurocopa",                    espn: "uefa.euro" },
 ];
 
 // ESPN llama "season" al año de inicio de la temporada (2025 → "2025-26").

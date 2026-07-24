@@ -33,10 +33,20 @@ export interface H2HSummary {
   draws: number;
 }
 
+export interface GoalEvent {
+  id: string;
+  minute: string;
+  scorer: string;
+  teamId: number;
+  ownGoal: boolean;
+  penalty: boolean;
+}
+
 export interface MatchDetails {
   stats: MatchStats | null;
   h2h: H2HMatch[] | null;
   h2hSummary: H2HSummary | null;
+  goals: GoalEvent[] | null;
 }
 
 export interface StandingRow {
@@ -88,6 +98,23 @@ function parseStats(boxscore: any): MatchStats | null {
     corners:       [statValue(home.statistics, "wonCorners"), statValue(away.statistics, "wonCorners")],
     fouls:         [statValue(home.statistics, "foulsCommitted"), statValue(away.statistics, "foulsCommitted")],
   };
+}
+
+// Goles: keyEvents trae toda la timeline del partido (kickoff, tarjetas,
+// entretiempo, etc) — nos quedamos solo con las jugadas marcadas scoringPlay.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function parseGoals(keyEvents: any[] | undefined): GoalEvent[] {
+  if (!keyEvents) return [];
+  return keyEvents
+    .filter((e) => e.scoringPlay)
+    .map((e) => ({
+      id: String(e.id),
+      minute: e.clock?.displayValue ?? "",
+      scorer: e.participants?.[0]?.athlete?.displayName ?? e.shortText ?? "",
+      teamId: Number(e.team?.id),
+      ownGoal: /own goal/i.test(e.type?.text ?? ""),
+      penalty: /penalty/i.test(e.type?.text ?? ""),
+    }));
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -149,7 +176,7 @@ export async function getMatchDetails(league: string, eventId: string): Promise<
   if (cached) return cached;
 
   const res = await fetch(`/api/espn?league=${league}&endpoint=summary&event=${eventId}`);
-  if (!res.ok) return { stats: null, h2h: null, h2hSummary: null };
+  if (!res.ok) return { stats: null, h2h: null, h2hSummary: null, goals: null };
 
   const data = await res.json();
   const h2h = parseSummaryH2H(data.headToHeadGames);
@@ -157,6 +184,7 @@ export async function getMatchDetails(league: string, eventId: string): Promise<
     stats: parseStats(data.boxscore),
     h2h: h2h?.matches ?? null,
     h2hSummary: h2h?.summary ?? null,
+    goals: parseGoals(data.keyEvents),
   };
   writeCache(key, details);
   return details;
