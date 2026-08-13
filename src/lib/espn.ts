@@ -246,19 +246,29 @@ export async function getHeadToHead(
   // Selecciones se cruzan mucho menos seguido que clubes — techo de
   // seguridad más alto para no cortar la búsqueda antes de tiempo, sin
   // arriesgar loop eterno si dos selecciones nunca jugaron entre sí.
-  // Mundial es cada 4 años — el techo fijo de 40 no siempre alcanza
-  // para juntar 5 cruces, así que ahí se busca hasta el primer Mundial (1930).
-  const seasonsBack = maxSeasonsBack ?? (
-    league === "fifa.world" ? Math.max(0, fromSeason - 1930 + 1) :
-    NATIONAL_TEAM_LEAGUES.has(league) ? 40 : 10
-  );
+  // Mundial es cada 4 años — en vez de recorrer año por año hasta 1930
+  // (~90 pedidos), se salta directo a las ediciones reales (~24 pedidos).
+  // 1942 y 1946 no se jugaron (Segunda Guerra) — se filtran del salto de
+  // a 4; si igual quedara algún año sin Mundial real, ESPN no devuelve
+  // eventos y el loop sigue de largo sin romper nada.
+  let seasons: number[];
+  if (league === "fifa.world") {
+    seasons = [];
+    for (let y = fromSeason; y >= 1930; y -= 4) {
+      if (y !== 1942 && y !== 1946) seasons.push(y);
+    }
+  } else {
+    const seasonsBack = maxSeasonsBack ?? (NATIONAL_TEAM_LEAGUES.has(league) ? 40 : 10);
+    seasons = Array.from({ length: seasonsBack }, (_, i) => fromSeason - i);
+  }
+
   const matches: H2HMatch[] = [];
   const seenIds = new Set<number>();
 
-  for (let i = 0; i < seasonsBack; i++) {
+  for (let i = 0; i < seasons.length; i++) {
     if (matches.length >= 5) break; // ya alcanza para "últimos cruces" — no pedir temporadas más viejas
     if (i > 0) await new Promise(r => setTimeout(r, 250));
-    const season = fromSeason - i;
+    const season = seasons[i];
     const res = await fetch(`/api/espn?league=${league}&endpoint=teams/${meId}/schedule&season=${season}`);
     if (res.status === 403) break;
     if (!res.ok) continue;
