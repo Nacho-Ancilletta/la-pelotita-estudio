@@ -237,8 +237,10 @@ export async function getHeadToHead(
   const seenIds = new Set<number>();
 
   for (let i = 0; i < 5; i++) {
+    if (i > 0) await new Promise(r => setTimeout(r, 250));
     const season = fromSeason - i;
     const res = await fetch(`/api/espn?league=${league}&endpoint=teams/${meId}/schedule&season=${season}`);
+    if (res.status === 403) break;
     if (!res.ok) continue;
     const data = await res.json();
     for (const ev of data.events ?? []) {
