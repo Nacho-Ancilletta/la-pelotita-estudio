@@ -110,12 +110,24 @@ const INTL_EDITIONS: Record<string, Edition[]> = {
 };
 
 // ── Cache ──────────────────────────────────────────────────────
+// ttlMs opcional: si se pasa al guardar, cacheGet lo respeta al leer.
+// Entradas viejas guardadas sin wrapper {data,ts,ttlMs} (ej. standings)
+// siguen leyéndose igual, sin expiración — no rompe cache ya en disco.
 function cacheGet<T>(key: string): T | null {
-  try { return JSON.parse(localStorage.getItem(key) ?? "null") as T; }
-  catch { return null; }
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === "object" && "data" in parsed && "ts" in parsed) {
+      const { data, ts, ttlMs } = parsed as { data: T; ts: number; ttlMs?: number };
+      if (ttlMs != null && Date.now() - ts > ttlMs) return null;
+      return data;
+    }
+    return parsed as T;
+  } catch { return null; }
 }
-function cacheSet(key: string, d: unknown) {
-  localStorage.setItem(key, JSON.stringify(d));
+function cacheSet(key: string, d: unknown, ttlMs?: number) {
+  localStorage.setItem(key, JSON.stringify({ data: d, ts: Date.now(), ttlMs }));
 }
 function h2hDate(ts: number) {
   return new Date(ts * 1000).toLocaleDateString("es-AR", { day: "2-digit", month: "2-digit", year: "2-digit" });
@@ -281,10 +293,11 @@ export default function TacticoTab() {
       setStatsA(rowA); setStatsB(rowB);
 
       const h2hKey = `pelotita_espn_h2h_${leagueSlug}_${teamAId}_${teamBId}_${seasonYear}`;
+      const H2H_TTL_MS = 7 * 24 * 60 * 60 * 1000; // cruces históricos casi no cambian entre grabaciones
       let list = cacheGet<H2HMatch[]>(h2hKey);
       if (!list) {
         list = await getHeadToHead(leagueSlug, Number(teamAId), rowA.team.name, Number(teamBId), rowB.team.name, seasonYear);
-        cacheSet(h2hKey, list);
+        cacheSet(h2hKey, list, H2H_TTL_MS);
       }
       setH2h(list);
 
