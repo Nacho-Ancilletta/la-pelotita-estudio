@@ -232,11 +232,13 @@ export async function getHeadToHead(
   meId: number, meName: string,
   oppId: number, oppName: string,
   fromSeason: number,
+  maxSeasonsBack = 10,
 ): Promise<H2HMatch[]> {
   const matches: H2HMatch[] = [];
   const seenIds = new Set<number>();
 
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < maxSeasonsBack; i++) {
+    if (matches.length >= 5) break; // ya alcanza para "últimos cruces" — no pedir temporadas más viejas
     if (i > 0) await new Promise(r => setTimeout(r, 250));
     const season = fromSeason - i;
     const res = await fetch(`/api/espn?league=${league}&endpoint=teams/${meId}/schedule&season=${season}`);
