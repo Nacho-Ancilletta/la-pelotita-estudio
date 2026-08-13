@@ -246,7 +246,12 @@ export async function getHeadToHead(
   // Selecciones se cruzan mucho menos seguido que clubes — techo de
   // seguridad más alto para no cortar la búsqueda antes de tiempo, sin
   // arriesgar loop eterno si dos selecciones nunca jugaron entre sí.
-  const seasonsBack = maxSeasonsBack ?? (NATIONAL_TEAM_LEAGUES.has(league) ? 40 : 10);
+  // Mundial es cada 4 años — el techo fijo de 40 no siempre alcanza
+  // para juntar 5 cruces, así que ahí se busca hasta el primer Mundial (1930).
+  const seasonsBack = maxSeasonsBack ?? (
+    league === "fifa.world" ? Math.max(0, fromSeason - 1930 + 1) :
+    NATIONAL_TEAM_LEAGUES.has(league) ? 40 : 10
+  );
   const matches: H2HMatch[] = [];
   const seenIds = new Set<number>();
 
