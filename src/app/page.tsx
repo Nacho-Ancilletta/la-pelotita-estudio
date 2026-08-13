@@ -4,12 +4,14 @@ import { useState } from "react";
 import TacticoTab from "@/components/tabs/TacticoTab";
 import RefuerzosTab from "@/components/tabs/RefuerzosTab";
 import EnVivoTab from "@/components/tabs/EnVivoTab";
+import GrandTTab from "@/components/tabs/GrandTTab";
 import ApiQuotaCounter from "@/components/ApiQuotaCounter";
 
 const TABS = [
   { id: "tactico",   label: "AYUDANTE TÁCTICO" },
   { id: "refuerzos", label: "BUSCADOR DE REFUERZOS" },
   { id: "vivo",      label: "FIXTURE" },
+  { id: "grandt",    label: "GRAN DT" },
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
@@ -52,6 +54,7 @@ export default function Home() {
         {activeTab === "tactico"   && <TacticoTab />}
         {activeTab === "refuerzos" && <RefuerzosTab />}
         {activeTab === "vivo"      && <EnVivoTab />}
+        {activeTab === "grandt"    && <GrandTTab />}
       </div>
     </div>
   );
