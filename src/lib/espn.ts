@@ -227,17 +227,30 @@ export async function getStandings(league: string, season: number): Promise<Stan
 // de un equipo temporada por temporada y se filtra por el rival, igual idea
 // que usaba Sofascore pero sin bloqueo.
 
+// Mismos slugs de selecciones que usan TacticoTab.tsx y EspnFixtures.tsx.
+const NATIONAL_TEAM_LEAGUES = new Set([
+  "fifa.world",
+  "fifa.worldq.conmebol",
+  "fifa.worldq.uefa",
+  "conmebol.america",
+  "uefa.euro",
+]);
+
 export async function getHeadToHead(
   league: string,
   meId: number, meName: string,
   oppId: number, oppName: string,
   fromSeason: number,
-  maxSeasonsBack = 10,
+  maxSeasonsBack?: number,
 ): Promise<H2HMatch[]> {
+  // Selecciones se cruzan mucho menos seguido que clubes — techo de
+  // seguridad más alto para no cortar la búsqueda antes de tiempo, sin
+  // arriesgar loop eterno si dos selecciones nunca jugaron entre sí.
+  const seasonsBack = maxSeasonsBack ?? (NATIONAL_TEAM_LEAGUES.has(league) ? 40 : 10);
   const matches: H2HMatch[] = [];
   const seenIds = new Set<number>();
 
-  for (let i = 0; i < maxSeasonsBack; i++) {
+  for (let i = 0; i < seasonsBack; i++) {
     if (matches.length >= 5) break; // ya alcanza para "últimos cruces" — no pedir temporadas más viejas
     if (i > 0) await new Promise(r => setTimeout(r, 250));
     const season = fromSeason - i;
