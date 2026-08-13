@@ -232,12 +232,11 @@ export async function getHeadToHead(
   meId: number, meName: string,
   oppId: number, oppName: string,
   fromSeason: number,
-  limit = 10,
 ): Promise<H2HMatch[]> {
   const matches: H2HMatch[] = [];
   const seenIds = new Set<number>();
 
-  for (let i = 0; i < 5 && matches.length < limit; i++) {
+  for (let i = 0; i < 5; i++) {
     const season = fromSeason - i;
     const res = await fetch(`/api/espn?league=${league}&endpoint=teams/${meId}/schedule&season=${season}`);
     if (!res.ok) continue;
@@ -273,5 +272,5 @@ export async function getHeadToHead(
   }
 
   matches.sort((a, b) => b.timestamp - a.timestamp);
-  return matches.slice(0, limit);
+  return matches;
 }

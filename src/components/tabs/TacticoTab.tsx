@@ -283,7 +283,7 @@ export default function TacticoTab() {
       const h2hKey = `pelotita_espn_h2h_${leagueSlug}_${teamAId}_${teamBId}_${seasonYear}`;
       let list = cacheGet<H2HMatch[]>(h2hKey);
       if (!list) {
-        list = await getHeadToHead(leagueSlug, Number(teamAId), rowA.team.name, Number(teamBId), rowB.team.name, seasonYear, 10);
+        list = await getHeadToHead(leagueSlug, Number(teamAId), rowA.team.name, Number(teamBId), rowB.team.name, seasonYear);
         cacheSet(h2hKey, list);
       }
       setH2h(list);
