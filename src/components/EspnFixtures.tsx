@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { getMatchDetails, getHeadToHead, summarizeH2H, type H2HMatch, type H2HSummary, type MatchStats, type GoalEvent } from "@/lib/espn";
 import { getFixtureLiga, type PromiedosGame, type PromiedosLeagueSlug } from "@/lib/promiedos";
 
-// ── Ligas ESPN ────────────────────────────────────────────────
+// ── Ligas integradas (mismas que Ayudante Táctico) ──────────────
 
 const LEAGUES = [
   { id: "arg.1",                 name: "Liga Profesional",  flag: "ARG" },
@@ -23,6 +23,26 @@ const LEAGUES = [
   { id: "conmebol.america",      name: "Copa América",                flag: "CON" },
   { id: "uefa.euro",             name: "Eurocopa",                    flag: "UEFA" },
 ];
+
+// ── Fechas ────────────────────────────────────────────────────
+
+function todayIso(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+function addDays(iso: string, n: number): string {
+  const d = new Date(iso + "T12:00:00");
+  d.setDate(d.getDate() + n);
+  return d.toISOString().slice(0, 10);
+}
+function nextNDays(startIso: string, n: number): string[] {
+  return Array.from({ length: n }, (_, i) => addDays(startIso, i));
+}
+function formatDayLabel(iso: string): string {
+  if (iso === todayIso()) return "HOY";
+  if (iso === addDays(todayIso(), 1)) return "MAÑANA";
+  const d = new Date(iso + "T12:00:00");
+  return d.toLocaleDateString("es-AR", { weekday: "short", day: "2-digit", month: "2-digit" }).toUpperCase();
+}
 
 // ── Cache ─────────────────────────────────────────────────────
 
@@ -238,14 +258,114 @@ function MatchCard({ ev, leagueName, onClick, expanded, matchStats, statsLoading
   );
 }
 
+// ── Tarjeta simple para partidos de respaldo (Promiedos) ────────
+// Solo lista básica: no hay stats/goleadores/H2H para estos, esos
+// endpoints son específicos de ESPN.
+
+function PromiedosMatchCard({ g }: { g: PromiedosGame }) {
+  return (
+    <div className="rounded-lg border border-bg-card bg-bg-deep/40 p-3">
+      <div className="font-mono text-[9px] text-orange/60 mb-1.5 text-center">{g.statusName || g.startTime}</div>
+      <div className="flex items-center justify-between gap-2">
+        <span className="font-mono text-[11px] text-cream text-center flex-1 truncate">{g.homeTeam.name}</span>
+        <span className="font-mono text-[10px] text-cream/25 shrink-0">VS</span>
+        <span className="font-mono text-[11px] text-cream text-center flex-1 truncate">{g.awayTeam.name}</span>
+      </div>
+    </div>
+  );
+}
+
+// ── Panel de un día (acordeón, mismo estilo que Gran DT) ────────
+
+function DayPanel({
+  date, isOpen, onToggle, onRefresh, loading,
+  leaguesEvents, leaguesFallback,
+  expandedId, matchStats, goals, statsLoading, h2h, h2hSummary, h2hCardLoading, onToggleMatch,
+}: {
+  date: string; isOpen: boolean; onToggle: () => void; onRefresh: () => void; loading: boolean;
+  leaguesEvents: Record<string, EspnEvent[]>; leaguesFallback: Record<string, PromiedosGame[]>;
+  expandedId: string | null;
+  matchStats: Record<string, MatchStats | null>; goals: Record<string, GoalEvent[] | null>; statsLoading: string | null;
+  h2h: Record<string, H2HMatch[] | null>; h2hSummary: Record<string, H2HSummary | null>; h2hCardLoading: Record<string, boolean>;
+  onToggleMatch: (ev: EspnEvent, leagueId: string) => void;
+}) {
+  const leaguesWithGames = LEAGUES.filter(
+    (l) => (leaguesEvents[l.id]?.length ?? 0) > 0 || (leaguesFallback[l.id]?.length ?? 0) > 0
+  );
+  const totalGames = leaguesWithGames.reduce(
+    (sum, l) => sum + (leaguesEvents[l.id]?.length ?? 0) + (leaguesFallback[l.id]?.length ?? 0), 0
+  );
+
+  return (
+    <div className="rounded-lg border border-bg-card bg-bg-card/10 overflow-hidden">
+      <button
+        onClick={onToggle}
+        className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-bg-card/20 transition-colors"
+      >
+        <span className="font-mono text-sm text-cream tracking-widest">{formatDayLabel(date)}</span>
+        <span className="flex items-center gap-3">
+          {loading && <span className="font-mono text-[10px] text-cream/30 animate-pulse">buscando...</span>}
+          {!loading && isOpen && totalGames > 0 && <span className="font-mono text-[10px] text-cream/30">{totalGames} partidos</span>}
+          <span className={["font-mono text-orange text-lg transition-transform", isOpen ? "rotate-180" : ""].join(" ")}>⌄</span>
+        </span>
+      </button>
+
+      {isOpen && (
+        <div className="px-5 pb-5 border-t border-bg-card/60 pt-4">
+          {loading && <div className="text-cream/25 font-mono text-xs py-4 text-center">buscando partidos en las ligas seguidas...</div>}
+          {!loading && leaguesWithGames.length === 0 && (
+            <div className="flex flex-col items-center gap-2 py-6 text-center">
+              <span className="text-cream/20 font-mono text-xs">sin partidos este día en las ligas seguidas</span>
+              <button onClick={onRefresh} className="font-mono text-[10px] text-cream/30 hover:text-orange">↺ reintentar</button>
+            </div>
+          )}
+          {!loading && leaguesWithGames.map((lg) => {
+            const evs = leaguesEvents[lg.id] ?? [];
+            const fallbackGames = leaguesFallback[lg.id] ?? [];
+            const usingFallback = evs.length === 0 && fallbackGames.length > 0;
+            return (
+              <div key={lg.id} className="mb-4 last:mb-0">
+                <div className="font-mono text-[10px] text-orange/70 tracking-widest mb-2">
+                  [{lg.flag}] {lg.name.toUpperCase()}
+                  {usingFallback && <span className="text-cream/25 normal-case"> · vía Promiedos</span>}
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+                  {usingFallback
+                    ? fallbackGames.map((g) => <PromiedosMatchCard key={g.id} g={g} />)
+                    : evs.map((ev) => (
+                        <MatchCard
+                          key={ev.id}
+                          ev={ev}
+                          leagueName={lg.name}
+                          onClick={() => onToggleMatch(ev, lg.id)}
+                          expanded={expandedId === ev.id}
+                          matchStats={matchStats[ev.id] ?? null}
+                          statsLoading={statsLoading === ev.id}
+                          goals={goals[ev.id] ?? null}
+                          h2h={h2h[ev.id] ?? null}
+                          h2hSummary={h2hSummary[ev.id] ?? null}
+                          h2hCardLoading={!!h2hCardLoading[ev.id]}
+                        />
+                      ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Main component ────────────────────────────────────────────
 
 export default function EspnFixtures() {
-  const [leagueId,    setLeagueId]    = useState("arg.1");
-  const [date,        setDate]        = useState(() => new Date().toISOString().slice(0, 10));
-  const [events,      setEvents]      = useState<EspnEvent[]>([]);
-  const [loading,     setLoading]     = useState(false);
-  const [error,       setError]       = useState<string | null>(null);
+  const [dayList, setDayList] = useState<string[]>(() => nextNDays(todayIso(), 7));
+  const [openDays, setOpenDays] = useState<Set<string>>(() => new Set([todayIso()]));
+  const [dayEvents,   setDayEvents]   = useState<Record<string, Record<string, EspnEvent[]>>>({});
+  const [dayFallback, setDayFallback] = useState<Record<string, Record<string, PromiedosGame[]>>>({});
+  const [dayLoading,  setDayLoading]  = useState<Record<string, boolean>>({});
+
   const [expandedId,  setExpandedId]  = useState<string | null>(null);
   const [matchStats,  setMatchStats]  = useState<Record<string, MatchStats | null>>({});
   const [goals,       setGoals]       = useState<Record<string, GoalEvent[] | null>>({});
@@ -253,49 +373,81 @@ export default function EspnFixtures() {
   const [h2h,         setH2h]         = useState<Record<string, H2HMatch[] | null>>({});
   const [h2hSummary,  setH2hSummary]  = useState<Record<string, H2HSummary | null>>({});
   const [h2hCardLoading, setH2hCardLoading] = useState<Record<string, boolean>>({});
-  const [promiedosGames, setPromiedosGames] = useState<PromiedosGame[] | null>(null);
 
-  // Auto-fetch when league/date changes
+  // Carga el día de hoy solo (los demás, al abrirlos).
   useEffect(() => {
-    fetchFixtures();
+    ensureDayLoaded(todayIso());
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [leagueId, date]);
+  }, []);
 
-  async function fetchFixtures() {
-    setError(null); setExpandedId(null); setPromiedosGames(null);
-    const key = cacheKey(leagueId, date);
-    const cached = cacheGet<EspnEvent[]>(key);
-    if (cached) { setEvents(cached); return; }
+  // Recorre las 15 ligas integradas para un día — ESPN primero (con delay
+  // entre pedidos, mismo criterio anti-403 que getHeadToHead), Promiedos
+  // como respaldo cuando ESPN falla, pero solo tiene sentido para "hoy"
+  // (Promiedos no soporta pedir fixture por fecha calendario arbitraria,
+  // "latest" = partidos actuales — ver lib/promiedos.ts).
+  async function ensureDayLoaded(date: string, force = false) {
+    if (!force && (dayEvents[date] || dayLoading[date])) return;
+    setDayLoading(p => ({ ...p, [date]: true }));
+    const perLeague: Record<string, EspnEvent[]> = {};
+    const perLeagueFallback: Record<string, PromiedosGame[]> = {};
+    const isToday = date === todayIso();
 
-    setLoading(true);
-    try {
-      const res  = await fetch(`/api/espn?league=${leagueId}&endpoint=scoreboard&dates=${date.replace(/-/g, "")}`);
-      const data = await res.json();
-      if (data.error) throw new Error(data.error);
-      const evs: EspnEvent[] = data.events ?? [];
-      setEvents(evs);
-      cacheSet(key, evs);
-    } catch (e) {
-      // ESPN falló (ej. 403 de Akamai) — Promiedos como respaldo. Solo trae
-      // "partidos actuales" (Promiedos no filtra por fecha calendario), así
-      // que esto sirve sobre todo cuando se está mirando el día de hoy.
-      setEvents([]);
-      try {
-        const games = await getFixtureLiga(leagueId as PromiedosLeagueSlug);
-        setPromiedosGames(games);
-      } catch {
-        setError(e instanceof Error ? e.message : "Error ESPN");
+    for (let i = 0; i < LEAGUES.length; i++) {
+      const lg = LEAGUES[i];
+      if (i > 0) await new Promise(r => setTimeout(r, 150));
+      const key = cacheKey(lg.id, date);
+      let evs = cacheGet<EspnEvent[]>(key);
+      if (!evs) {
+        try {
+          const res  = await fetch(`/api/espn?league=${lg.id}&endpoint=scoreboard&dates=${date.replace(/-/g, "")}`);
+          const data = await res.json();
+          if (data.error) throw new Error(data.error);
+          evs = data.events ?? [];
+          cacheSet(key, evs);
+        } catch {
+          evs = null; // ESPN falló para esta liga — no se cachea el fallo
+        }
       }
-    } finally {
-      setLoading(false);
+      if (evs && evs.length > 0) {
+        perLeague[lg.id] = evs;
+      } else if (evs === null && isToday) {
+        try {
+          const games = await getFixtureLiga(lg.id as PromiedosLeagueSlug);
+          if (games.length > 0) perLeagueFallback[lg.id] = games;
+        } catch { /* sin datos de esta liga hoy por ninguna fuente — se omite */ }
+      }
     }
+
+    setDayEvents(p => ({ ...p, [date]: perLeague }));
+    setDayFallback(p => ({ ...p, [date]: perLeagueFallback }));
+    setDayLoading(p => ({ ...p, [date]: false }));
+  }
+
+  function toggleDay(date: string) {
+    const willOpen = !openDays.has(date);
+    setOpenDays(prev => {
+      const next = new Set(prev);
+      if (next.has(date)) next.delete(date); else next.add(date);
+      return next;
+    });
+    if (willOpen) ensureDayLoaded(date);
+  }
+
+  function refreshDay(date: string) {
+    setDayEvents(p => { const n = { ...p }; delete n[date]; return n; });
+    setDayFallback(p => { const n = { ...p }; delete n[date]; return n; });
+    ensureDayLoaded(date, true);
+  }
+
+  function loadMoreDays() {
+    setDayList(prev => [...prev, ...nextNDays(addDays(prev[prev.length - 1], 1), 7)]);
   }
 
   // Stats + goleadores — solo al expandir la tarjeta (no en todas apenas
   // cargan: el summary de ESPN pesa harto y no vale la pena bajarlo de
   // entrada para cada partido del día). getMatchDetails ya cachea 90s en
   // localStorage.
-  async function fetchDetails(ev: EspnEvent) {
+  async function fetchDetails(ev: EspnEvent, leagueId: string) {
     const evId = ev.id;
     if (matchStats[evId] !== undefined) return; // ya lo tenemos
     setStatsLoading(evId);
@@ -314,7 +466,7 @@ export default function EspnFixtures() {
   // H2H reconstruido desde el calendario histórico (mismo getHeadToHead
   // y misma cache de 7 días que usa TacticoTab) — más confiable que el
   // headToHeadGames del summary, que suele venir vacío.
-  async function fetchH2H(ev: EspnEvent) {
+  async function fetchH2H(ev: EspnEvent, leagueId: string) {
     const evId = ev.id;
     if (h2h[evId] !== undefined) return; // ya lo tenemos
     const comp = ev.competitions[0];
@@ -340,102 +492,42 @@ export default function EspnFixtures() {
     }
   }
 
-  function toggleEvent(ev: EspnEvent) {
+  function toggleMatch(ev: EspnEvent, leagueId: string) {
     if (expandedId === ev.id) { setExpandedId(null); return; }
     setExpandedId(ev.id);
-    fetchH2H(ev);
-    fetchDetails(ev);
+    fetchH2H(ev, leagueId);
+    fetchDetails(ev, leagueId);
   }
-
-  function shiftDate(days: number) {
-    const d = new Date(date + "T12:00:00");
-    d.setDate(d.getDate() + days);
-    setDate(d.toISOString().slice(0, 10));
-  }
-
-  const league = LEAGUES.find(l => l.id === leagueId);
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
-      {/* Controles */}
-      <div className="px-4 py-3 border-b border-bg-card/60 flex flex-wrap items-center gap-2">
-        <select value={leagueId} onChange={e => setLeagueId(e.target.value)}
-          className="bg-bg-deep border border-bg-card text-cream text-xs font-mono rounded px-2 py-1.5 focus:outline-none focus:border-orange/50">
-          {LEAGUES.map(l => <option key={l.id} value={l.id}>[{l.flag}] {l.name}</option>)}
-        </select>
-        <button onClick={() => shiftDate(-1)}
-          className="w-8 h-8 font-mono text-xs text-cream/40 hover:text-cream border border-bg-card rounded transition-colors">‹</button>
-        <input type="date" value={date} onChange={e => setDate(e.target.value)}
-          className="bg-bg-deep border border-bg-card text-cream text-xs font-mono rounded px-2 py-1.5 focus:outline-none focus:border-orange/50" />
-        <button onClick={() => shiftDate(1)}
-          className="w-8 h-8 font-mono text-xs text-cream/40 hover:text-cream border border-bg-card rounded transition-colors">›</button>
-        <button onClick={fetchFixtures}
-          className="w-8 h-8 font-mono text-xs text-cream/30 hover:text-orange border border-bg-card rounded transition-colors">↺</button>
-        {events.length > 0 && <span className="font-mono text-[10px] text-cream/30 ml-auto">{events.length} partidos</span>}
-      </div>
-
-      {/* Grilla de tarjetas */}
-      <div className="flex-1 overflow-y-auto p-4">
-        {loading && (
-          <div className="flex items-center justify-center h-40">
-            <span className="font-mono text-xs text-cream/25 animate-pulse">cargando ESPN...</span>
-          </div>
-        )}
-        {error && (
-          <div className="text-red-400 font-mono text-xs bg-red-900/20 rounded p-3 border border-red-900/40">{error}</div>
-        )}
-        {!loading && !error && !promiedosGames && events.length === 0 && (
-          <div className="flex flex-col items-center justify-center h-40 gap-2 text-center">
-            <div className="text-3xl opacity-20">⚽</div>
-            <span className="font-mono text-sm text-cream/25">sin partidos · {league?.name}</span>
-            <span className="font-mono text-[10px] text-cream/15">probá otra fecha o liga</span>
-          </div>
-        )}
-        {!loading && promiedosGames && (
-          <div>
-            <div className="mb-3 font-mono text-[10px] text-orange/70 bg-orange/10 border border-orange/30 rounded px-3 py-1.5 inline-block">
-              ⚠ ESPN no disponible · datos vía Promiedos (partidos actuales)
-            </div>
-            {promiedosGames.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-40 gap-2 text-center">
-                <div className="text-3xl opacity-20">⚽</div>
-                <span className="font-mono text-sm text-cream/25">sin partidos actuales · {league?.name}</span>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                {promiedosGames.map(g => (
-                  <div key={g.id} className="rounded-lg border border-bg-card bg-bg-card/10 p-4">
-                    <div className="font-mono text-[10px] text-orange/70 mb-2 text-center">{g.statusName || g.startTime}</div>
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="font-mono text-xs text-cream text-center flex-1 truncate">{g.homeTeam.name}</span>
-                      <span className="font-mono text-sm text-cream/25 tracking-widest shrink-0">VS</span>
-                      <span className="font-mono text-xs text-cream text-center flex-1 truncate">{g.awayTeam.name}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-        {!loading && !error && !promiedosGames && events.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-            {events.map(ev => (
-              <MatchCard
-                key={ev.id}
-                ev={ev}
-                leagueName={league?.name}
-                onClick={() => toggleEvent(ev)}
-                expanded={expandedId === ev.id}
-                matchStats={matchStats[ev.id] ?? null}
-                statsLoading={statsLoading === ev.id}
-                goals={goals[ev.id] ?? null}
-                h2h={h2h[ev.id] ?? null}
-                h2hSummary={h2hSummary[ev.id] ?? null}
-                h2hCardLoading={!!h2hCardLoading[ev.id]}
-              />
-            ))}
-          </div>
-        )}
+      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+        {dayList.map((date) => (
+          <DayPanel
+            key={date}
+            date={date}
+            isOpen={openDays.has(date)}
+            onToggle={() => toggleDay(date)}
+            onRefresh={() => refreshDay(date)}
+            loading={!!dayLoading[date]}
+            leaguesEvents={dayEvents[date] ?? {}}
+            leaguesFallback={dayFallback[date] ?? {}}
+            expandedId={expandedId}
+            matchStats={matchStats}
+            goals={goals}
+            statsLoading={statsLoading}
+            h2h={h2h}
+            h2hSummary={h2hSummary}
+            h2hCardLoading={h2hCardLoading}
+            onToggleMatch={toggleMatch}
+          />
+        ))}
+        <button
+          onClick={loadMoreDays}
+          className="w-full py-3 font-mono text-xs text-cream/30 hover:text-orange border border-dashed border-bg-card rounded-lg transition-colors"
+        >
+          cargar más días ↓
+        </button>
       </div>
     </div>
   );

@@ -4,12 +4,17 @@ import { useEffect, useState } from "react";
 import { getGrandTRanking, GRANDT_POSITIONS, type GrandTPosition, type GrandTPlayer } from "@/lib/grandt";
 import {
   getGoleadores, getAsistencias, getFixtureLiga, getTablaPosiciones,
-  type PromiedosPlayerStat, type PromiedosGame, type PromiedosStandingGroup,
+  type PromiedosPlayerStat, type PromiedosGame, type PromiedosStandingGroup, type PromiedosStandingRow,
 } from "@/lib/promiedos";
 
 // Gran DT es sobre la Liga Profesional Argentina — no hay selector de liga
 // en este tab, así que se cruza siempre contra esa.
 const GRANDT_LEAGUE = "arg.1" as const;
+// El puntaje Gran DT (fantasy) solo existe en esta planilla — Promiedos no
+// lo tiene, aporta goleadores/asistencias/tabla reales. Ya no hay campo de
+// configuración en la UI (se sacó a pedido); cuando salga una fecha nueva
+// en planetagrandt.com.ar hay que actualizar este valor a mano en código.
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQar3txoFXtWCNwPoWL_2_z7ehHwxJmgFWEIIKoILxig9a7z8i3RxmbjLt8ioO_0PA5hbu_hIRHW-VW/pubhtml";
 
 function normalize(s: string): string {
   return s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
@@ -66,8 +71,8 @@ function nextOpponentFor(teamId: string, games: PromiedosGame[]): string | undef
 // ── Cache ──────────────────────────────────────────────────────
 // Mismo patrón que TacticoTab.tsx / EspnFixtures.tsx: ttlMs opcional
 // wrapeado en {data,ts,ttlMs}; sin ttlMs, la entrada no expira nunca
-// (URL configurada, jugador recomendado). No se tocan acá los TTL de
-// goleadores/asistencias/tabla — esos viven adentro de lib/promiedos.ts.
+// (jugador recomendado). No se tocan acá los TTL de goleadores/
+// asistencias/tabla — esos viven adentro de lib/promiedos.ts.
 function cacheGet<T>(key: string): T | null {
   try {
     const raw = localStorage.getItem(key);
@@ -86,16 +91,9 @@ function cacheSet(key: string, d: unknown, ttlMs?: number) {
 }
 
 const RANKING_TTL_MS = 7 * 24 * 60 * 60 * 1000; // la planilla se publica una vez por fecha
-const URL_KEY = "pelotita_grandt_sheet_url";
-// Link vigente a la fecha 4 del Clausura 2026 — se pisa desde el campo de
-// configuración del tab cada vez que planetagrandt.com.ar publica una fecha
-// nueva (el link cambia de URL en cada publicación). Sigue haciendo falta:
-// el puntaje Gran DT en sí solo existe en esta planilla, Promiedos no lo
-// tiene (aporta goleadores/asistencias/tabla reales, no el puntaje fantasy).
-const DEFAULT_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQar3txoFXtWCNwPoWL_2_z7ehHwxJmgFWEIIKoILxig9a7z8i3RxmbjLt8ioO_0PA5hbu_hIRHW-VW/pubhtml";
 
-function rankingKey(sheetUrl: string, pos: GrandTPosition) {
-  return `pelotita_grandt_ranking_${pos}_${encodeURIComponent(sheetUrl)}`;
+function rankingKey(pos: GrandTPosition) {
+  return `pelotita_grandt_ranking_${pos}_${encodeURIComponent(SHEET_URL)}`;
 }
 function recoKey(pos: GrandTPosition) {
   return `pelotita_grandt_reco_${pos}`;
@@ -112,7 +110,7 @@ function StatColumn({ title, icon, stats, teamNameById, recommendedNames }: {
       <div className="font-mono text-orange text-xs tracking-widest mb-3">{icon} {title.toUpperCase()}</div>
       {stats.length === 0 && <div className="text-cream/20 font-mono text-xs py-2">sin datos de Promiedos</div>}
       {stats.length > 0 && (
-        <div className="space-y-1 max-h-[420px] overflow-y-auto pr-1">
+        <div className="space-y-1 max-h-[380px] overflow-y-auto pr-1">
           {stats.slice(0, 15).map((s, i) => {
             const isRecommended = recommendedNames.some((r) => textMatches(r, s.name));
             return (
@@ -136,14 +134,48 @@ function StatColumn({ title, icon, stats, teamNameById, recommendedNames }: {
   );
 }
 
+// ── Columna lateral: tabla de posiciones por zona (Promiedos) ──
+
+function StandingsColumn({ zoneName, rows, recommendedNames }: {
+  zoneName: string; rows: PromiedosStandingRow[]; recommendedNames: string[];
+}) {
+  return (
+    <div className="rounded-lg border border-bg-card bg-bg-card/10 p-4">
+      <div className="font-mono text-orange text-xs tracking-widest mb-3">📊 {zoneName.toUpperCase()}</div>
+      {rows.length === 0 && <div className="text-cream/20 font-mono text-xs py-2">sin datos de Promiedos</div>}
+      {rows.length > 0 && (
+        <div className="space-y-1 max-h-[380px] overflow-y-auto pr-1">
+          {rows.map((r) => {
+            const isRecommended = recommendedNames.some((n) => textMatches(n, r.team.name) || textMatches(n, r.team.shortName));
+            return (
+              <div
+                key={r.team.id}
+                className={[
+                  "flex items-center gap-2 font-mono text-xs py-1 px-1.5 rounded border-b border-bg-deep/40 last:border-0",
+                  isRecommended ? "bg-orange/15 border-orange/40" : "",
+                ].join(" ")}
+              >
+                <span className="text-orange/70 w-5 text-right shrink-0">{r.position}</span>
+                <span className={["flex-1 truncate", isRecommended ? "text-orange font-bold" : "text-cream"].join(" ")}>{r.team.shortName || r.team.name}</span>
+                <span className="text-cream/25 tabular-nums w-8 text-right shrink-0">{r.played}pj</span>
+                <span className="text-warm-white font-bold tabular-nums w-6 text-right shrink-0">{r.points}</span>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Panel de una posición ─────────────────────────────────────
 
 function PositionPanel({
-  posKey, label, sheetUrl, isOpen, onToggle,
+  posKey, label, isOpen, onToggle,
   goleadores, asistencias, teams, games,
   recommended, onRecommendedChange,
 }: {
-  posKey: GrandTPosition; label: string; sheetUrl: string;
+  posKey: GrandTPosition; label: string;
   isOpen: boolean; onToggle: () => void;
   goleadores: PromiedosPlayerStat[]; asistencias: PromiedosPlayerStat[];
   teams: TeamLite[]; games: PromiedosGame[];
@@ -158,10 +190,10 @@ function PositionPanel({
     setLoading(true);
     setError(null);
     try {
-      const key = rankingKey(sheetUrl, posKey);
+      const key = rankingKey(posKey);
       let list = cacheGet<GrandTPlayer[]>(key);
       if (!list) {
-        list = await getGrandTRanking(sheetUrl, posKey);
+        list = await getGrandTRanking(SHEET_URL, posKey);
         cacheSet(key, list, RANKING_TTL_MS);
       }
       setPlayers(list);
@@ -265,14 +297,11 @@ function PositionPanel({
 // ── Main: Gran DT ─────────────────────────────────────────────
 
 export default function GrandTTab() {
-  const [sheetUrl,  setSheetUrl]  = useState(() => cacheGet<string>(URL_KEY) ?? DEFAULT_SHEET_URL);
-  const [urlDraft,  setUrlDraft]  = useState(sheetUrl);
   const [openPanel, setOpenPanel] = useState<GrandTPosition | null>(null);
-  const [saved,     setSaved]     = useState(false);
-  const [goleadores,  setGoleadores]  = useState<PromiedosPlayerStat[]>([]);
-  const [asistencias, setAsistencias] = useState<PromiedosPlayerStat[]>([]);
-  const [teams,       setTeams]       = useState<TeamLite[]>([]);
-  const [games,       setGames]       = useState<PromiedosGame[]>([]);
+  const [goleadores,     setGoleadores]     = useState<PromiedosPlayerStat[]>([]);
+  const [asistencias,    setAsistencias]    = useState<PromiedosPlayerStat[]>([]);
+  const [standingGroups, setStandingGroups] = useState<PromiedosStandingGroup[]>([]);
+  const [games,          setGames]          = useState<PromiedosGame[]>([]);
   const [recommended, setRecommendedState] = useState<Record<GrandTPosition, string>>(() => {
     const init = {} as Record<GrandTPosition, string>;
     for (const p of GRANDT_POSITIONS) init[p.key] = cacheGet<string>(recoKey(p.key)) ?? "";
@@ -290,72 +319,62 @@ export default function GrandTTab() {
   useEffect(() => {
     getGoleadores(GRANDT_LEAGUE).then(setGoleadores).catch(() => setGoleadores([]));
     getAsistencias(GRANDT_LEAGUE).then(setAsistencias).catch(() => setAsistencias([]));
-    getTablaPosiciones(GRANDT_LEAGUE).then((g) => setTeams(flattenTeams(g))).catch(() => setTeams([]));
+    getTablaPosiciones(GRANDT_LEAGUE).then(setStandingGroups).catch(() => setStandingGroups([]));
     getFixtureLiga(GRANDT_LEAGUE).then(setGames).catch(() => setGames([]));
   }, []);
 
+  const teams = flattenTeams(standingGroups);
   const teamNameById = new Map(teams.map((t) => [t.id, t.shortName || t.name]));
   const recommendedNames = Object.values(recommended).filter((v) => v.trim().length > 0);
 
-  function saveUrl() {
-    const trimmed = urlDraft.trim();
-    if (!trimmed) return;
-    setSheetUrl(trimmed);
-    cacheSet(URL_KEY, trimmed);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 1500);
-  }
+  // La Liga Profesional se juega en 2 zonas — se usan las dos tablas del
+  // primer grupo que trae Promiedos (el torneo vigente, ej. "Grupo A"/
+  // "Grupo B" en Clausura, o "Zona A"/"Zona B" en Apertura según la fecha
+  // del año). Si algún día ese grupo no viene partido en dos tablas, se
+  // cae a una sola tabla combinada en vez de romper el layout.
+  const mainGroup = standingGroups[0];
+  const zoneATable = mainGroup?.tables[0];
+  const zoneBTable = mainGroup?.tables[1];
+  const splitOk = !!zoneATable && !!zoneBTable;
 
   return (
     <div className="h-full overflow-auto p-4">
-      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-4 items-start">
-        {/* Columna principal: config + 4 paneles */}
-        <div className="space-y-4">
-          <div className="rounded-lg border border-bg-card bg-bg-card/10 p-4">
-            <label className="block font-mono text-[9px] text-orange/60 tracking-widest mb-2">
-              LINK DE LA PLANILLA (planetagrandt.com.ar · se actualiza cada fecha)
-            </label>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={urlDraft}
-                onChange={(e) => setUrlDraft(e.target.value)}
-                placeholder="https://docs.google.com/spreadsheets/d/e/.../pubhtml"
-                className="flex-1 bg-bg-deep border border-bg-card text-cream text-xs font-mono rounded px-3 py-2 focus:outline-none focus:border-orange/50"
-              />
-              <button
-                onClick={saveUrl}
-                className="px-4 py-2 font-mono text-xs text-cream/70 hover:text-orange border border-bg-card rounded transition-colors shrink-0"
-              >
-                {saved ? "✓ guardado" : "guardar"}
-              </button>
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            {GRANDT_POSITIONS.map((p) => (
-              <PositionPanel
-                key={`${p.key}-${sheetUrl}`}
-                posKey={p.key}
-                label={p.label}
-                sheetUrl={sheetUrl}
-                isOpen={openPanel === p.key}
-                onToggle={() => setOpenPanel((cur) => (cur === p.key ? null : p.key))}
-                goleadores={goleadores}
-                asistencias={asistencias}
-                teams={teams}
-                games={games}
-                recommended={recommended[p.key]}
-                onRecommendedChange={(v) => setRecommended(p.key, v)}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Columna lateral: Goleadores / Asistidores reales (Promiedos) */}
-        <div className="space-y-4">
+      <div className="max-w-[1400px] mx-auto grid grid-cols-1 xl:grid-cols-[280px_1fr_280px] gap-4 items-start">
+        {/* Columna izquierda: Goleadores / Asistidores reales (Promiedos) */}
+        <div className="space-y-4 order-2 xl:order-1">
           <StatColumn title="Goleadores" icon="⚽" stats={goleadores} teamNameById={teamNameById} recommendedNames={recommendedNames} />
           <StatColumn title="Asistidores" icon="🅰" stats={asistencias} teamNameById={teamNameById} recommendedNames={recommendedNames} />
+        </div>
+
+        {/* Columna central: 4 paneles desplegables */}
+        <div className="space-y-3 order-1 xl:order-2">
+          {GRANDT_POSITIONS.map((p) => (
+            <PositionPanel
+              key={p.key}
+              posKey={p.key}
+              label={p.label}
+              isOpen={openPanel === p.key}
+              onToggle={() => setOpenPanel((cur) => (cur === p.key ? null : p.key))}
+              goleadores={goleadores}
+              asistencias={asistencias}
+              teams={teams}
+              games={games}
+              recommended={recommended[p.key]}
+              onRecommendedChange={(v) => setRecommended(p.key, v)}
+            />
+          ))}
+        </div>
+
+        {/* Columna derecha: tabla de posiciones por zona (Promiedos) */}
+        <div className="space-y-4 order-3">
+          {splitOk ? (
+            <>
+              <StandingsColumn zoneName={zoneATable!.name} rows={zoneATable!.rows} recommendedNames={recommendedNames} />
+              <StandingsColumn zoneName={zoneBTable!.name} rows={zoneBTable!.rows} recommendedNames={recommendedNames} />
+            </>
+          ) : (
+            <StandingsColumn zoneName={mainGroup?.name || "Tabla"} rows={mainGroup?.tables[0]?.rows ?? []} recommendedNames={recommendedNames} />
+          )}
         </div>
       </div>
     </div>
