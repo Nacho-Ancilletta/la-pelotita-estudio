@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getMatchDetails, type H2HMatch, type H2HSummary, type MatchStats, type GoalEvent } from "@/lib/espn";
+import { getMatchDetails, getHeadToHead, summarizeH2H, type H2HMatch, type H2HSummary, type MatchStats, type GoalEvent } from "@/lib/espn";
 
 // ── Ligas ESPN ────────────────────────────────────────────────
 
@@ -28,13 +28,26 @@ const LEAGUES = [
 function cacheKey(league: string, date: string) {
   return `pelotita_espn_${league}_${date}`;
 }
+// ttlMs opcional: si se pasa al guardar, cacheGet lo respeta al leer.
+// Entradas viejas sin wrapper {data,ts,ttlMs} (fixtures del día) siguen
+// leyéndose igual, sin expiración — mismo patrón que TacticoTab.tsx.
 function cacheGet<T>(key: string): T | null {
-  try { return JSON.parse(localStorage.getItem(key) ?? "null") as T; }
-  catch { return null; }
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === "object" && "data" in parsed && "ts" in parsed) {
+      const { data, ts, ttlMs } = parsed as { data: T; ts: number; ttlMs?: number };
+      if (ttlMs != null && Date.now() - ts > ttlMs) return null;
+      return data;
+    }
+    return parsed as T;
+  } catch { return null; }
 }
-function cacheSet(key: string, d: unknown) {
-  localStorage.setItem(key, JSON.stringify(d));
+function cacheSet(key: string, d: unknown, ttlMs?: number) {
+  localStorage.setItem(key, JSON.stringify({ data: d, ts: Date.now(), ttlMs }));
 }
+const H2H_TTL_MS = 7 * 24 * 60 * 60 * 1000; // cruces históricos casi no cambian entre grabaciones
 
 // ── Types ─────────────────────────────────────────────────────
 
@@ -192,22 +205,27 @@ function MatchCard({ ev, leagueName, onClick, expanded, matchStats, statsLoading
           )}
 
           <div className="pt-2 border-t border-bg-deep/60">
-            <div className="font-mono text-[8px] text-orange/60 tracking-widest mb-1">H2H · ÚLTIMOS CRUCES</div>
+            <div className="font-mono text-[8px] text-orange/60 tracking-widest mb-1">ÚLTIMOS 5 CRUCES</div>
             {h2hCardLoading && <div className="text-cream/25 font-mono text-[9px] py-1">buscando historial...</div>}
-            {!h2hCardLoading && h2hSummary && (
+            {!h2hCardLoading && h2hSummary && h2h && h2h.length > 0 && (
               <div className="text-center font-mono text-[9px] text-cream/30 pb-1.5">
                 {home.team.name} {h2hSummary.homeWins}V · {h2hSummary.draws}E · {h2hSummary.awayWins}V {away.team.name}
               </div>
             )}
-            {!h2hCardLoading && !h2hSummary && <div className="text-cream/20 font-mono text-[9px] py-1">sin historial disponible</div>}
+            {!h2hCardLoading && (!h2h || h2h.length === 0) && <div className="text-cream/20 font-mono text-[9px] py-1">sin cruces en el historial</div>}
             {!h2hCardLoading && h2h && h2h.length > 0 && (
-              <div className="space-y-0.5">
-                {h2h.map(m => (
-                  <div key={m.id} className="flex items-center gap-1.5 font-mono text-[9px] text-cream/40">
-                    <span className="text-cream/20 w-11 shrink-0">{h2hDate(m.timestamp)}</span>
-                    <span className="truncate flex-1 text-right">{m.homeTeam}</span>
-                    <span className="text-cream font-bold tabular-nums shrink-0">{m.homeScore}-{m.awayScore}</span>
-                    <span className="truncate flex-1">{m.awayTeam}</span>
+              <div className="space-y-1">
+                {h2h.slice(0, 5).map(m => (
+                  <div key={m.id} className="font-mono text-[9px] text-cream/40">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-cream/20 w-11 shrink-0">{h2hDate(m.timestamp)}</span>
+                      <span className="truncate flex-1 text-right">{m.homeTeam}</span>
+                      <span className="text-cream font-bold tabular-nums shrink-0">{m.homeScore}-{m.awayScore}</span>
+                      <span className="truncate flex-1">{m.awayTeam}</span>
+                    </div>
+                    {m.tournament && (
+                      <div className="text-cream/15 text-[8px] pl-[52px] truncate">{m.tournament}</div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -262,27 +280,51 @@ export default function EspnFixtures() {
     }
   }
 
-  // Stats + H2H — solo al expandir la tarjeta (no en todas apenas cargan: el
-  // summary de ESPN pesa harto y no vale la pena bajarlo de entrada para cada
-  // partido del día). getMatchDetails ya cachea 90s en localStorage.
+  // Stats + goleadores — solo al expandir la tarjeta (no en todas apenas
+  // cargan: el summary de ESPN pesa harto y no vale la pena bajarlo de
+  // entrada para cada partido del día). getMatchDetails ya cachea 90s en
+  // localStorage.
   async function fetchDetails(ev: EspnEvent) {
     const evId = ev.id;
     if (matchStats[evId] !== undefined) return; // ya lo tenemos
     setStatsLoading(evId);
-    setH2hCardLoading(p => ({ ...p, [evId]: true }));
     try {
       const details = await getMatchDetails(leagueId, evId);
       setMatchStats(p => ({ ...p, [evId]: details.stats }));
       setGoals(p => ({ ...p, [evId]: details.goals }));
-      setH2h(p => ({ ...p, [evId]: details.h2h }));
-      setH2hSummary(p => ({ ...p, [evId]: details.h2hSummary }));
     } catch {
       setMatchStats(p => ({ ...p, [evId]: null }));
       setGoals(p => ({ ...p, [evId]: null }));
+    } finally {
+      setStatsLoading(null);
+    }
+  }
+
+  // H2H reconstruido desde el calendario histórico (mismo getHeadToHead
+  // y misma cache de 7 días que usa TacticoTab) — más confiable que el
+  // headToHeadGames del summary, que suele venir vacío.
+  async function fetchH2H(ev: EspnEvent) {
+    const evId = ev.id;
+    if (h2h[evId] !== undefined) return; // ya lo tenemos
+    const comp = ev.competitions[0];
+    const home = comp?.competitors.find(c => c.homeAway === "home");
+    const away = comp?.competitors.find(c => c.homeAway === "away");
+    if (!home || !away) return;
+    setH2hCardLoading(p => ({ ...p, [evId]: true }));
+    try {
+      const fromSeason = new Date(ev.date).getFullYear();
+      const h2hKey = `pelotita_espn_h2h_${leagueId}_${home.team.id}_${away.team.id}_${fromSeason}`;
+      let list = cacheGet<H2HMatch[]>(h2hKey);
+      if (!list) {
+        list = await getHeadToHead(leagueId, Number(home.team.id), home.team.name, Number(away.team.id), away.team.name, fromSeason);
+        cacheSet(h2hKey, list, H2H_TTL_MS);
+      }
+      setH2h(p => ({ ...p, [evId]: list }));
+      setH2hSummary(p => ({ ...p, [evId]: summarizeH2H(list, Number(home.team.id), Number(away.team.id)) }));
+    } catch {
       setH2h(p => ({ ...p, [evId]: null }));
       setH2hSummary(p => ({ ...p, [evId]: null }));
     } finally {
-      setStatsLoading(null);
       setH2hCardLoading(p => ({ ...p, [evId]: false }));
     }
   }
@@ -290,6 +332,7 @@ export default function EspnFixtures() {
   function toggleEvent(ev: EspnEvent) {
     if (expandedId === ev.id) { setExpandedId(null); return; }
     setExpandedId(ev.id);
+    fetchH2H(ev);
     fetchDetails(ev);
   }
 
