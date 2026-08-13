@@ -26,7 +26,10 @@ export async function GET(request: NextRequest) {
 
   try {
     const res  = await fetch(url, {
-      headers: { "User-Agent": "Mozilla/5.0 (compatible; PelotitaEstudio/1.0)" },
+      // Akamai bloquea con 403 cualquier UA que se parezca a navegador
+      // ("Mozilla/...") pero deja pasar clientes tipo curl — confirmado
+      // empíricamente contra site.api.espn.com.
+      headers: { "User-Agent": "curl/8.5.0" },
       next: { revalidate: 120 },
     });
     if (!res.ok) return NextResponse.json({ error: `ESPN ${res.status}` }, { status: res.status });
