@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getMatchDetails, getHeadToHead, summarizeH2H, type H2HMatch, type H2HSummary, type MatchStats, type GoalEvent } from "@/lib/espn";
+import { getFixtureLiga, type PromiedosGame, type PromiedosLeagueSlug } from "@/lib/promiedos";
 
 // ── Ligas ESPN ────────────────────────────────────────────────
 
@@ -252,6 +253,7 @@ export default function EspnFixtures() {
   const [h2h,         setH2h]         = useState<Record<string, H2HMatch[] | null>>({});
   const [h2hSummary,  setH2hSummary]  = useState<Record<string, H2HSummary | null>>({});
   const [h2hCardLoading, setH2hCardLoading] = useState<Record<string, boolean>>({});
+  const [promiedosGames, setPromiedosGames] = useState<PromiedosGame[] | null>(null);
 
   // Auto-fetch when league/date changes
   useEffect(() => {
@@ -260,7 +262,7 @@ export default function EspnFixtures() {
   }, [leagueId, date]);
 
   async function fetchFixtures() {
-    setError(null); setExpandedId(null);
+    setError(null); setExpandedId(null); setPromiedosGames(null);
     const key = cacheKey(leagueId, date);
     const cached = cacheGet<EspnEvent[]>(key);
     if (cached) { setEvents(cached); return; }
@@ -274,7 +276,16 @@ export default function EspnFixtures() {
       setEvents(evs);
       cacheSet(key, evs);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Error ESPN");
+      // ESPN falló (ej. 403 de Akamai) — Promiedos como respaldo. Solo trae
+      // "partidos actuales" (Promiedos no filtra por fecha calendario), así
+      // que esto sirve sobre todo cuando se está mirando el día de hoy.
+      setEvents([]);
+      try {
+        const games = await getFixtureLiga(leagueId as PromiedosLeagueSlug);
+        setPromiedosGames(games);
+      } catch {
+        setError(e instanceof Error ? e.message : "Error ESPN");
+      }
     } finally {
       setLoading(false);
     }
@@ -373,14 +384,40 @@ export default function EspnFixtures() {
         {error && (
           <div className="text-red-400 font-mono text-xs bg-red-900/20 rounded p-3 border border-red-900/40">{error}</div>
         )}
-        {!loading && !error && events.length === 0 && (
+        {!loading && !error && !promiedosGames && events.length === 0 && (
           <div className="flex flex-col items-center justify-center h-40 gap-2 text-center">
             <div className="text-3xl opacity-20">⚽</div>
             <span className="font-mono text-sm text-cream/25">sin partidos · {league?.name}</span>
             <span className="font-mono text-[10px] text-cream/15">probá otra fecha o liga</span>
           </div>
         )}
-        {!loading && !error && events.length > 0 && (
+        {!loading && promiedosGames && (
+          <div>
+            <div className="mb-3 font-mono text-[10px] text-orange/70 bg-orange/10 border border-orange/30 rounded px-3 py-1.5 inline-block">
+              ⚠ ESPN no disponible · datos vía Promiedos (partidos actuales)
+            </div>
+            {promiedosGames.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-40 gap-2 text-center">
+                <div className="text-3xl opacity-20">⚽</div>
+                <span className="font-mono text-sm text-cream/25">sin partidos actuales · {league?.name}</span>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                {promiedosGames.map(g => (
+                  <div key={g.id} className="rounded-lg border border-bg-card bg-bg-card/10 p-4">
+                    <div className="font-mono text-[10px] text-orange/70 mb-2 text-center">{g.statusName || g.startTime}</div>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-mono text-xs text-cream text-center flex-1 truncate">{g.homeTeam.name}</span>
+                      <span className="font-mono text-sm text-cream/25 tracking-widest shrink-0">VS</span>
+                      <span className="font-mono text-xs text-cream text-center flex-1 truncate">{g.awayTeam.name}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+        {!loading && !error && !promiedosGames && events.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {events.map(ev => (
               <MatchCard

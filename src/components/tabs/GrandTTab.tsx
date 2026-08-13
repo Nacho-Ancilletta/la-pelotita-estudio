@@ -1,7 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { getGrandTRanking, GRANDT_POSITIONS, type GrandTPosition, type GrandTPlayer } from "@/lib/grandt";
+import { getGoleadores, getAsistencias, type PromiedosPlayerStat } from "@/lib/promiedos";
+
+// Gran DT es sobre la Liga Profesional Argentina — no hay selector de liga
+// en este tab, así que se cruza siempre contra esa.
+const GRANDT_LEAGUE = "arg.1" as const;
+
+function normalize(s: string): string {
+  return s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
+}
+// La planilla de Gran DT nombra "Apellido, Nombre" — Promiedos da
+// shortName = apellido solo. No hay ID compartido entre las dos fuentes,
+// así que el cruce es por apellido normalizado (mejor esfuerzo, no 100%
+// infalible con apellidos muy comunes, pero suficiente para un dato de
+// contexto en vivo).
+function surnameOf(sheetName: string): string {
+  return sheetName.split(",")[0]?.trim() ?? sheetName;
+}
+function matchStat(playerName: string, stats: PromiedosPlayerStat[]): PromiedosPlayerStat | undefined {
+  const surname = normalize(surnameOf(playerName));
+  if (!surname) return undefined;
+  return stats.find((s) => normalize(s.shortName) === surname);
+}
 
 // ── Cache ──────────────────────────────────────────────────────
 // Mismo patrón que TacticoTab.tsx / EspnFixtures.tsx: ttlMs opcional
@@ -40,9 +62,10 @@ function recoKey(pos: GrandTPosition) {
 
 // ── Panel de una posición ─────────────────────────────────────
 
-function PositionPanel({ posKey, label, sheetUrl, isOpen, onToggle }: {
+function PositionPanel({ posKey, label, sheetUrl, isOpen, onToggle, goleadores, asistencias }: {
   posKey: GrandTPosition; label: string; sheetUrl: string;
   isOpen: boolean; onToggle: () => void;
+  goleadores: PromiedosPlayerStat[]; asistencias: PromiedosPlayerStat[];
 }) {
   const [players,     setPlayers]     = useState<GrandTPlayer[] | null | undefined>(undefined);
   const [loading,     setLoading]     = useState(false);
@@ -100,14 +123,25 @@ function PositionPanel({ posKey, label, sheetUrl, isOpen, onToggle }: {
           )}
           {!loading && players && players.length > 0 && (
             <div className="space-y-1 mb-4">
-              {players.slice(0, 10).map((p, i) => (
-                <div key={`${p.name}-${i}`} className="flex items-center gap-3 font-mono text-xs py-1 border-b border-bg-deep/40 last:border-0">
-                  <span className="text-orange/70 w-5 text-right shrink-0">{i + 1}</span>
-                  <span className="text-cream flex-1 truncate">{p.name}</span>
-                  <span className="text-cream/30 truncate max-w-[35%]">{p.club}</span>
-                  <span className="text-warm-white font-bold tabular-nums w-10 text-right shrink-0">{p.points}</span>
-                </div>
-              ))}
+              {players.slice(0, 10).map((p, i) => {
+                const goals   = matchStat(p.name, goleadores);
+                const assists = matchStat(p.name, asistencias);
+                return (
+                  <div key={`${p.name}-${i}`} className="flex items-center gap-3 font-mono text-xs py-1 border-b border-bg-deep/40 last:border-0">
+                    <span className="text-orange/70 w-5 text-right shrink-0">{i + 1}</span>
+                    <span className="text-cream flex-1 truncate">{p.name}</span>
+                    {(goals || assists) && (
+                      <span className="text-cream/25 text-[10px] shrink-0 tabular-nums">
+                        {goals && <>⚽{goals.value}</>}
+                        {goals && assists && " "}
+                        {assists && <>🅰{assists.value}</>}
+                      </span>
+                    )}
+                    <span className="text-cream/30 truncate max-w-[25%]">{p.club}</span>
+                    <span className="text-warm-white font-bold tabular-nums w-10 text-right shrink-0">{p.points}</span>
+                  </div>
+                );
+              })}
             </div>
           )}
 
@@ -136,6 +170,17 @@ export default function GrandTTab() {
   const [urlDraft,  setUrlDraft]  = useState(sheetUrl);
   const [openPanel, setOpenPanel] = useState<GrandTPosition | null>(null);
   const [saved,     setSaved]     = useState(false);
+  const [goleadores,  setGoleadores]  = useState<PromiedosPlayerStat[]>([]);
+  const [asistencias, setAsistencias] = useState<PromiedosPlayerStat[]>([]);
+
+  // Goleadores/asistencias reales de Liga Profesional (Promiedos) para
+  // cruzar con los puntajes de Gran DT — se cachean 24hs adentro de
+  // getGoleadores/getAsistencias, así que pedirlos acá de entrada es barato
+  // (un solo fetch real por día, no por apertura de panel).
+  useEffect(() => {
+    getGoleadores(GRANDT_LEAGUE).then(setGoleadores).catch(() => setGoleadores([]));
+    getAsistencias(GRANDT_LEAGUE).then(setAsistencias).catch(() => setAsistencias([]));
+  }, []);
 
   function saveUrl() {
     const trimmed = urlDraft.trim();
@@ -181,6 +226,8 @@ export default function GrandTTab() {
               sheetUrl={sheetUrl}
               isOpen={openPanel === p.key}
               onToggle={() => setOpenPanel((cur) => (cur === p.key ? null : p.key))}
+              goleadores={goleadores}
+              asistencias={asistencias}
             />
           ))}
         </div>
