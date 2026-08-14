@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getMatchDetails, getHeadToHead, summarizeH2H, type H2HMatch, type H2HSummary, type MatchStats, type GoalEvent } from "@/lib/espn";
 import { getFixtureLiga, type PromiedosGame, type PromiedosLeagueSlug } from "@/lib/promiedos";
 
@@ -40,9 +40,13 @@ function nextNDays(startIso: string, n: number): string[] {
 function formatDayLabel(iso: string): string {
   if (iso === todayIso()) return "HOY";
   if (iso === addDays(todayIso(), 1)) return "MAÑANA";
+  if (iso === addDays(todayIso(), -1)) return "AYER";
   const d = new Date(iso + "T12:00:00");
   return d.toLocaleDateString("es-AR", { weekday: "short", day: "2-digit", month: "2-digit" }).toUpperCase();
 }
+const PAST_DAYS = 7; // días hacia atrás desde hoy que se muestran de entrada
+const FUTURE_DAYS = 7; // días hoy-en-adelante que se muestran de entrada (mismo rango que ya tenía)
+const PAST_FIXTURE_TTL_MS = 7 * 24 * 60 * 60 * 1000; // resultados pasados no cambian — mismo criterio que H2H
 
 // ── Cache ─────────────────────────────────────────────────────
 
@@ -360,8 +364,9 @@ function DayPanel({
 // ── Main component ────────────────────────────────────────────
 
 export default function EspnFixtures() {
-  const [dayList, setDayList] = useState<string[]>(() => nextNDays(todayIso(), 7));
+  const [dayList, setDayList] = useState<string[]>(() => nextNDays(addDays(todayIso(), -PAST_DAYS), PAST_DAYS + FUTURE_DAYS));
   const [openDays, setOpenDays] = useState<Set<string>>(() => new Set([todayIso()]));
+  const todayRef = useRef<HTMLDivElement>(null);
   const [dayEvents,   setDayEvents]   = useState<Record<string, Record<string, EspnEvent[]>>>({});
   const [dayFallback, setDayFallback] = useState<Record<string, Record<string, PromiedosGame[]>>>({});
   const [dayLoading,  setDayLoading]  = useState<Record<string, boolean>>({});
@@ -374,9 +379,12 @@ export default function EspnFixtures() {
   const [h2hSummary,  setH2hSummary]  = useState<Record<string, H2HSummary | null>>({});
   const [h2hCardLoading, setH2hCardLoading] = useState<Record<string, boolean>>({});
 
-  // Carga el día de hoy solo (los demás, al abrirlos).
+  // Carga el día de hoy solo (los demás, al abrirlos) y deja el scroll
+  // parado ahí de entrada — con 7 días para atrás ya cargados en la lista,
+  // "hoy" no es lo primero que se ve si no se hace este scroll.
   useEffect(() => {
     ensureDayLoaded(todayIso());
+    todayRef.current?.scrollIntoView({ block: "start" });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -391,6 +399,7 @@ export default function EspnFixtures() {
     const perLeague: Record<string, EspnEvent[]> = {};
     const perLeagueFallback: Record<string, PromiedosGame[]> = {};
     const isToday = date === todayIso();
+    const isPast = date < todayIso();
 
     for (let i = 0; i < LEAGUES.length; i++) {
       const lg = LEAGUES[i];
@@ -403,7 +412,10 @@ export default function EspnFixtures() {
           const data = await res.json();
           if (data.error) throw new Error(data.error);
           evs = data.events ?? [];
-          cacheSet(key, evs);
+          // Días pasados: resultado ya no cambia, TTL largo (7 días, mismo
+          // criterio que H2H). Hoy/futuro: sin TTL — se recarga a mano con
+          // el ↺ de cada día, mismo comportamiento que ya tenía el tab.
+          cacheSet(key, evs, isPast ? PAST_FIXTURE_TTL_MS : undefined);
         } catch {
           evs = null; // ESPN falló para esta liga — no se cachea el fallo
         }
@@ -503,24 +515,25 @@ export default function EspnFixtures() {
     <div className="flex flex-col h-full overflow-hidden">
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
         {dayList.map((date) => (
-          <DayPanel
-            key={date}
-            date={date}
-            isOpen={openDays.has(date)}
-            onToggle={() => toggleDay(date)}
-            onRefresh={() => refreshDay(date)}
-            loading={!!dayLoading[date]}
-            leaguesEvents={dayEvents[date] ?? {}}
-            leaguesFallback={dayFallback[date] ?? {}}
-            expandedId={expandedId}
-            matchStats={matchStats}
-            goals={goals}
-            statsLoading={statsLoading}
-            h2h={h2h}
-            h2hSummary={h2hSummary}
-            h2hCardLoading={h2hCardLoading}
-            onToggleMatch={toggleMatch}
-          />
+          <div key={date} ref={date === todayIso() ? todayRef : undefined}>
+            <DayPanel
+              date={date}
+              isOpen={openDays.has(date)}
+              onToggle={() => toggleDay(date)}
+              onRefresh={() => refreshDay(date)}
+              loading={!!dayLoading[date]}
+              leaguesEvents={dayEvents[date] ?? {}}
+              leaguesFallback={dayFallback[date] ?? {}}
+              expandedId={expandedId}
+              matchStats={matchStats}
+              goals={goals}
+              statsLoading={statsLoading}
+              h2h={h2h}
+              h2hSummary={h2hSummary}
+              h2hCardLoading={h2hCardLoading}
+              onToggleMatch={toggleMatch}
+            />
+          </div>
         ))}
         <button
           onClick={loadMoreDays}
