@@ -7,8 +7,7 @@ import {
 } from "@/lib/refuerzos";
 
 // ── Foto de jugador circular, con silueta genérica si no hay foto o falla
-// la carga (API-Football no siempre tiene foto para jugadores de ligas
-// menores) — nunca un espacio roto. ──────────────────────────────────────
+// la carga — nunca un espacio roto. ──────────────────────────────────────
 function PlayerPhoto({ src, alt }: { src: string | null; alt: string }) {
   const [failed, setFailed] = useState(false);
   const showFallback = !src || failed;
@@ -24,38 +23,33 @@ function PlayerPhoto({ src, alt }: { src: string | null; alt: string }) {
   );
 }
 
-// ── Filas de estadísticas a mostrar en la ficha, según posición. Es un
-// concern de UI (qué se muestra y en qué orden), separado del scoring que
-// vive en lib/refuerzos.ts. Los rótulos con "(plan gratis...)" documentan
-// sustituciones/limitaciones reales de la fuente, no maquillan el dato. ──
+// ── Filas de estadísticas de la ficha. Todo lo que ves acá es de la
+// temporada 2026 en curso vía Promiedos, salvo edad/nacionalidad (bio de
+// API-Football, no cambia de temporada a temporada). Sin minutos jugados
+// — ninguna de las 3 fuentes lo expone por jugador para esta liga. ───────
 function statRows(c: RefuerzoResult): { label: string; value: string }[] {
   const common = [
     { label: "Edad", value: c.age != null ? `${c.age} años` : "—" },
-    { label: "Minutos 2024", value: `${c.minutes} (${c.appearances} PJ)` },
-    { label: "Rating prom.", value: c.rating != null ? c.rating.toFixed(2) : "—" },
+    { label: "Nacionalidad", value: c.nationality ?? "—" },
+    { label: "Equipo actual", value: c.teamName },
   ];
   const byPosition: Record<RefuerzoPosition, { label: string; value: string }[]> = {
-    ARQ: [
-      { label: "Atajadas", value: String(c.saves) },
-      { label: "% de atajadas", value: `${c.savePct}%` },
-      { label: "Goles recibidos", value: String(c.goalsConceded) },
-    ],
+    ARQ: [],
     DEF: [
-      { label: "% duelos ganados", value: `${c.duelsWonPct}%` },
-      { label: "Intercepciones", value: String(c.interceptions) },
-      { label: "Bloqueos (proxy de despejes)", value: String(c.blocks) },
+      { label: "Goles", value: String(c.goals) },
+      { label: "Asistencias", value: String(c.assists) },
+      { label: "Faltas cometidas", value: String(c.foulsConceded) },
       { label: "Tarjetas", value: `${c.yellowCards}A / ${c.redCards}R` },
     ],
     VOL: [
-      { label: "Pases clave", value: String(c.keyPasses) },
-      { label: "% duelos ganados", value: `${c.duelsWonPct}%` },
-      { label: "Recuperaciones (intercepciones)", value: String(c.interceptions) },
+      { label: "Asistencias", value: String(c.assists) },
+      { label: "Goles", value: String(c.goals) },
+      { label: "Tarjetas", value: `${c.yellowCards}A / ${c.redCards}R` },
     ],
     DEL: [
       { label: "Goles", value: String(c.goals) },
       { label: "Asistencias", value: String(c.assists) },
-      { label: "Tiros al arco", value: String(c.shotsOn) },
-      { label: "% duelos ganados", value: `${c.duelsWonPct}%` },
+      { label: "Tarjetas", value: `${c.yellowCards}A / ${c.redCards}R` },
     ],
   };
   return [...common, ...byPosition[c.position]];
@@ -85,9 +79,6 @@ function CandidateCard({ candidate, isOpen, onToggle }: { candidate: RefuerzoRes
               </div>
             ))}
           </div>
-          {candidate.injured && (
-            <div className="font-mono text-[10px] text-red-400 bg-red-900/20 rounded p-1.5 border border-red-900/40">⚠ marcado como lesionado en la fuente</div>
-          )}
           <div>
             <div className="font-mono text-[9px] text-orange/60 tracking-widest mb-1">POR QUÉ ENCAJA</div>
             {candidate.fit.reasons.length > 0 ? (
@@ -126,10 +117,10 @@ export default function RefuerzosTab() {
   const [teamId, setTeamId] = useState<string>("");
   const [position, setPosition] = useState<RefuerzoPosition>("DEL");
 
-  const [result, setResult] = useState<{ need: NeedProfile; candidates: RefuerzoResult[] } | null>(null);
+  const [result, setResult] = useState<{ need: NeedProfile; candidates: RefuerzoResult[]; noDataForPosition: boolean } | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [openCards, setOpenCards] = useState<Set<number>>(new Set());
+  const [openCards, setOpenCards] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     queueMicrotask(() => {
@@ -141,7 +132,7 @@ export default function RefuerzosTab() {
     });
   }, []);
 
-  function toggleCard(id: number) {
+  function toggleCard(id: string) {
     setOpenCards((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id); else next.add(id);
@@ -150,7 +141,7 @@ export default function RefuerzosTab() {
   }
 
   async function buscar(force = false) {
-    const team = teams.find((t) => String(t.id) === teamId);
+    const team = teams.find((t) => t.id === teamId);
     if (!team) return;
     setLoading(true);
     setError(null);
@@ -173,9 +164,13 @@ export default function RefuerzosTab() {
         <div className="rounded-lg border border-bg-card bg-bg-card/10 p-4">
           <div className="font-mono text-orange text-xs tracking-widest mb-3">⚽ BUSCADOR DE REFUERZOS</div>
           <p className="font-mono text-cream/30 text-[10px] mb-3 leading-relaxed">
-            Liga Profesional Argentina, temporada 2024 — última accesible en el plan gratis de API-Football
-            (2025/2026 no están disponibles). Posiciones agrupadas en Arquero/Defensor/Mediocampista/Delantero:
-            la fuente no distingue Lateral de Central ni Extremo de 9.
+            Liga Profesional Argentina, temporada 2026 en curso — goles, asistencias y tarjetas vía Promiedos
+            (se actualiza con la fecha jugada). Foto/nacionalidad/edad vía API-Football (dato biográfico, no de
+            rendimiento — no cambia de temporada a temporada). Sin dato de minutos jugados en ninguna fuente
+            disponible: los totales no están normalizados por partidos jugados. Arquero no tiene ranking —
+            ninguna fuente expone estadística de arquero por jugador para esta liga. Defensor: sin duelos/
+            intercepciones/pases disponibles, el puntaje se arma con disciplina (tarjetas, faltas) y aporte
+            ofensivo ocasional — más débil que Delantero/Mediocampista.
           </p>
           <div className="flex flex-wrap items-end gap-3">
             <label className="flex flex-col gap-1">
@@ -187,7 +182,7 @@ export default function RefuerzosTab() {
                 className="bg-bg-deep border border-bg-card text-cream text-xs font-mono rounded px-2 py-1.5 focus:outline-none focus:border-orange/50 disabled:opacity-40 min-w-[180px]"
               >
                 <option value="">{teamsLoading ? "cargando equipos..." : "— elegir equipo —"}</option>
-                {teams.map((t) => <option key={t.id} value={String(t.id)}>{t.name}</option>)}
+                {teams.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
               </select>
             </label>
 
@@ -235,10 +230,14 @@ export default function RefuerzosTab() {
           <>
             <NeedSummary need={result.need} />
 
-            {result.candidates.length === 0 ? (
+            {result.noDataForPosition ? (
+              <div className="text-cream/20 font-mono text-xs py-6 text-center max-w-md mx-auto">
+                Arquero no tiene ranking de candidatos: ni Promiedos ni API-Football (temporada accesible) exponen
+                estadística de arquero por jugador para la Liga Profesional Argentina. No se inventa el dato.
+              </div>
+            ) : result.candidates.length === 0 ? (
               <div className="text-cream/20 font-mono text-xs py-6 text-center">
-                Sin candidatos suficientes con los datos disponibles para esta posición — el pool de esta liga
-                sale de goleadores/asistidores/amonestados, puede no cubrir bien Defensor/Mediocampista.
+                Sin candidatos con datos suficientes para esta posición esta fecha.
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
