@@ -44,8 +44,10 @@ function formatDayLabel(iso: string): string {
   const d = new Date(iso + "T12:00:00");
   return d.toLocaleDateString("es-AR", { weekday: "short", day: "2-digit", month: "2-digit" }).toUpperCase();
 }
-const PAST_DAYS = 7; // días hacia atrás desde hoy que se muestran de entrada
-const FUTURE_DAYS = 7; // días hoy-en-adelante que se muestran de entrada (mismo rango que ya tenía)
+const PAST_DAYS = 1; // días hacia atrás desde hoy que se muestran de entrada (ayer); más atrás, vía el buscador de fecha
+const FUTURE_DAYS = 7; // días hoy-en-adelante que se muestran de entrada (sin cambios)
+// Se aplica a cualquier día pasado que se cargue, no solo a los del rango por
+// defecto — también a los que trae el buscador de fecha yendo más atrás de "ayer".
 const PAST_FIXTURE_TTL_MS = 7 * 24 * 60 * 60 * 1000; // resultados pasados no cambian — mismo criterio que H2H
 
 // ── Cache ─────────────────────────────────────────────────────
@@ -366,7 +368,13 @@ function DayPanel({
 export default function EspnFixtures() {
   const [dayList, setDayList] = useState<string[]>(() => nextNDays(addDays(todayIso(), -PAST_DAYS), PAST_DAYS + FUTURE_DAYS));
   const [openDays, setOpenDays] = useState<Set<string>>(() => new Set([todayIso()]));
-  const todayRef = useRef<HTMLDivElement>(null);
+  const dayRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  // Fecha activa en el buscador (arriba del scroll). Si cae fuera del rango
+  // por defecto (dayList), jumpDate guarda esa fecha puntual y se muestra en
+  // un panel aparte, con el mismo formato agrupado por liga que un día del
+  // scroll normal — ver goToDate más abajo.
+  const [selectedDate, setSelectedDate] = useState<string>(() => todayIso());
+  const [jumpDate, setJumpDate] = useState<string | null>(null);
   const [dayEvents,   setDayEvents]   = useState<Record<string, Record<string, EspnEvent[]>>>({});
   const [dayFallback, setDayFallback] = useState<Record<string, Record<string, PromiedosGame[]>>>({});
   const [dayLoading,  setDayLoading]  = useState<Record<string, boolean>>({});
@@ -380,11 +388,11 @@ export default function EspnFixtures() {
   const [h2hCardLoading, setH2hCardLoading] = useState<Record<string, boolean>>({});
 
   // Carga el día de hoy solo (los demás, al abrirlos) y deja el scroll
-  // parado ahí de entrada — con 7 días para atrás ya cargados en la lista,
-  // "hoy" no es lo primero que se ve si no se hace este scroll.
+  // parado ahí de entrada — con "ayer" ya cargado antes en la lista, "hoy"
+  // no es lo primero que se ve si no se hace este scroll.
   useEffect(() => {
     ensureDayLoaded(todayIso());
-    todayRef.current?.scrollIntoView({ block: "start" });
+    dayRefs.current[todayIso()]?.scrollIntoView({ block: "start" });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -455,6 +463,24 @@ export default function EspnFixtures() {
     setDayList(prev => [...prev, ...nextNDays(addDays(prev[prev.length - 1], 1), 7)]);
   }
 
+  // Buscador de fecha (flechas + input arriba del scroll). Si la fecha
+  // elegida ya está en el rango por defecto, scrollea/abre ese día como
+  // toggleDay. Si cae afuera (ej. una fecha de hace un mes), no la mete en
+  // dayList — la muestra aparte como jumpDate, un panel puntual con el
+  // mismo formato agrupado por liga.
+  function goToDate(newDate: string) {
+    setSelectedDate(newDate);
+    if (dayList.includes(newDate)) {
+      setJumpDate(null);
+      setOpenDays(prev => new Set(prev).add(newDate));
+      ensureDayLoaded(newDate);
+      dayRefs.current[newDate]?.scrollIntoView({ block: "start", behavior: "smooth" });
+    } else {
+      setJumpDate(newDate);
+      ensureDayLoaded(newDate);
+    }
+  }
+
   // Stats + goleadores — solo al expandir la tarjeta (no en todas apenas
   // cargan: el summary de ESPN pesa harto y no vale la pena bajarlo de
   // entrada para cada partido del día). getMatchDetails ya cachea 90s en
@@ -513,9 +539,62 @@ export default function EspnFixtures() {
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
+      {/* Buscador de fecha: salta a cualquier día, incluyendo pasado más allá de "ayer" */}
+      <div className="shrink-0 flex items-center justify-center gap-3 px-4 pt-4 pb-3 border-b border-bg-card/40">
+        <button
+          onClick={() => goToDate(addDays(selectedDate, -1))}
+          className="font-mono text-orange text-lg px-2 hover:text-orange/70 transition-colors"
+          aria-label="día anterior"
+        >
+          ‹
+        </button>
+        <input
+          type="date"
+          value={selectedDate}
+          onChange={(e) => e.target.value && goToDate(e.target.value)}
+          className="bg-bg-deep border border-bg-card text-cream text-xs font-mono rounded px-3 py-1.5 focus:outline-none focus:border-orange/50"
+        />
+        <button
+          onClick={() => goToDate(addDays(selectedDate, 1))}
+          className="font-mono text-orange text-lg px-2 hover:text-orange/70 transition-colors"
+          aria-label="día siguiente"
+        >
+          ›
+        </button>
+        {selectedDate !== todayIso() && (
+          <button
+            onClick={() => goToDate(todayIso())}
+            className="font-mono text-[10px] text-cream/40 hover:text-orange tracking-widest"
+          >
+            HOY
+          </button>
+        )}
+      </div>
+
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
+        {jumpDate && (
+          <div ref={(el) => { dayRefs.current[jumpDate] = el; }}>
+            <DayPanel
+              date={jumpDate}
+              isOpen={true}
+              onToggle={() => setJumpDate(null)}
+              onRefresh={() => refreshDay(jumpDate)}
+              loading={!!dayLoading[jumpDate]}
+              leaguesEvents={dayEvents[jumpDate] ?? {}}
+              leaguesFallback={dayFallback[jumpDate] ?? {}}
+              expandedId={expandedId}
+              matchStats={matchStats}
+              goals={goals}
+              statsLoading={statsLoading}
+              h2h={h2h}
+              h2hSummary={h2hSummary}
+              h2hCardLoading={h2hCardLoading}
+              onToggleMatch={toggleMatch}
+            />
+          </div>
+        )}
         {dayList.map((date) => (
-          <div key={date} ref={date === todayIso() ? todayRef : undefined}>
+          <div key={date} ref={(el) => { dayRefs.current[date] = el; }}>
             <DayPanel
               date={date}
               isOpen={openDays.has(date)}
