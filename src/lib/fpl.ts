@@ -23,9 +23,19 @@ export interface FplPlayer {
   elementType: number;
 }
 
+export interface FplUpcomingFixture {
+  event: number | null;
+  teamH: string;
+  teamA: string;
+  kickoffTime: string | null;
+}
+
 export interface FplData {
   players: FplPlayer[]; // todas las posiciones juntas, sin filtrar
   nextOpponentByTeamId: Record<number, string>;
+  // Solo la fecha (gameweek) más próxima entre los fixtures futuros — panel
+  // compacto de "próximos partidos", no el fixture completo de la temporada.
+  upcomingFixtures: FplUpcomingFixture[];
 }
 
 interface FplBootstrapTeam { id: number; name: string; short_name: string; }
@@ -33,7 +43,7 @@ interface FplBootstrapElement {
   id: number; web_name: string; team: number; element_type: number;
   total_points: number; goals_scored: number; assists: number;
 }
-interface FplFixture { team_h: number; team_a: number; }
+interface FplFixture { event: number | null; team_h: number; team_a: number; kickoff_time: string | null; }
 
 export async function getFplData(): Promise<FplData> {
   const [bootRes, fixRes] = await Promise.all([
@@ -58,17 +68,30 @@ export async function getFplData(): Promise<FplData> {
 
   // Un solo pase por el fixture list (ya viene ordenado por fecha, ?future=1
   // filtra lo no jugado): el primer partido encontrado por equipo es el
-  // próximo rival — no hace falta más que eso.
+  // próximo rival — no hace falta más que eso. De paso, junta los fixtures
+  // de la gameweek más próxima (menor "event") para el panel compacto.
   const nextOpponentByTeamId: Record<number, string> = {};
+  let upcomingFixtures: FplUpcomingFixture[] = [];
   if (fixRes.ok) {
     const fixtures = await fixRes.json() as FplFixture[];
     for (const f of fixtures) {
       if (!(f.team_h in nextOpponentByTeamId)) nextOpponentByTeamId[f.team_h] = teamNameById.get(f.team_a) ?? "";
       if (!(f.team_a in nextOpponentByTeamId)) nextOpponentByTeamId[f.team_a] = teamNameById.get(f.team_h) ?? "";
     }
+    const events = fixtures.map((f) => f.event).filter((e): e is number => e != null);
+    const minEvent = events.length ? Math.min(...events) : null;
+    upcomingFixtures = fixtures
+      .filter((f) => f.event === minEvent)
+      .map((f) => ({
+        event: f.event,
+        teamH: teamNameById.get(f.team_h) ?? "",
+        teamA: teamNameById.get(f.team_a) ?? "",
+        kickoffTime: f.kickoff_time,
+      }))
+      .sort((a, b) => (a.kickoffTime ?? "").localeCompare(b.kickoffTime ?? ""));
   }
 
-  return { players, nextOpponentByTeamId };
+  return { players, nextOpponentByTeamId, upcomingFixtures };
 }
 
 export function rankFplPlayers(data: FplData, position: FplPosition, limit = 30): FplPlayer[] {
@@ -78,4 +101,12 @@ export function rankFplPlayers(data: FplData, position: FplPosition, limit = 30)
     .filter((p) => p.elementType === pos.elementType)
     .sort((a, b) => b.points - a.points)
     .slice(0, limit);
+}
+
+export function topScorers(data: FplData, limit = 15): FplPlayer[] {
+  return [...data.players].sort((a, b) => b.goals - a.goals).slice(0, limit);
+}
+
+export function topAssisters(data: FplData, limit = 15): FplPlayer[] {
+  return [...data.players].sort((a, b) => b.assists - a.assists).slice(0, limit);
 }
