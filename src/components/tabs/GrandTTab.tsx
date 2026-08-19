@@ -194,8 +194,20 @@ function StandingsColumn({ zoneName, rows, recommendedNames }: {
 // por default), mismo estilo compacto que el panel homólogo de Fantasy
 // Premier. Nota: "latest"/"Partidos actuales" de Promiedos puede devolver
 // la fecha más reciente ya jugada en vez de la próxima sin jugar todavía
-// (comportamiento de la fuente, no de este código) — se muestra el status
-// real de cada partido (statusName) así nunca es ambiguo.
+// (comportamiento de la fuente, no de este código) — por eso cada partido
+// se resuelve por separado: si ya tiene resultado (homeScore/awayScore) se
+// muestra el marcador, si no la fecha/hora programada.
+
+// "DD-MM-YYYY HH:mm" (formato propio de Promiedos) → "Vie 22/08 · 21:00hs".
+function formatKickoff(startTime: string): string {
+  const m = startTime.match(/^(\d{2})-(\d{2})-(\d{4}) (\d{2}):(\d{2})$/);
+  if (!m) return startTime;
+  const [, dd, mm, yyyy, hh, min] = m;
+  const d = new Date(Number(yyyy), Number(mm) - 1, Number(dd), Number(hh), Number(min));
+  const weekday = d.toLocaleDateString("es-AR", { weekday: "short" }).replace(".", "");
+  const cap = weekday.charAt(0).toUpperCase() + weekday.slice(1);
+  return `${cap} ${dd}/${mm} · ${hh}:${min}hs`;
+}
 
 function UpcomingFixturesPanel({ games }: { games: PromiedosGame[] }) {
   return (
@@ -204,16 +216,25 @@ function UpcomingFixturesPanel({ games }: { games: PromiedosGame[] }) {
       {games.length === 0 && <div className="text-cream/20 font-mono text-xs py-2">sin fixture disponible</div>}
       {games.length > 0 && (
         <div className="space-y-2 max-h-[380px] overflow-y-auto pr-1">
-          {games.map((g) => (
-            <div key={g.id} className="font-mono text-[10px] border-b border-bg-deep/40 last:border-0 pb-2 last:pb-0">
-              <div className="text-center text-cream/25 text-[9px] mb-1">{g.statusName || g.startTime}</div>
-              <div className="flex items-center justify-between gap-2">
-                <span className="truncate flex-1 text-right text-cream">{g.homeTeam.shortName || g.homeTeam.name}</span>
-                <span className="text-cream/25 shrink-0 px-1">vs</span>
-                <span className="truncate flex-1 text-cream">{g.awayTeam.shortName || g.awayTeam.name}</span>
+          {games.map((g) => {
+            const played = g.homeScore != null && g.awayScore != null;
+            return (
+              <div key={g.id} className="font-mono text-[10px] border-b border-bg-deep/40 last:border-0 pb-2 last:pb-0">
+                {!played && (
+                  <div className="text-center text-cream/25 text-[9px] mb-1">{formatKickoff(g.startTime)}</div>
+                )}
+                <div className="flex items-center justify-between gap-2">
+                  <span className="truncate flex-1 text-right text-cream">{g.homeTeam.shortName || g.homeTeam.name}</span>
+                  {played ? (
+                    <span className="font-bold text-warm-white tabular-nums shrink-0 px-1.5">{g.homeScore} - {g.awayScore}</span>
+                  ) : (
+                    <span className="text-cream/25 shrink-0 px-1">vs</span>
+                  )}
+                  <span className="truncate flex-1 text-cream">{g.awayTeam.shortName || g.awayTeam.name}</span>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

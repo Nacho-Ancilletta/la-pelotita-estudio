@@ -94,8 +94,12 @@ export interface PromiedosGame {
   urlName: string;
   homeTeam: PromiedosTeam;
   awayTeam: PromiedosTeam;
-  startTime: string;
+  startTime: string; // "DD-MM-YYYY HH:mm", formato propio de Promiedos
   statusName: string;
+  // Resultado — presente solo si el partido ya se jugó (confirmado a mano:
+  // "scores" no viene en absoluto en partidos todavía programados).
+  homeScore: number | null;
+  awayScore: number | null;
 }
 
 // ── Cache localStorage — mismo patrón {data,ts,ttlMs} que TacticoTab.tsx /
@@ -238,6 +242,8 @@ export async function getFixtureLiga(league: PromiedosLeagueSlug, filterKey = "l
     awayTeam: { id: g.teams?.[1]?.id ?? "", name: g.teams?.[1]?.name ?? "", shortName: g.teams?.[1]?.short_name ?? "" },
     startTime: g.start_time ?? "",
     statusName: g.status?.short_name ?? g.status?.name ?? "",
+    homeScore: typeof g.scores?.[0] === "number" ? g.scores[0] : null,
+    awayScore: typeof g.scores?.[1] === "number" ? g.scores[1] : null,
   }));
   cacheSet(key, games, GAMES_TTL_MS);
   return games;
