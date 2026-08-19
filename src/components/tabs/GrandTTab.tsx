@@ -188,6 +188,38 @@ function StandingsColumn({ zoneName, rows, recommendedNames }: {
   );
 }
 
+// ── Columna lateral: próximos partidos, versión compacta ───────
+// No es el fixture grande del tab Fixture — mismos `games` que ya se piden
+// para el próximo rival del recomendado (getFixtureLiga, filterKey "latest"
+// por default), mismo estilo compacto que el panel homólogo de Fantasy
+// Premier. Nota: "latest"/"Partidos actuales" de Promiedos puede devolver
+// la fecha más reciente ya jugada en vez de la próxima sin jugar todavía
+// (comportamiento de la fuente, no de este código) — se muestra el status
+// real de cada partido (statusName) así nunca es ambiguo.
+
+function UpcomingFixturesPanel({ games }: { games: PromiedosGame[] }) {
+  return (
+    <div className="rounded-lg border border-bg-card bg-bg-card/10 p-4">
+      <div className="font-mono text-orange text-xs tracking-widest mb-3">📅 PRÓXIMOS PARTIDOS</div>
+      {games.length === 0 && <div className="text-cream/20 font-mono text-xs py-2">sin fixture disponible</div>}
+      {games.length > 0 && (
+        <div className="space-y-2 max-h-[380px] overflow-y-auto pr-1">
+          {games.map((g) => (
+            <div key={g.id} className="font-mono text-[10px] border-b border-bg-deep/40 last:border-0 pb-2 last:pb-0">
+              <div className="text-center text-cream/25 text-[9px] mb-1">{g.statusName || g.startTime}</div>
+              <div className="flex items-center justify-between gap-2">
+                <span className="truncate flex-1 text-right text-cream">{g.homeTeam.shortName || g.homeTeam.name}</span>
+                <span className="text-cream/25 shrink-0 px-1">vs</span>
+                <span className="truncate flex-1 text-cream">{g.awayTeam.shortName || g.awayTeam.name}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Panel de una posición ─────────────────────────────────────
 
 function PositionPanel({
@@ -267,25 +299,32 @@ function PositionPanel({
                 const goals   = matchStat(p.name, goleadores);
                 const assists = matchStat(p.name, asistencias);
                 const isRecommended = recTrim.length > 0 && textMatches(recTrim, p.name);
+                const rowTeamId = resolveTeamId(p.club, teams);
+                const rowNextOpponent = rowTeamId ? nextOpponentFor(rowTeamId, games) : undefined;
                 return (
                   <div
                     key={`${p.name}-${i}`}
                     className={[
-                      "flex items-center gap-3 font-mono text-xs py-1 px-1.5 rounded border-b border-bg-deep/40 last:border-0",
+                      "font-mono text-xs py-1.5 px-1.5 rounded border-b border-bg-deep/40 last:border-0",
                       isRecommended ? "bg-orange/15 border-orange/40" : "",
                     ].join(" ")}
                   >
-                    <span className="text-orange/70 w-5 text-right shrink-0">{i + 1}</span>
-                    <span className={["flex-1 truncate", isRecommended ? "text-orange font-bold" : "text-cream"].join(" ")}>{p.name}</span>
-                    {(goals || assists) && (
-                      <span className="text-cream/25 text-[10px] shrink-0 tabular-nums">
-                        {goals && <>⚽{goals.value}</>}
-                        {goals && assists && " "}
-                        {assists && <>🅰{assists.value}</>}
-                      </span>
-                    )}
-                    <span className="text-cream/30 truncate max-w-[25%]">{p.club}</span>
-                    <span className="text-warm-white font-bold tabular-nums w-10 text-right shrink-0">{p.points}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-orange/70 w-5 text-right shrink-0">{i + 1}</span>
+                      <span className={["flex-1 truncate", isRecommended ? "text-orange font-bold" : "text-cream"].join(" ")}>{p.name}</span>
+                      <span className="text-warm-white font-bold tabular-nums w-10 text-right shrink-0">{p.points}</span>
+                    </div>
+                    <div className="flex items-center gap-2 pl-7 mt-0.5 text-[9px] text-cream/25">
+                      <span className="truncate flex-1">{p.club}</span>
+                      {(goals || assists) && (
+                        <span className="shrink-0 tabular-nums">
+                          {goals && <>⚽{goals.value}</>}
+                          {goals && assists && " "}
+                          {assists && <>🅰{assists.value}</>}
+                        </span>
+                      )}
+                      {rowNextOpponent && <span className="shrink-0 truncate max-w-[35%]">vs {rowNextOpponent}</span>}
+                    </div>
                   </div>
                 );
               })}
@@ -396,6 +435,7 @@ export default function GrandTTab() {
           ) : (
             <StandingsColumn zoneName={mainGroup?.name || "Tabla"} rows={mainGroup?.tables[0]?.rows ?? []} recommendedNames={recommendedNames} />
           )}
+          <UpcomingFixturesPanel games={games} />
         </div>
       </div>
     </div>

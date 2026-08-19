@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import {
-  getFplData, rankFplPlayers, topScorers, topAssisters, FPL_POSITIONS,
-  type FplPosition, type FplPlayer, type FplData, type FplUpcomingFixture,
+  getFplData, rankFplPlayers, topScorers, topAssisters, fplFitness, FPL_POSITIONS,
+  type FplPosition, type FplPlayer, type FplData, type FplUpcomingFixture, type FplFitness,
 } from "@/lib/fpl";
 import { getTablaPosiciones, type PromiedosStandingRow } from "@/lib/promiedos";
 
@@ -45,11 +45,10 @@ function cacheSet(key: string, d: unknown, ttlMs?: number) {
   localStorage.setItem(key, JSON.stringify({ data: d, ts: Date.now(), ttlMs }));
 }
 
-// v2: se agregó upcomingFixtures a FplData sin cambiar la key — los blobs
-// viejos en localStorage (TTL 24hs, todavía vigentes) no traían ese campo,
-// así que el panel de próximos partidos quedaba en "sin datos" hasta que
-// esa caché vieja expiraba sola. Bump de key para no depender de eso.
-const DATA_KEY = "pelotita_fpl_data_v2";
+// v3: se agregaron status/chanceOfPlayingNextRound/selectedByPercent y
+// nextFixtureDifficultyByTeamId a FplData — mismo motivo que el bump v2,
+// bumpear la key de nuevo para no servir blobs viejos incompletos.
+const DATA_KEY = "pelotita_fpl_data_v3";
 const DATA_TTL_MS = 24 * 60 * 60 * 1000; // el ranking se actualiza una vez por fecha jugada
 
 function recoKey(pos: FplPosition) {
@@ -156,15 +155,39 @@ function UpcomingFixturesPanel({ fixtures, loading }: { fixtures: FplUpcomingFix
   );
 }
 
+// Punto de disponibilidad: verde ok, amarillo duda, rojo afuera — status +
+// chance_of_playing_next_round de bootstrap-static (ver fplFitness en lib/fpl.ts).
+function FitnessDot({ fitness, chance }: { fitness: FplFitness; chance: number | null }) {
+  const color = fitness === "ok" ? "bg-green-400" : fitness === "doubt" ? "bg-yellow-400" : "bg-red-400";
+  const title = fitness === "ok" ? "disponible" : fitness === "doubt" ? `duda${chance != null ? ` (${chance}%)` : ""}` : "no disponible";
+  return <span className={["w-1.5 h-1.5 rounded-full shrink-0", color].join(" ")} title={title} />;
+}
+
+// FDR del próximo rival (1 fácil - 5 difícil), mismo criterio de colores
+// que usa la propia FPL.
+function fdrClasses(v: number): string {
+  if (v <= 2) return "text-green-400 bg-green-900/30";
+  if (v === 3) return "text-yellow-400 bg-yellow-900/20";
+  return "text-red-400 bg-red-900/30";
+}
+function FdrBadge({ value }: { value: number | undefined }) {
+  if (value == null) return null;
+  return (
+    <span className={["font-mono text-[9px] font-bold rounded px-1 tabular-nums shrink-0", fdrClasses(value)].join(" ")} title="dificultad próximo rival (FDR)">
+      {value}
+    </span>
+  );
+}
+
 // ── Panel de una posición (centro) ──────────────────────────────
 
 function PositionPanel({
-  posKey, label, isOpen, onToggle, players, nextOpponentByTeamId,
+  posKey, label, isOpen, onToggle, players, nextOpponentByTeamId, nextFixtureDifficultyByTeamId,
   recommended, onRecommendedChange,
 }: {
   posKey: FplPosition; label: string;
   isOpen: boolean; onToggle: () => void;
-  players: FplPlayer[]; nextOpponentByTeamId: Record<number, string>;
+  players: FplPlayer[]; nextOpponentByTeamId: Record<number, string>; nextFixtureDifficultyByTeamId: Record<number, number>;
   recommended: string; onRecommendedChange: (value: string) => void;
 }) {
   const recTrim = recommended.trim();
@@ -190,25 +213,34 @@ function PositionPanel({
             <div className="space-y-1 mb-4">
               {players.slice(0, 10).map((p, i) => {
                 const isRecommended = recTrim.length > 0 && textMatches(recTrim, p.name);
+                const fitness = fplFitness(p);
+                const fdr = nextFixtureDifficultyByTeamId[p.clubId];
                 return (
                   <div
                     key={p.id}
                     className={[
-                      "flex items-center gap-3 font-mono text-xs py-1 px-1.5 rounded border-b border-bg-deep/40 last:border-0",
+                      "font-mono text-xs py-1.5 px-1.5 rounded border-b border-bg-deep/40 last:border-0",
                       isRecommended ? "bg-orange/15 border-orange/40" : "",
                     ].join(" ")}
                   >
-                    <span className="text-orange/70 w-5 text-right shrink-0">{i + 1}</span>
-                    <span className={["flex-1 truncate", isRecommended ? "text-orange font-bold" : "text-cream"].join(" ")}>{p.name}</span>
-                    {(p.goals > 0 || p.assists > 0) && (
-                      <span className="text-cream/25 text-[10px] shrink-0 tabular-nums">
-                        {p.goals > 0 && <>⚽{p.goals}</>}
-                        {p.goals > 0 && p.assists > 0 && " "}
-                        {p.assists > 0 && <>🅰{p.assists}</>}
-                      </span>
-                    )}
-                    <span className="text-cream/30 truncate max-w-[25%]">{p.club}</span>
-                    <span className="text-warm-white font-bold tabular-nums w-10 text-right shrink-0">{p.points}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-orange/70 w-5 text-right shrink-0">{i + 1}</span>
+                      <FitnessDot fitness={fitness} chance={p.chanceOfPlayingNextRound} />
+                      <span className={["flex-1 truncate", isRecommended ? "text-orange font-bold" : "text-cream"].join(" ")}>{p.name}</span>
+                      <FdrBadge value={fdr} />
+                      <span className="text-warm-white font-bold tabular-nums w-10 text-right shrink-0">{p.points}</span>
+                    </div>
+                    <div className="flex items-center gap-2 pl-7 mt-0.5 text-[9px] text-cream/25">
+                      <span className="truncate flex-1">{p.club}</span>
+                      {(p.goals > 0 || p.assists > 0) && (
+                        <span className="shrink-0 tabular-nums">
+                          {p.goals > 0 && <>⚽{p.goals}</>}
+                          {p.goals > 0 && p.assists > 0 && " "}
+                          {p.assists > 0 && <>🅰{p.assists}</>}
+                        </span>
+                      )}
+                      <span className="shrink-0 tabular-nums text-cream/20">{p.selectedByPercent.toFixed(1)}%</span>
+                    </div>
                   </div>
                 );
               })}
@@ -307,6 +339,7 @@ export default function FantasyPremierTab() {
               onToggle={() => setOpenPanel((cur) => (cur === p.key ? null : p.key))}
               players={rankFplPlayers(data, p.key)}
               nextOpponentByTeamId={data.nextOpponentByTeamId}
+              nextFixtureDifficultyByTeamId={data.nextFixtureDifficultyByTeamId}
               recommended={recommended[p.key]}
               onRecommendedChange={(v) => setRecommended(p.key, v)}
             />

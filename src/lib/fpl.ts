@@ -12,6 +12,11 @@ export const FPL_POSITIONS: { key: FplPosition; label: string; elementType: numb
   { key: "DEL", label: "Delantero",     elementType: 4 },
 ];
 
+// status: "a" disponible, "d" duda, "i" lesionado, "s" suspendido,
+// "u" no disponible (se fue del club) — códigos propios de la API de FPL,
+// confirmados a mano contra bootstrap-static.
+export type FplStatus = "a" | "d" | "i" | "s" | "u";
+
 export interface FplPlayer {
   id: number;
   name: string;
@@ -21,6 +26,20 @@ export interface FplPlayer {
   goals: number;
   assists: number;
   elementType: number;
+  status: FplStatus;
+  chanceOfPlayingNextRound: number | null; // 0-100, null = sin duda (status "a")
+  selectedByPercent: number;
+}
+
+// Disponible sin duda ("a", chance null o >=75) = ok; duda (status "d" o
+// chance intermedio) = doubt; lesionado/suspendido/afuera del club = out.
+export type FplFitness = "ok" | "doubt" | "out";
+
+export function fplFitness(p: Pick<FplPlayer, "status" | "chanceOfPlayingNextRound">): FplFitness {
+  if (p.status === "i" || p.status === "s" || p.status === "u") return "out";
+  if (p.status === "d") return "doubt";
+  if (p.chanceOfPlayingNextRound != null && p.chanceOfPlayingNextRound < 75) return "doubt";
+  return "ok";
 }
 
 export interface FplUpcomingFixture {
@@ -33,6 +52,9 @@ export interface FplUpcomingFixture {
 export interface FplData {
   players: FplPlayer[]; // todas las posiciones juntas, sin filtrar
   nextOpponentByTeamId: Record<number, string>;
+  // Dificultad (1 fácil a 5 difícil) del próximo fixture de cada equipo —
+  // mismo criterio que usa la propia FPL para el "FDR".
+  nextFixtureDifficultyByTeamId: Record<number, number>;
   // Solo la fecha (gameweek) más próxima entre los fixtures futuros — panel
   // compacto de "próximos partidos", no el fixture completo de la temporada.
   upcomingFixtures: FplUpcomingFixture[];
@@ -42,8 +64,12 @@ interface FplBootstrapTeam { id: number; name: string; short_name: string; }
 interface FplBootstrapElement {
   id: number; web_name: string; team: number; element_type: number;
   total_points: number; goals_scored: number; assists: number;
+  status: FplStatus; chance_of_playing_next_round: number | null; selected_by_percent: string;
 }
-interface FplFixture { event: number | null; team_h: number; team_a: number; kickoff_time: string | null; }
+interface FplFixture {
+  event: number | null; team_h: number; team_a: number; kickoff_time: string | null;
+  team_h_difficulty: number; team_a_difficulty: number;
+}
 
 export async function getFplData(): Promise<FplData> {
   const [bootRes, fixRes] = await Promise.all([
@@ -64,19 +90,30 @@ export async function getFplData(): Promise<FplData> {
     goals: e.goals_scored ?? 0,
     assists: e.assists ?? 0,
     elementType: e.element_type,
+    status: e.status,
+    chanceOfPlayingNextRound: e.chance_of_playing_next_round,
+    selectedByPercent: parseFloat(e.selected_by_percent) || 0,
   }));
 
   // Un solo pase por el fixture list (ya viene ordenado por fecha, ?future=1
   // filtra lo no jugado): el primer partido encontrado por equipo es el
-  // próximo rival — no hace falta más que eso. De paso, junta los fixtures
-  // de la gameweek más próxima (menor "event") para el panel compacto.
+  // próximo rival (y su dificultad, del lado que le toca a ese equipo) —
+  // no hace falta más que eso. De paso, junta los fixtures de la gameweek
+  // más próxima (menor "event") para el panel compacto.
   const nextOpponentByTeamId: Record<number, string> = {};
+  const nextFixtureDifficultyByTeamId: Record<number, number> = {};
   let upcomingFixtures: FplUpcomingFixture[] = [];
   if (fixRes.ok) {
     const fixtures = await fixRes.json() as FplFixture[];
     for (const f of fixtures) {
-      if (!(f.team_h in nextOpponentByTeamId)) nextOpponentByTeamId[f.team_h] = teamNameById.get(f.team_a) ?? "";
-      if (!(f.team_a in nextOpponentByTeamId)) nextOpponentByTeamId[f.team_a] = teamNameById.get(f.team_h) ?? "";
+      if (!(f.team_h in nextOpponentByTeamId)) {
+        nextOpponentByTeamId[f.team_h] = teamNameById.get(f.team_a) ?? "";
+        nextFixtureDifficultyByTeamId[f.team_h] = f.team_h_difficulty;
+      }
+      if (!(f.team_a in nextOpponentByTeamId)) {
+        nextOpponentByTeamId[f.team_a] = teamNameById.get(f.team_h) ?? "";
+        nextFixtureDifficultyByTeamId[f.team_a] = f.team_a_difficulty;
+      }
     }
     const events = fixtures.map((f) => f.event).filter((e): e is number => e != null);
     const minEvent = events.length ? Math.min(...events) : null;
@@ -91,7 +128,7 @@ export async function getFplData(): Promise<FplData> {
       .sort((a, b) => (a.kickoffTime ?? "").localeCompare(b.kickoffTime ?? ""));
   }
 
-  return { players, nextOpponentByTeamId, upcomingFixtures };
+  return { players, nextOpponentByTeamId, nextFixtureDifficultyByTeamId, upcomingFixtures };
 }
 
 export function rankFplPlayers(data: FplData, position: FplPosition, limit = 30): FplPlayer[] {
