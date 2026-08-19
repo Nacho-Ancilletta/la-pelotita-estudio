@@ -45,7 +45,11 @@ function cacheSet(key: string, d: unknown, ttlMs?: number) {
   localStorage.setItem(key, JSON.stringify({ data: d, ts: Date.now(), ttlMs }));
 }
 
-const DATA_KEY = "pelotita_fpl_data";
+// v2: se agregó upcomingFixtures a FplData sin cambiar la key — los blobs
+// viejos en localStorage (TTL 24hs, todavía vigentes) no traían ese campo,
+// así que el panel de próximos partidos quedaba en "sin datos" hasta que
+// esa caché vieja expiraba sola. Bump de key para no depender de eso.
+const DATA_KEY = "pelotita_fpl_data_v2";
 const DATA_TTL_MS = 24 * 60 * 60 * 1000; // el ranking se actualiza una vez por fecha jugada
 
 function recoKey(pos: FplPosition) {
@@ -118,12 +122,18 @@ function StandingsColumn({ rows }: { rows: PromiedosStandingRow[] }) {
 // No es el fixture grande del tab Fixture — solo la gameweek más próxima,
 // nombre de equipos + fecha/hora.
 
-function UpcomingFixturesPanel({ fixtures }: { fixtures: FplUpcomingFixture[] }) {
+function UpcomingFixturesPanel({ fixtures, loading }: { fixtures: FplUpcomingFixture[]; loading: boolean }) {
   return (
     <div className="rounded-lg border border-bg-card bg-bg-card/10 p-4">
       <div className="font-mono text-orange text-xs tracking-widest mb-3">📅 PRÓXIMOS PARTIDOS</div>
-      {fixtures.length === 0 && <div className="text-cream/20 font-mono text-xs py-2">sin fixture disponible</div>}
-      {fixtures.length > 0 && (
+      {loading && <div className="text-cream/25 font-mono text-xs py-2">buscando partidos...</div>}
+      {/* Distinto del loading: la API respondió pero no hay fixtures futuros
+          cargados (entre temporadas, o la fecha aún no está confirmada) —
+          el panel queda listo para mostrarlos apenas la API los tenga. */}
+      {!loading && fixtures.length === 0 && (
+        <div className="text-cream/20 font-mono text-xs py-2">todavía no hay fecha confirmada</div>
+      )}
+      {!loading && fixtures.length > 0 && (
         <div className="space-y-2 max-h-[380px] overflow-y-auto pr-1">
           {fixtures.map((f, i) => {
             const d = f.kickoffTime ? new Date(f.kickoffTime) : null;
@@ -306,7 +316,7 @@ export default function FantasyPremierTab() {
         {/* Columna derecha: tabla de posiciones + próximos partidos */}
         <div className="space-y-4 order-3">
           <StandingsColumn rows={standingsRows} />
-          <UpcomingFixturesPanel fixtures={data?.upcomingFixtures ?? []} />
+          <UpcomingFixturesPanel fixtures={data?.upcomingFixtures ?? []} loading={loading} />
         </div>
       </div>
     </div>
