@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getGrandTRanking, GRANDT_POSITIONS, type GrandTPosition, type GrandTPlayer } from "@/lib/grandt";
+import { getGrandTRanking, getLatestGrandTSheet, GRANDT_POSITIONS, type GrandTPosition, type GrandTPlayer } from "@/lib/grandt";
 import {
   getGoleadores, getAsistencias, getFixtureLiga, getTablaPosiciones,
   type PromiedosPlayerStat, type PromiedosGame, type PromiedosStandingGroup, type PromiedosStandingRow,
@@ -11,10 +11,12 @@ import {
 // en este tab, así que se cruza siempre contra esa.
 const GRANDT_LEAGUE = "arg.1" as const;
 // El puntaje Gran DT (fantasy) solo existe en esta planilla — Promiedos no
-// lo tiene, aporta goleadores/asistencias/tabla reales. Ya no hay campo de
-// configuración en la UI (se sacó a pedido); cuando salga una fecha nueva
-// en planetagrandt.com.ar hay que actualizar este valor a mano en código.
-const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQar3txoFXtWCNwPoWL_2_z7ehHwxJmgFWEIIKoILxig9a7z8i3RxmbjLt8ioO_0PA5hbu_hIRHW-VW/pubhtml";
+// lo tiene, aporta goleadores/asistencias/tabla reales. La URL de la
+// planilla de la fecha vigente se descubre sola (ver resolveSheetUrl más
+// abajo) buscando el post más reciente de la categoría "Estadísticas" en
+// planetagrandt.com.ar. Este valor es solo el último conocido a mano, usado
+// como red de seguridad si el descubrimiento automático falla.
+const FALLBACK_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQar3txoFXtWCNwPoWL_2_z7ehHwxJmgFWEIIKoILxig9a7z8i3RxmbjLt8ioO_0PA5hbu_hIRHW-VW/pubhtml";
 
 function normalize(s: string): string {
   return s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
@@ -91,12 +93,30 @@ function cacheSet(key: string, d: unknown, ttlMs?: number) {
 }
 
 const RANKING_TTL_MS = 7 * 24 * 60 * 60 * 1000; // la planilla se publica una vez por fecha
+const LATEST_SHEET_TTL_MS = 24 * 60 * 60 * 1000; // buscar post nuevo como máximo una vez por día
 
-function rankingKey(pos: GrandTPosition) {
-  return `pelotita_grandt_ranking_${pos}_${encodeURIComponent(SHEET_URL)}`;
+const LATEST_SHEET_KEY = "pelotita_grandt_latest_sheet";
+
+function rankingKey(pos: GrandTPosition, sheetUrl: string) {
+  return `pelotita_grandt_ranking_${pos}_${encodeURIComponent(sheetUrl)}`;
 }
 function recoKey(pos: GrandTPosition) {
   return `pelotita_grandt_reco_${pos}`;
+}
+
+// Resuelve la planilla de la fecha vigente: cache de 24hs primero, si no hay
+// (o venció) busca el post más reciente de "Estadísticas" en planetagrandt.
+// Si el descubrimiento falla por lo que sea (feed caído, post sin link),
+// cae al último valor hardcodeado conocido sin romper la carga del tab.
+async function resolveSheetUrl(): Promise<string> {
+  const cached = cacheGet<{ sheetUrl: string }>(LATEST_SHEET_KEY);
+  if (cached?.sheetUrl) return cached.sheetUrl;
+  const latest = await getLatestGrandTSheet();
+  if (latest?.sheetUrl) {
+    cacheSet(LATEST_SHEET_KEY, latest, LATEST_SHEET_TTL_MS);
+    return latest.sheetUrl;
+  }
+  return FALLBACK_SHEET_URL;
 }
 
 // ── Columna lateral: Goleadores / Asistidores (Promiedos) ──────
@@ -117,13 +137,13 @@ function StatColumn({ title, icon, stats, teamNameById, recommendedNames }: {
               <div
                 key={`${s.name}-${i}`}
                 className={[
-                  "flex items-center gap-2 font-mono text-xs py-1 px-1.5 rounded border-b border-bg-deep/40 last:border-0",
+                  "flex items-center gap-2 font-mono text-[11px] py-1 px-1.5 rounded border-b border-bg-deep/40 last:border-0",
                   isRecommended ? "bg-orange/15 border-orange/40" : "",
                 ].join(" ")}
               >
                 <span className="text-orange/70 w-5 text-right shrink-0">{i + 1}</span>
-                <span className={["flex-1 truncate", isRecommended ? "text-orange font-bold" : "text-cream"].join(" ")}>{s.name}</span>
-                <span className="text-cream/30 truncate max-w-[35%]">{teamNameById.get(s.teamId) ?? ""}</span>
+                <span className={["flex-1 break-words leading-tight", isRecommended ? "text-orange font-bold" : "text-cream"].join(" ")}>{s.name}</span>
+                <span className="text-cream/30 truncate max-w-[30%] shrink-0">{teamNameById.get(s.teamId) ?? ""}</span>
                 <span className="text-warm-white font-bold tabular-nums w-6 text-right shrink-0">{s.value}</span>
               </div>
             );
@@ -151,12 +171,12 @@ function StandingsColumn({ zoneName, rows, recommendedNames }: {
               <div
                 key={r.team.id}
                 className={[
-                  "flex items-center gap-2 font-mono text-xs py-1 px-1.5 rounded border-b border-bg-deep/40 last:border-0",
+                  "flex items-center gap-2 font-mono text-[11px] py-1 px-1.5 rounded border-b border-bg-deep/40 last:border-0",
                   isRecommended ? "bg-orange/15 border-orange/40" : "",
                 ].join(" ")}
               >
                 <span className="text-orange/70 w-5 text-right shrink-0">{r.position}</span>
-                <span className={["flex-1 truncate", isRecommended ? "text-orange font-bold" : "text-cream"].join(" ")}>{r.team.shortName || r.team.name}</span>
+                <span className={["flex-1 break-words leading-tight", isRecommended ? "text-orange font-bold" : "text-cream"].join(" ")}>{r.team.shortName || r.team.name}</span>
                 <span className="text-cream/25 tabular-nums w-8 text-right shrink-0">{r.played}pj</span>
                 <span className="text-warm-white font-bold tabular-nums w-6 text-right shrink-0">{r.points}</span>
               </div>
@@ -190,10 +210,11 @@ function PositionPanel({
     setLoading(true);
     setError(null);
     try {
-      const key = rankingKey(posKey);
+      const sheetUrl = await resolveSheetUrl();
+      const key = rankingKey(posKey, sheetUrl);
       let list = cacheGet<GrandTPlayer[]>(key);
       if (!list) {
-        list = await getGrandTRanking(SHEET_URL, posKey);
+        list = await getGrandTRanking(sheetUrl, posKey);
         cacheSet(key, list, RANKING_TTL_MS);
       }
       setPlayers(list);
@@ -339,7 +360,7 @@ export default function GrandTTab() {
 
   return (
     <div className="h-full overflow-auto p-4">
-      <div className="max-w-[1400px] mx-auto grid grid-cols-1 xl:grid-cols-[280px_1fr_280px] gap-4 items-start">
+      <div className="max-w-[1400px] mx-auto grid grid-cols-1 xl:grid-cols-[320px_1fr_320px] gap-4 items-start">
         {/* Columna izquierda: Goleadores / Asistidores reales (Promiedos) */}
         <div className="space-y-4 order-2 xl:order-1">
           <StatColumn title="Goleadores" icon="⚽" stats={goleadores} teamNameById={teamNameById} recommendedNames={recommendedNames} />

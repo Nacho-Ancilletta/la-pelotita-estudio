@@ -75,3 +75,24 @@ export async function getGrandTRanking(sheetUrl: string, position: GrandTPositio
   const html = await res.text();
   return parseSheetHtml(html);
 }
+
+export interface GrandTLatestSheet {
+  sheetUrl: string;
+  title: string;
+  published: string;
+}
+
+// Busca en el proxy el post más reciente de la categoría "Estadísticas" de
+// planetagrandt.com.ar y devuelve el link a la planilla de esa fecha. Null
+// si el feed falla o no trae el link — quien llama decide el fallback.
+export async function getLatestGrandTSheet(): Promise<GrandTLatestSheet | null> {
+  try {
+    const res = await fetch(`/api/grandt?discover=1`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (!data?.sheetUrl) return null;
+    return data as GrandTLatestSheet;
+  } catch {
+    return null;
+  }
+}
