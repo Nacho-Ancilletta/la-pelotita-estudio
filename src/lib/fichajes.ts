@@ -1,7 +1,9 @@
 // fichajes.com — tercera fuente, SOLO para lo que Promiedos/ESPN no
-// exponen por jugador: minutos, partidos, tarjetas, paradas, vallas
-// invictas de arquero/defensor. Goles/asistencias siguen viniendo de
-// Promiedos (fuente principal para eso, sin tocar).
+// exponen por jugador: minutos, partidos, tarjetas, paradas. Goles/
+// asistencias siguen viniendo de Promiedos (fuente principal para eso,
+// sin tocar). Vallas invictas de arquero ya NO sale de acá — el archivo
+// manual src/data/refuerzo-magico-data-2026.json trae una lista más
+// confiable (FootyStats, "cleanSheetsGoalkeepers").
 //
 // Investigación previa (confirmada a mano antes de integrar, ago 2026):
 // robots.txt de fichajes.com permite todo, sin bloqueo/challenge activo
@@ -22,6 +24,12 @@
 // para esto, el mismo patrón de URL se arma directo con el slug que ya
 // viene en la tabla de ranking (ver photoUrlFromSlug).
 
+// "porteria-a-cero" (vallas invictas de arquero) ya NO se pide acá — el
+// archivo manual src/data/refuerzo-magico-data-2026.json trae
+// "cleanSheetsGoalkeepers" (FootyStats) como fuente priorizada para eso
+// (pedido explícito: más confiable que la tabla equivalente de esta
+// fuente, que en su nota propia advierte que puede mezclar jugadores de
+// campo a partir del 2° puesto).
 const CATEGORY_SLUGS = {
   minutes: "minutos-disputados",
   matches: "partidos-disputados",
@@ -29,17 +37,16 @@ const CATEGORY_SLUGS = {
   yellowCards: "tarjetas-amarillas",
   redCardsDirect: "tarjetas-rojas-directas",
   redCardsDouble: "tarjetas-rojas-por-dos-amarillas",
-  cleanSheets: "porteria-a-cero",
 } as const;
 
 // Cada categoría (excepto minutos-disputados, ~140 filas) solo lista el
 // top ~20-24 de TODA la liga en esa estadística puntual — confirmado a
 // mano (paradas-realizadas: 20, tarjetas-amarillas: 23, tarjetas-rojas-*:
-// 24 c/u, porteria-a-cero: 20). No es "cada jugador tiene este dato", es
-// "estos ~20 son los líderes de la liga en esto". Por eso cada campo es
-// number|null: null = el jugador no aparece en ESA tabla puntual (no
-// necesariamente 0 — puede jugar mucho y no estar entre los ~20 con más
-// tarjetas, por ejemplo), no se inventa un 0 falso.
+// 24 c/u). No es "cada jugador tiene este dato", es "estos ~20 son los
+// líderes de la liga en esto". Por eso cada campo es number|null: null =
+// el jugador no aparece en ESA tabla puntual (no necesariamente 0 —
+// puede jugar mucho y no estar entre los ~20 con más tarjetas, por
+// ejemplo), no se inventa un 0 falso.
 export interface FichajesPlayerData {
   name: string;
   slug: string;
@@ -48,7 +55,6 @@ export interface FichajesPlayerData {
   saves: number | null;
   yellowCards: number | null;
   redCards: number | null;
-  cleanSheets: number | null;
 }
 
 export interface FichajesProfile { team: string | null; photo: string | null; }
@@ -123,7 +129,7 @@ export async function getFichajesData(): Promise<Map<string, FichajesPlayerData>
   function ensure(slug: string, name: string): FichajesPlayerData {
     let p = byId.get(slug);
     if (!p) {
-      p = { name, slug, minutes: null, matches: null, saves: null, yellowCards: null, redCards: null, cleanSheets: null };
+      p = { name, slug, minutes: null, matches: null, saves: null, yellowCards: null, redCards: null };
       byId.set(slug, p);
     }
     return p;
@@ -143,7 +149,6 @@ export async function getFichajesData(): Promise<Map<string, FichajesPlayerData>
       else if (field === "yellowCards") p.yellowCards = r.total;
       else if (field === "redCardsDirect") p.redCards = (p.redCards ?? 0) + r.total;   // directas + por doble amarilla se suman
       else if (field === "redCardsDouble") p.redCards = (p.redCards ?? 0) + r.total;   // en un solo total de "rojas" (pedido no las separa en la ficha)
-      else if (field === "cleanSheets") p.cleanSheets = r.total;
     }
   }
 
@@ -197,28 +202,3 @@ export async function getPlayerProfile(slug: string): Promise<FichajesProfile> {
   return result;
 }
 
-export interface FichajesGoalkeeper extends FichajesPlayerData { team: string | null; photo: string | null; }
-
-// Arqueros = unión de quienes aparecen en paradas o vallas invictas — las
-// únicas 2 tablas de esta fuente realmente específicas de arquero (si un
-// arquero no atajó ni sumó valla invicta en toda la temporada no tiene
-// sentido recomendarlo igual). Ninguna otra fuente del proyecto tiene
-// esto por jugador — antes de sumar fichajes.com, Arquero no tenía pool
-// de candidatos en absoluto.
-export async function getGoalkeeperCandidates(): Promise<FichajesGoalkeeper[]> {
-  const key = "pelotita_fichajes_arqueros_v1";
-  const cached = cacheGet<FichajesGoalkeeper[]>(key);
-  if (cached) return cached;
-
-  const data = await getFichajesData();
-  const keepers = [...data.values()].filter((p) => (p.saves ?? 0) > 0 || (p.cleanSheets ?? 0) > 0);
-  const enriched: FichajesGoalkeeper[] = [];
-  for (let i = 0; i < keepers.length; i++) {
-    if (blockedThisSession) break;
-    if (i > 0) await delay(280);
-    const profile = await getPlayerProfile(keepers[i].slug);
-    enriched.push({ ...keepers[i], team: profile.team, photo: profile.photo ?? photoUrlFromSlug(keepers[i].slug) });
-  }
-  cacheSet(key, enriched, STATS_TTL_MS);
-  return enriched;
-}

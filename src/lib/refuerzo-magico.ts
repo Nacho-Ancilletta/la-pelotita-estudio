@@ -1,17 +1,91 @@
 // Refuerzo Mágico — recomendación automática de 4 jugadores por equipo,
-// decidiendo puertas adentro en qué posiciones reforzar. Fuentes: SOLO
-// Promiedos (goles/asistencias, tabla anual) + fichajes.com (minutos,
-// partidos, tarjetas, paradas, vallas invictas — lo que Promiedos/ESPN NO
-// tienen, confirmado en el Paso 0 de esta tarea). Gran DT solo para el
-// filtro de forma (Paso 4.3). CERO API-Football — no queda ni un import.
+// decidiendo puertas adentro en qué posiciones reforzar. Fuentes:
+// Promiedos (goles/asistencias, sin tocar) + fichajes.com (minutos/
+// partidos/tarjetas/paradas) + src/data/refuerzo-magico-data-2026.json
+// (xG y diagnóstico de necesidad YA CALCULADOS a mano por Ignacio desde
+// FootyStats, más una lista de arqueros por vallas invictas) + Gran DT
+// (filtro/desempate de forma). CERO API-Football.
 //
-// Todo el diagnóstico de necesidad y la composición de posiciones es
-// interno — nunca se expone en la UI (pedido explícito).
+// ── El archivo de datos manual es la única fuente de verdad del
+// diagnóstico ────────────────────────────────────────────────────────
+// diagnosticoNecesidades[equipo] YA trae la brecha dominante y la
+// composición sugerida (misma fórmula del Paso 3 original, ya aplicada)
+// — NO se recalcula acá, se lee directo. Import estático de TypeScript
+// (`resolveJsonModule` habilitado en tsconfig): si Ignacio edita el JSON
+// y se vuelve a deployar, el valor nuevo se usa solo, sin tocar código.
+// Movido de "Refuerzo Mágico/refuerzo-magico-data-2026.json" (carpeta
+// con espacio y tilde en la raíz del repo, poco estándar) a
+// src/data/, ruta convencional de Next.js para datos estáticos.
+//
+// Los nombres de equipo del JSON (FootyStats, ej. "CA Tucuman") no
+// coinciden con los de Promiedos (ej. "Atlético Tucumán") — se
+// resolvió a mano un mapeo id-Promiedos → nombre-JSON para los 30
+// equipos (PROMIEDOS_ID_TO_JSON_TEAM), verificado con un matcher por
+// tokens antes de hardcodearlo (encontró y corrigió una colisión real:
+// "CA Independiente" matcheaba mal contra "Independiente Rivadavia").
+//
+// ── Arquero: ahora SÍ tiene una fuente confiable ────────────────────
+// playerStats.cleanSheetsGoalkeepers del JSON (FootyStats, página
+// dedicada de arqueros) es la fuente PRIORIZADA para vallas invictas de
+// arquero — el propio archivo advierte que la lista equivalente del
+// sitio (cleanSheetsPlayersPageNote) puede mezclar jugadores de campo a
+// partir del 2° puesto, no se usa. fichajes.com complementa con
+// paradas/minutos/partidos/tarjetas vía cruce por nombre (mismo
+// criterio best-effort de todo cruce entre fuentes de este proyecto).
 
 import { getTablaPosiciones, PROMIEDOS_LEAGUES, type PromiedosStandingGroup } from "@/lib/promiedos";
 import { getGrandTRanking, getLatestGrandTSheet, type GrandTPosition } from "@/lib/grandt";
-import { getFichajesData, getGoalkeeperCandidates, bySurname, photoUrlFromSlug, type FichajesPlayerData } from "@/lib/fichajes";
-import { XG_DATA } from "@/lib/xg-data";
+import { getFichajesData, getPlayerProfile, bySurname, photoUrlFromSlug, type FichajesPlayerData } from "@/lib/fichajes";
+import RM_DATA_RAW from "@/data/refuerzo-magico-data-2026.json";
+
+interface RMDiagnostico {
+  ofensiva_score: number;
+  defensiva_score: number;
+  brecha_dominante: "OFENSIVA" | "DEFENSIVA" | "PAREJA";
+  composicion_sugerida: string;
+}
+interface RMDataFile {
+  diagnosticoNecesidades: Record<string, RMDiagnostico>;
+  playerStats: {
+    cleanSheetsGoalkeepers: { player: string; mp: number; cs: number; csPct: number }[];
+  };
+}
+const RM_DATA = RM_DATA_RAW as unknown as RMDataFile;
+
+// Mapeo validado a mano (script de matcheo por tokens contra los 30
+// nombres reales de Promiedos, ago 2026) — ver nota arriba.
+const PROMIEDOS_ID_TO_JSON_TEAM: Record<string, string> = {
+  "hcag": "CA Union de Santa Fe",
+  "hcch": "CS Independiente Rivadavia",
+  "ihe": "CA Independiente",
+  "ihh": "Newells Old Boys",
+  "hcbh": "CSD Defensa y Justicia",
+  "hbbh": "CA Sarmiento",
+  "iia": "Gimnasia y Esgrima La Plata",
+  "igg": "CA Boca Juniors",
+  "ihf": "CA Rosario Central",
+  "jche": "CA Talleres de Cordoba",
+  "igj": "CA Lanus",
+  "ihi": "CA Banfield",
+  "bbjbf": "Atletico Gimnasia y Esgrima de Mendoza",
+  "igi": "CA River Plate",
+  "ihg": "Racing Club de Avellaneda",
+  "ihb": "Argentinos Juniors",
+  "gbfc": "CA Tucuman",
+  "hchc": "Instituto AC Cordoba",
+  "fhid": "CA Belgrano de Cordoba",
+  "iie": "CA Huracan",
+  "beafh": "CA Central Cordoba de Santiago del Estero",
+  "iid": "CA Tigre",
+  "ihc": "Club Atletico Velez Sarsfield",
+  "hcah": "CA Platense",
+  "igh": "Estudiantes de La Plata",
+  "bheaf": "AA Estudiantes de Rio Cuarto",
+  "igf": "CA San Lorenzo de Almagro",
+  "jafb": "CA Barracas Central",
+  "hccd": "CA Aldosivi",
+  "bbjea": "CD Riestra",
+};
 
 const LEAGUE_SLUG = "arg.1" as const;
 
@@ -48,9 +122,10 @@ export interface FitResult { score: number; }
 export type RMResult = RMCandidate & { fit: FitResult };
 
 function normalize(s: string): string {
-  return s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
+  return s.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/['']/g, "").toLowerCase().trim();
 }
 function clamp(v: number, min: number, max: number) { return Math.min(max, Math.max(min, v)); }
+function delay(ms: number) { return new Promise((r) => setTimeout(r, ms)); }
 
 // ── Caché — mismo patrón {data,ts,ttlMs} que el resto de la app ─────────
 function cacheGet<T>(key: string): T | null {
@@ -88,6 +163,20 @@ export async function getTeams(): Promise<RMTeam[]> {
   return teams;
 }
 
+// ── Composición de posiciones — leída directo del JSON, no recalculada ──
+function parseComposition(str: string): RMPosition[] {
+  if (str.includes("arquero")) return ["ARQ", "DEF", "DEF", "VOL"];
+  if (str.includes("delanteros")) return ["DEL", "DEL", "VOL", "VOL"];
+  return ["DEL", "VOL", "DEF", "DEF"]; // "2 ofensivos + 2 defensivos"
+}
+
+function getComposition(team: RMTeam): RMPosition[] {
+  const jsonKey = PROMIEDOS_ID_TO_JSON_TEAM[team.id];
+  const diag = jsonKey ? RM_DATA.diagnosticoNecesidades[jsonKey] : undefined;
+  if (!diag) return ["DEL", "VOL", "DEF", "DEF"]; // no debería pasar, los 30 están mapeados — fallback defensivo
+  return parseComposition(diag.composicion_sugerida);
+}
+
 // ── Promiedos: pool de candidatos de campo (DEF/VOL/DEL) ────────────────
 async function fetchRawLeagueData(): Promise<Record<string, unknown>> {
   const meta = PROMIEDOS_LEAGUES[LEAGUE_SLUG];
@@ -111,7 +200,7 @@ function buildPromiedosPool(raw: any, teamNameById: Map<string, { name: string; 
   function ensure(obj: any): RMCandidate | null {
     const name: string | undefined = obj?.name;
     const bucket = PROMIEDOS_POSITION_TO_BUCKET[obj?.position];
-    if (!name || !bucket || bucket === "ARQ") return null; // arqueros salen de fichajes.com, no de acá
+    if (!name || !bucket || bucket === "ARQ") return null; // arqueros salen del JSON, no de acá
     const id = normalize(name);
     let c = pool.get(id);
     if (!c) {
@@ -141,8 +230,11 @@ function buildPromiedosPool(raw: any, teamNameById: Map<string, { name: string; 
 }
 
 // Enriquece un candidato de campo con datos de fichajes.com (minutos,
-// partidos, tarjetas, vallas invictas para defensores) — cruce por
-// apellido, best-effort (ver nota en lib/fichajes.ts).
+// partidos, tarjetas) — cruce por apellido, best-effort (ver nota en
+// lib/fichajes.ts). Vallas invictas de Defensor queda siempre sin dato:
+// ninguna fuente integrada atribuye clean sheets a un defensor puntual
+// (ni fichajes.com ni el JSON — "cleanSheetsGoalkeepers" es, como el
+// nombre indica, solo de arqueros).
 function enrichWithFichajes(c: RMCandidate, bySname: Map<string, FichajesPlayerData>): RMCandidate {
   const fd = bySname.get(normalize(c.surname));
   if (!fd) return c;
@@ -150,26 +242,68 @@ function enrichWithFichajes(c: RMCandidate, bySname: Map<string, FichajesPlayerD
     ...c,
     minutes: fd.minutes, matches: fd.matches,
     yellowCards: fd.yellowCards, redCards: fd.redCards,
-    cleanSheets: c.position === "DEF" ? fd.cleanSheets : null, // solo relevante como ficha de Defensor
     photo: photoUrlFromSlug(fd.slug),
   };
 }
 
-export async function getCandidatePool(position: RMPosition): Promise<RMCandidate[]> {
-  if (position === "ARQ") {
-    const key = "pelotita_rm_pool_arq_v1";
-    const cached = cacheGet<RMCandidate[]>(key);
-    if (cached) return cached;
-    const keepers = await getGoalkeeperCandidates();
-    const pool: RMCandidate[] = keepers.map((k) => ({
-      id: k.slug, name: k.name, surname: k.slug.split("-").slice(-1)[0] ?? k.name,
-      teamId: null, teamName: k.team ?? "—", position: "ARQ",
-      photo: k.photo, goals: 0, assists: 0, minutes: k.minutes, matches: k.matches,
-      yellowCards: k.yellowCards, redCards: k.redCards, saves: k.saves, cleanSheets: k.cleanSheets,
-    }));
-    cacheSet(key, pool, POOL_TTL_MS);
-    return pool;
+// ── Arqueros: JSON (cleanSheetsGoalkeepers) + fichajes.com (paradas,
+// minutos, tarjetas, equipo/foto vía ficha individual) ─────────────────
+function tokenizeForMatch(s: string): string[] {
+  return normalize(s).split(/[\s-]+/).filter((t) => t.length > 2);
+}
+// Cruce por nombre completo (JSON) contra slug (fichajes.com) — mismo
+// criterio best-effort de token-overlap que se usó para validar el mapeo
+// de equipos, acá corrido en tiempo real sobre ~15 arqueros.
+function findFichajesMatch(fullName: string, pool: FichajesPlayerData[]): FichajesPlayerData | undefined {
+  const target = new Set(tokenizeForMatch(fullName));
+  let best: FichajesPlayerData | undefined, bestScore = 0;
+  for (const p of pool) {
+    const slugTokens = tokenizeForMatch(p.slug);
+    const shared = slugTokens.filter((t) => target.has(t)).length;
+    const score = shared / Math.max(1, slugTokens.length);
+    if (score > bestScore) { bestScore = score; best = p; }
   }
+  return bestScore >= 0.5 ? best : undefined;
+}
+
+async function getGoalkeeperPool(): Promise<RMCandidate[]> {
+  const key = "pelotita_rm_pool_arq_v2";
+  const cached = cacheGet<RMCandidate[]>(key);
+  if (cached) return cached;
+
+  const fichajesData = await getFichajesData();
+  const fichajesPool = [...fichajesData.values()];
+  const keepers = RM_DATA.playerStats.cleanSheetsGoalkeepers;
+
+  const pool: RMCandidate[] = [];
+  for (let i = 0; i < keepers.length; i++) {
+    const gk = keepers[i];
+    const match = findFichajesMatch(gk.player, fichajesPool);
+    if (i > 0) await delay(280); // 250-300ms entre pedidos, criterio conservador (mismo que ESPN)
+    const profile = match ? await getPlayerProfile(match.slug) : { team: null, photo: null };
+    pool.push({
+      id: match?.slug ?? normalize(gk.player),
+      name: gk.player,
+      surname: gk.player.split(/\s+/).slice(-1)[0] ?? gk.player,
+      teamId: null, // el JSON no trae team_id de Promiedos — se resuelve por nombre (ver recommend())
+      teamName: profile.team ?? "—",
+      position: "ARQ",
+      photo: profile.photo ?? (match ? photoUrlFromSlug(match.slug) : null),
+      goals: 0, assists: 0,
+      minutes: match?.minutes ?? null, // sin estimar — si fichajes no matcheó, queda sin dato
+      matches: gk.mp, // el JSON siempre lo trae para estos 15, es la fuente priorizada
+      yellowCards: match?.yellowCards ?? null,
+      redCards: match?.redCards ?? null,
+      saves: match?.saves ?? null,
+      cleanSheets: gk.cs, // JSON siempre gana acá
+    });
+  }
+  cacheSet(key, pool, POOL_TTL_MS);
+  return pool;
+}
+
+export async function getCandidatePool(position: RMPosition): Promise<RMCandidate[]> {
+  if (position === "ARQ") return getGoalkeeperPool();
 
   const key = `pelotita_rm_pool_v1_${LEAGUE_SLUG}`;
   const cached = cacheGet<RMCandidate[]>(key);
@@ -183,66 +317,6 @@ export async function getCandidatePool(position: RMPosition): Promise<RMCandidat
     cacheSet(key, allOutfield, POOL_TTL_MS);
   }
   return allOutfield.filter((c) => c.position === position);
-}
-
-// ── Paso 2/3: perfil de necesidad + composición de posiciones (interno) ──
-interface NeedProfile {
-  composition: RMPosition[];
-  teamPosition: number; // posición en la tabla anual (1=puntero) — para el ajuste de calidad de equipo (Paso 6.3)
-  totalTeams: number;
-}
-
-function pctDeviation(value: number, avg: number): number {
-  return avg !== 0 ? ((value - avg) / avg) * 100 : 0;
-}
-
-async function getNeedProfile(team: RMTeam, groups: PromiedosStandingGroup[]): Promise<NeedProfile> {
-  const annual = groups.flatMap((g) => g.tables).find((t) => /anual/i.test(t.name));
-  const rows = annual?.rows ?? [];
-  const row = rows.find((r) => r.team.id === team.id);
-  const withGames = rows.filter((r) => r.played > 0);
-  const leagueAvgFor = withGames.length ? withGames.reduce((s, r) => s + r.goalsFor / r.played, 0) / withGames.length : 0;
-  const leagueAvgAgainst = withGames.length ? withGames.reduce((s, r) => s + r.goalsAgainst / r.played, 0) / withGames.length : 0;
-  const forPerGame = row && row.played > 0 ? row.goalsFor / row.played : 0;
-  const againstPerGame = row && row.played > 0 ? row.goalsAgainst / row.played : 0;
-
-  const golesForDev = pctDeviation(forPerGame, leagueAvgFor);
-  const golesAgainstDev = pctDeviation(againstPerGame, leagueAvgAgainst);
-
-  // xG: promedio de liga calculado solo entre los equipos que sí tienen
-  // xG cargado a mano (Paso 1) — si ninguno lo tiene todavía, esta pata
-  // del diagnóstico se ignora y el cálculo sigue solo con goles reales.
-  const xg = XG_DATA[team.id];
-  let xgForDev = 0, xgAgainstDev = 0, hasXG = false;
-  if (xg?.xGFor != null && xg?.xGAgainst != null) {
-    const loaded = Object.values(XG_DATA).filter((t) => t.xGFor != null && t.xGAgainst != null);
-    if (loaded.length > 0) {
-      const avgXgFor = loaded.reduce((s, t) => s + (t.xGFor as number), 0) / loaded.length;
-      const avgXgAgainst = loaded.reduce((s, t) => s + (t.xGAgainst as number), 0) / loaded.length;
-      xgForDev = pctDeviation(xg.xGFor, avgXgFor);
-      xgAgainstDev = pctDeviation(xg.xGAgainst, avgXgAgainst);
-      hasXG = true;
-    }
-  }
-
-  // Brecha ofensiva: solo la parte "por debajo del promedio" cuenta (un
-  // equipo que marca MÁS que el promedio no tiene brecha ofensiva por
-  // eso). Ídem brecha defensiva con "por encima del promedio" en contra.
-  const offFromGoals = Math.max(0, -golesForDev);
-  const offFromXG = hasXG ? Math.max(0, -xgForDev) : 0;
-  const brechaOfensiva = hasXG ? (offFromGoals + offFromXG) / 2 : offFromGoals;
-
-  const defFromGoals = Math.max(0, golesAgainstDev);
-  const defFromXG = hasXG ? Math.max(0, xgAgainstDev) : 0;
-  const brechaDefensiva = hasXG ? (defFromGoals + defFromXG) / 2 : defFromGoals;
-
-  const diff = brechaDefensiva - brechaOfensiva;
-  let composition: RMPosition[];
-  if (diff > 15) composition = ["ARQ", "DEF", "DEF", "VOL"];
-  else if (-diff > 15) composition = ["DEL", "DEL", "VOL", "VOL"];
-  else composition = ["DEL", "VOL", "DEF", "DEF"]; // parejo: 2 ofensivos + 2 defensivos
-
-  return { composition, teamPosition: row?.position ?? Math.ceil(rows.length / 2), totalTeams: rows.length || 30 };
 }
 
 // ── Gran DT: filtro DURO de forma (Paso 4.3) ────────────────────────────
@@ -267,10 +341,6 @@ async function getGrandTPointsBySurname(position: RMPosition): Promise<Map<strin
 }
 
 // ── Paso 6: scoring 0-100, normalizado por 90' ──────────────────────────
-// Pesos por posición — criterio futbolístico: para un delantero pesa más
-// goles/90 que asistencias/90, para un mediocampista es al revés (más
-// asistencias/pases de gol que goles); un defensor pondera fuerte vallas
-// invictas + disciplina; un arquero, paradas/90 + vallas invictas.
 const WEIGHTS: Record<RMPosition, { key: keyof RMCandidate; per90?: boolean; invert?: boolean; weight: number }[]> = {
   ARQ: [
     { key: "saves", per90: true, weight: 0.40 },
@@ -302,18 +372,14 @@ function per90(value: number, minutes: number): number {
   return minutes > 0 ? (value / minutes) * 90 : 0;
 }
 
-// raw[candidato][dimensión] = número, o null si fichajes.com no tiene ese
-// dato para ese jugador puntual (fuera del top ~20-24 de esa categoría —
-// ver nota en RMCandidate). null NO es lo mismo que 0.
+// raw[candidato][dimensión] = número, o null si no hay dato para ese
+// jugador puntual en esa dimensión — null NO es lo mismo que 0.
 function scoreCandidates(candidates: RMCandidate[], position: RMPosition): RMResult[] {
   const dims = WEIGHTS[position];
   const raw: (number | null)[][] = candidates.map((c) => dims.map((d) => {
     const v = c[d.key] as number | null;
     if (v == null) return null; // sin dato para esta dimensión — no se inventa un 0
-    // Vallas invictas solo pesan si el candidato tiene 900'+ en el año
-    // (Paso 4.4) — se ve el número real en la ficha igual, esto solo
-    // afecta el peso en el cálculo.
-    if (d.key === "cleanSheets" && (c.minutes ?? 0) < MIN_MINUTES_FOR_CLEAN_SHEETS) return 0;
+    if (d.key === "cleanSheets" && (c.minutes ?? 0) < MIN_MINUTES_FOR_CLEAN_SHEETS) return 0; // Paso 4.4
     return d.per90 ? per90(v, c.minutes ?? 0) : v;
   }));
   const poolMax = dims.map((_, i) => Math.max(1e-6, ...raw.map((r) => r[i] ?? 0)));
@@ -331,16 +397,13 @@ function scoreCandidates(candidates: RMCandidate[], position: RMPosition): RMRes
     });
     // El ajuste de calidad de equipo (Paso 6.3) se aplica DESPUÉS, en
     // applyTeamQualityAdjustment — necesita la posición en tabla de cada
-    // candidato, no solo la del equipo buscado, así que no tiene sentido
-    // calcularlo acá adentro. clamp con headroom (1.3, no 1.0) para que
-    // ese ajuste posterior tenga margen antes del clamp final a 100.
+    // candidato, no solo la del equipo buscado. clamp con headroom (1.3,
+    // no 1.0) para que ese ajuste posterior tenga margen antes del clamp final.
     const base = clamp(weightSum > 0 ? weighted / weightSum : 0, 0, 1.3);
     return { ...c, fit: { score: Math.round(clamp(base * 100, 0, 100)) } };
   });
 }
 
-// Ajuste de calidad de equipo aplicado como paso separado (necesita la
-// posición en tabla de CADA candidato, no solo del equipo buscado).
 function applyTeamQualityAdjustment(results: RMResult[], teamPositionById: Map<string, number>, totalTeams: number): RMResult[] {
   return results.map((r) => {
     const pos = r.teamId ? teamPositionById.get(r.teamId) : undefined;
@@ -352,22 +415,23 @@ function applyTeamQualityAdjustment(results: RMResult[], teamPositionById: Map<s
 
 export async function recommend(team: RMTeam): Promise<{ picks: RMResult[]; composition: RMPosition[] }> {
   const groups = await getTablaPosiciones(LEAGUE_SLUG);
-  const need = await getNeedProfile(team, groups);
+  const composition = getComposition(team);
   const teamPositionById = new Map<string, number>();
   for (const g of groups) for (const t of g.tables) for (const r of t.rows) teamPositionById.set(r.team.id, r.position);
+  const totalTeams = teamPositionById.size || 30;
 
   const needByPosition = new Map<RMPosition, number>();
-  for (const p of need.composition) needByPosition.set(p, (needByPosition.get(p) ?? 0) + 1);
+  for (const p of composition) needByPosition.set(p, (needByPosition.get(p) ?? 0) + 1);
 
   const picks: RMResult[] = [];
   for (const [position, count] of needByPosition) {
-    const pool = (await getCandidatePool(position)).filter((c) => c.teamId !== team.id || position === "ARQ");
-    // Para arquero no hay teamId confiable siempre (fichajes.com no
-    // siempre resuelve equipo) — se excluye por NOMBRE contra el plantel
-    // conocido del equipo buscado en vez de por ID, best-effort.
+    const pool = await getCandidatePool(position);
+    // Para arquero no hay teamId confiable siempre (el JSON no trae
+    // team_id de Promiedos) — se excluye por NOMBRE contra el equipo
+    // buscado en vez de por ID, best-effort.
     const eligible = position === "ARQ"
       ? pool.filter((c) => !c.teamName || normalize(c.teamName) !== normalize(team.shortName || team.name))
-      : pool;
+      : pool.filter((c) => c.teamId !== team.id);
 
     const grandTPoints = await getGrandTPointsBySurname(position);
     const leaderPoints = Math.max(0, ...eligible.map((c) => grandTPoints.get(normalize(c.surname)) ?? 0));
@@ -378,10 +442,10 @@ export async function recommend(team: RMTeam): Promise<{ picks: RMResult[]; comp
       ? eligible.filter((c) => (grandTPoints.get(normalize(c.surname)) ?? 0) >= leaderPoints * 0.2)
       : eligible;
 
-    const scored = applyTeamQualityAdjustment(scoreCandidates(filtered, position), teamPositionById, need.totalTeams);
+    const scored = applyTeamQualityAdjustment(scoreCandidates(filtered, position), teamPositionById, totalTeams);
     const top = scored.sort((a, b) => b.fit.score - a.fit.score).slice(0, count);
     picks.push(...top);
   }
 
-  return { picks, composition: need.composition };
+  return { picks, composition };
 }
