@@ -5,6 +5,7 @@ import TacticoTab from "@/components/tabs/TacticoTab";
 import EnVivoTab from "@/components/tabs/EnVivoTab";
 import GrandTTab from "@/components/tabs/GrandTTab";
 import FantasyPremierTab from "@/components/tabs/FantasyPremierTab";
+import RefuerzoMagicoTab from "@/components/tabs/RefuerzoMagicoTab";
 import ApiQuotaCounter from "@/components/ApiQuotaCounter";
 
 const TABS = [
@@ -12,6 +13,7 @@ const TABS = [
   { id: "vivo",      label: "FIXTURE" },
   { id: "grandt",    label: "GRAN DT" },
   { id: "fantasy",   label: "FANTASY PREMIER" },
+  { id: "magico",    label: "REFUERZO MÁGICO" },
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
@@ -55,6 +57,7 @@ export default function Home() {
         {activeTab === "vivo"      && <EnVivoTab />}
         {activeTab === "grandt"    && <GrandTTab />}
         {activeTab === "fantasy"   && <FantasyPremierTab />}
+        {activeTab === "magico"    && <RefuerzoMagicoTab />}
       </div>
     </div>
   );
