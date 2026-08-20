@@ -1,59 +1,54 @@
 // Buscador de Refuerzos — recomendación por posición adaptada al equipo.
 //
-// ── Rediseño ago 2026: por qué se usa cada fuente ──────────────────────────
-// El plan gratis de API-Football SOLO da acceso a temporadas 2022-2024
-// (confirmado a mano: season=2025/2026 devuelven error "Free plans do not
-// have access to this season"). Eso hacía que el Buscador mostrara goles/
-// asistencias/tarjetas de 2024 disfrazadas de "actuales". Se corrigió así:
+// ── Rediseño v3 (ago 2026): fuera API-Football por completo ────────────
+// v1/v2 dependían de API-Football para bio o stats — el plan gratis solo
+// da temporadas 2022-2024, inútil para "temporada actual". v3 saca esa
+// dependencia entera: SOLO Promiedos (lib/promiedos.ts, sin tocar, mismo
+// endpoint que ya usa Gran DT) para estadísticas de rendimiento —
+// 100% temporada 2026 (Apertura + lo jugado del Clausura).
 //
-// - PROMIEDOS (lib/promiedos.ts, sin tocar) es ahora la fuente de TODO lo
-//   que es estadística de rendimiento: goleadores, asistidores, tarjetas,
-//   tabla de posiciones (para inferir estilo de equipo). Es 100% temporada
-//   2026 en curso — el mismo dato que ya usa Gran DT.
-// - API-FOOTBALL se usa SOLO para lo que NO es estadística de rendimiento:
-//   foto, nacionalidad, edad — datos biográficos que no cambian de
-//   temporada a temporada. Para pedirlos igual hay que mandar season=2024
-//   (única que el plan gratis acepta), pero el dato que se extrae de esa
-//   respuesta (player.photo/nationality/age) es el mismo sin importar qué
-//   season se haya pedido — no es un dato de rendimiento "viejo", es un
-//   dato biográfico que da lo mismo. Se busca por nombre (best-effort,
-//   sin ID compartido entre fuentes) SOLO para los 4 finalistas + el
-//   plantel actual en esa posición, no para todo el pool — para no gastar
-//   cuota de más.
-// - ESPN (lib/espn.ts, sin tocar): revisado, no expone estadísticas de
-//   jugador por temporada (solo por partido individual — goleadores de un
-//   partido puntual, stats de equipo). No se integra acá por esa razón,
-//   no por elección.
-//
-// ── Limitaciones reales, no maquilladas ────────────────────────────────
-// - Promiedos NO expone minutos jugados ni partidos jugados por jugador
-//   en ningún endpoint disponible — no se puede normalizar "por 90
-//   minutos" como se hacía antes con API-Football. Los puntajes usan
-//   totales acumulados tal cual, lo que favorece a quien jugó más
-//   partidos — no hay forma de corregir esto sin ese dato.
-// - Promiedos NO tiene estadística de jugador individual para ARQUERO en
-//   ninguna tabla (goleadores/asistidores/tarjetas son, lógicamente, casi
-//   todos de campo) — la posición Arquero no tiene pool de candidatos
-//   real, se corta antes de intentar puntuar y se avisa en la UI.
-// - Para DEFENSOR no hay duelos ganados, intercepciones, despejes ni % de
-//   pases en ninguna fuente 2026 — el puntaje de Defensor se arma con
-//   disciplina (tarjetas, faltas) + aporte ofensivo ocasional. Es un
-//   proxy más débil que el de Delantero/Mediocampista, se documenta en la
-//   UI, no se disimula.
+// ── Investigación previa a este rediseño ────────────────────────────────
+// - ESPN (lib/espn.ts, sin tocar) SÍ tiene atajadas/goles recibidos/goles/
+//   asistencias/tarjetas por jugador — confirmado en `summary.rosters[].
+//   roster[].stats` — pero es POR PARTIDO INDIVIDUAL, no acumulado de
+//   temporada. Sumar esto para toda la liga implicaría pedir el summary
+//   de cada partido jugado (decenas/cientos), no se hizo por costo/
+//   latencia — no por límite de cuota, es una fuente distinta a
+//   API-Football (sin rate limit duro) pero el volumen de pedidos para
+//   agregar una temporada completa de TODOS los equipos es
+//   desproporcionado para este alcance.
+// - NINGUNA fuente (Promiedos ni ESPN) expone foto de cara del jugador —
+//   Promiedos no tiene el campo en absoluto; ESPN solo trae imagen de
+//   camiseta genérica (`jerseyImages`), no headshot. Todas las tarjetas
+//   usan silueta genérica — no es una limitación de implementación, es
+//   que el dato no existe en ninguna fuente disponible.
+// - Ninguna fuente da "vallas invictas" ATRIBUIBLE A UN ARQUERO puntual
+//   (solo a nivel equipo, vía goles en contra de la tabla de posiciones)
+//   ni minutos/partidos jugados por jugador. Arquero se queda sin pool de
+//   candidatos por esto (ver recommend() más abajo) — Defensor/
+//   Mediocampista/Delantero muestran esos campos vacíos en la ficha
+//   (nunca inventados) pero sí tienen goles/asistencias/tarjetas reales.
 // - La columna de Promiedos rotulada "Barridas ganadas" en realidad trae
-//   el campo `TotalFoulsConceded` (faltas cometidas) — el nombre de la
-//   columna en el sitio está mal puesto, NO son tackles/barridas ganadas.
-//   Se usa acá por lo que realmente es (faltas cometidas, menos es mejor).
+//   el campo `TotalFoulsConceded` (faltas cometidas) — mal rotulada en el
+//   sitio. Se usa acá SOLO como señal interna de scoring para Defensor
+//   (menos faltas = mejor), no se muestra en la ficha (no estaba pedido).
+//
+// ── xG manual (Paso 1) ───────────────────────────────────────────────
+// Ninguna de las 3 fuentes integradas en el proyecto tiene xG. Se carga a
+// mano por equipo (localStorage, sin TTL — se actualiza cuando el usuario
+// lo actualiza, no automáticamente) y se combina con goles reales de
+// Promiedos para el perfil de necesidad.
+//
+// ── Diagnóstico silencioso (Paso 2/5/7) ──────────────────────────────
+// El perfil de necesidad y el desempate con Gran DT se calculan acá pero
+// NUNCA se exponen como texto en la UI (a pedido explícito) — el
+// componente solo pinta los 4 resultados finales. El cálculo en sí queda
+// documentado en comentarios como el resto del proyecto.
 
-import {
-  getTablaPosiciones, PROMIEDOS_LEAGUES,
-  type PromiedosStandingGroup,
-} from "@/lib/promiedos";
-import { updateQuota } from "@/components/ApiQuotaCounter";
+import { getTablaPosiciones, PROMIEDOS_LEAGUES, type PromiedosStandingGroup } from "@/lib/promiedos";
+import { getGrandTRanking, getLatestGrandTSheet, type GrandTPosition } from "@/lib/grandt";
 
-const LEAGUE_SLUG = "arg.1" as const; // Liga Profesional Argentina — mismo scope que Gran DT
-const AF_LEAGUE_ID = "128";           // id de API-Football para la misma liga
-const AF_BIO_SEASON = "2024";         // única temporada que el plan gratis deja pedir — solo se usa para bio
+const LEAGUE_SLUG = "arg.1" as const; // Liga Profesional Argentina (Primera División) — mismo scope que Gran DT
 
 export type RefuerzoPosition = "ARQ" | "DEF" | "VOL" | "DEL";
 
@@ -71,8 +66,9 @@ const PROMIEDOS_POSITION_TO_BUCKET: Record<string, RefuerzoPosition> = {
 export interface RefuerzoTeam { id: string; name: string; shortName: string; }
 
 export interface RefuerzoCandidate {
-  id: string; // normalize(nombre) — Promiedos no da un ID de jugador único y estable
+  id: string;       // normalize(nombre) — Promiedos no da un ID de jugador estable
   name: string;
+  surname: string;  // Promiedos `sname` — para cruzar contra la planilla de Gran DT
   teamId: string;
   teamName: string;
   position: RefuerzoPosition;
@@ -80,33 +76,18 @@ export interface RefuerzoCandidate {
   assists: number;
   yellowCards: number;
   redCards: number;
-  foulsConceded: number; // ver nota arriba sobre "Barridas ganadas"
-  // Bio, best-effort vía API-Football (puede no encontrarse — nunca bloquea el resto)
-  photo: string | null;
-  nationality: string | null;
-  age: number | null;
+  foulsConceded: number; // interno, no se muestra — ver nota sobre "Barridas ganadas"
 }
 
-export interface FitResult { score: number; reasons: string[]; }
+export interface FitResult { score: number; }
 export type RefuerzoResult = RefuerzoCandidate & { fit: FitResult };
 
-export interface TeamStyle { goalsForAvg: number; goalsAgainstAvg: number; played: number; }
-
-export interface NeedProfile {
-  team: RefuerzoTeam;
-  position: RefuerzoPosition;
-  incumbents: RefuerzoCandidate[];
-  avgAge: number | null; // solo si se pudo enriquecer bio de algún incumbente
-  style: TeamStyle;
-  defensiveNeed: number;
-  offensiveNeed: number;
-  depthNeed: number;
-  summary: string;
-}
+export interface TeamXG { xGFor: number; xGAgainst: number; updatedAt: string; }
 
 function normalize(s: string): string {
   return s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
 }
+function clamp(v: number, min: number, max: number) { return Math.min(max, Math.max(min, v)); }
 
 // ── Caché — mismo patrón {data,ts,ttlMs} que el resto de la app ─────────
 function cacheGet<T>(key: string): T | null {
@@ -125,15 +106,30 @@ function cacheGet<T>(key: string): T | null {
 function cacheSet(key: string, d: unknown, ttlMs?: number) {
   localStorage.setItem(key, JSON.stringify({ data: d, ts: Date.now(), ttlMs }));
 }
-// El pool sale de Promiedos, que sí cambia semana a semana (a diferencia de
-// la temporada 2024 congelada de API-Football) — TTL 24hs, mismo criterio
-// que goleadores/asistencias en lib/promiedos.ts.
-const POOL_TTL_MS = 24 * 60 * 60 * 1000;
+const POOL_TTL_MS = 24 * 60 * 60 * 1000;       // Promiedos cambia con la fecha jugada
+const GRANDT_TTL_MS = 7 * 24 * 60 * 60 * 1000; // mismo TTL que ya usa Gran DT para su ranking
 
-// ── Promiedos: pool de candidatos + equipos (proxy sin tocar, mismo
-// endpoint que ya usa lib/promiedos.ts — esto NO lo modifica, solo pide el
-// mismo payload con su propio fetch para leer también las tablas de
-// Tarjetas/Faltas que las funciones exportadas de ahí no exponen). ───────
+// ── xG manual (Paso 1) — localStorage puro, sin TTL, edición directa ───
+const XG_KEY = "pelotita_refuerzos_xg";
+
+export function getAllTeamXG(): Record<string, TeamXG> {
+  try { return JSON.parse(localStorage.getItem(XG_KEY) ?? "{}"); } catch { return {}; }
+}
+export function setTeamXG(teamId: string, xGFor: number, xGAgainst: number) {
+  const all = getAllTeamXG();
+  all[teamId] = { xGFor, xGAgainst, updatedAt: new Date().toISOString() };
+  localStorage.setItem(XG_KEY, JSON.stringify(all));
+}
+export function clearTeamXG(teamId: string) {
+  const all = getAllTeamXG();
+  delete all[teamId];
+  localStorage.setItem(XG_KEY, JSON.stringify(all));
+}
+
+// ── Promiedos: equipos + pool de candidatos (mismo proxy que lib/
+// promiedos.ts, pedido con fetch propio para leer también Tarjetas/
+// Faltas que las funciones exportadas de ahí no exponen — no modifica
+// ese archivo). ──────────────────────────────────────────────────────
 async function fetchRawLeagueData(): Promise<Record<string, unknown>> {
   const meta = PROMIEDOS_LEAGUES[LEAGUE_SLUG];
   const res = await fetch(`/api/promiedos?endpoint=data&slug=${meta.urlName}&id=${meta.id}`);
@@ -156,15 +152,15 @@ function buildCandidatePool(raw: any, teamNameById: Map<string, { name: string; 
   function ensure(obj: any): RefuerzoCandidate | null {
     const name: string | undefined = obj?.name;
     const bucket = PROMIEDOS_POSITION_TO_BUCKET[obj?.position];
-    if (!name || !bucket) return null; // sin posición reconocida — se descarta, no se inventa
+    if (!name || !bucket) return null;
     const id = normalize(name);
     let c = pool.get(id);
     if (!c) {
       const teamId: string = obj.team_id ?? "";
       c = {
-        id, name, teamId, teamName: teamNameById.get(teamId)?.shortName ?? teamNameById.get(teamId)?.name ?? "",
+        id, name, surname: obj.sname || name.split(/\s+/).slice(-1)[0] || name,
+        teamId, teamName: teamNameById.get(teamId)?.shortName ?? teamNameById.get(teamId)?.name ?? "",
         position: bucket, goals: 0, assists: 0, yellowCards: 0, redCards: 0, foulsConceded: 0,
-        photo: null, nationality: null, age: null,
       };
       pool.set(id, c);
     }
@@ -188,7 +184,7 @@ function buildCandidatePool(raw: any, teamNameById: Map<string, { name: string; 
 }
 
 export async function getTeams(): Promise<RefuerzoTeam[]> {
-  const key = "pelotita_refuerzos_teams_v2";
+  const key = "pelotita_refuerzos_teams_v3";
   const cached = cacheGet<RefuerzoTeam[]>(key);
   if (cached) return cached;
   const groups = await getTablaPosiciones(LEAGUE_SLUG);
@@ -202,7 +198,7 @@ export async function getTeams(): Promise<RefuerzoTeam[]> {
 }
 
 export async function getCandidatePool(): Promise<RefuerzoCandidate[]> {
-  const key = `pelotita_refuerzos_pool_v2_${LEAGUE_SLUG}`;
+  const key = `pelotita_refuerzos_pool_v3_${LEAGUE_SLUG}`;
   const cached = cacheGet<RefuerzoCandidate[]>(key);
   if (cached) return cached;
   const [raw, groups] = await Promise.all([fetchRawLeagueData(), getTablaPosiciones(LEAGUE_SLUG)]);
@@ -210,6 +206,8 @@ export async function getCandidatePool(): Promise<RefuerzoCandidate[]> {
   cacheSet(key, pool, POOL_TTL_MS);
   return pool;
 }
+
+interface TeamStyle { goalsForAvg: number; goalsAgainstAvg: number; played: number; }
 
 function styleFromStandings(teamId: string, groups: PromiedosStandingGroup[]): TeamStyle {
   for (const g of groups) for (const t of g.tables) for (const r of t.rows) {
@@ -225,114 +223,78 @@ function styleFromStandings(teamId: string, groups: PromiedosStandingGroup[]): T
   return { goalsForAvg: 0, goalsAgainstAvg: 0, played: 0 };
 }
 
-// ── API-Football: SOLO bio (foto/nacionalidad/edad), best-effort por
-// nombre, cacheado sin TTL (dato biográfico, no cambia). Nunca se cachea
-// un resultado null crudo — se cachea siempre un objeto Bio (vacío si no
-// hubo match) para distinguir "no pedido todavía" de "pedido, sin match". ──
-interface Bio { photo: string | null; nationality: string | null; age: number | null; }
-const EMPTY_BIO: Bio = { photo: null, nationality: null, age: null };
-
-async function footballGet(endpoint: string, params: Record<string, string>) {
-  const qs = new URLSearchParams({ endpoint, ...params }).toString();
-  const res = await fetch(`/api/football?${qs}`);
-  if (!res.ok) throw new Error(`API-Football ${res.status}`);
-  const { data, quotaRemaining } = await res.json();
-  if (quotaRemaining !== null) updateQuota(quotaRemaining);
-  if (data.errors && Object.keys(data.errors).length > 0) {
-    const msg = Array.isArray(data.errors) ? data.errors.join(", ") : Object.values(data.errors).join(", ");
-    throw new Error(String(msg));
-  }
-  return data;
-}
-
-async function enrichBio(fullName: string): Promise<Bio> {
-  const key = `pelotita_refuerzos_bio_${normalize(fullName)}`;
-  const cached = cacheGet<Bio>(key);
-  if (cached) return cached;
+// ── Gran DT: puntos por jugador de esa posición, solo para desempate
+// silencioso (Paso 5.2) — nunca se muestra en la UI. Best-effort: si el
+// descubrimiento de la planilla vigente falla, no hay desempate y listo,
+// no rompe la búsqueda principal. ───────────────────────────────────────
+async function getGrandTPointsBySurname(position: RefuerzoPosition): Promise<Map<string, number>> {
+  const key = `pelotita_refuerzos_grandt_${position}`;
+  const cached = cacheGet<Record<string, number>>(key);
+  if (cached) return new Map(Object.entries(cached));
   try {
-    const surname = fullName.trim().split(/\s+/).slice(-1)[0] ?? "";
-    if (surname.length < 3) { cacheSet(key, EMPTY_BIO); return EMPTY_BIO; }
-    const data = await footballGet("players", { search: surname, league: AF_LEAGUE_ID, season: AF_BIO_SEASON });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const entries: any[] = data.response ?? [];
-    const target = normalize(fullName);
-    const match = entries.find((e) => {
-      const n = normalize(e.player?.name ?? "");
-      return n.includes(target) || target.includes(n);
-    }) ?? entries[0];
-    const bio: Bio = match?.player
-      ? { photo: match.player.photo ?? null, nationality: match.player.nationality ?? null, age: match.player.age ?? null }
-      : EMPTY_BIO;
-    cacheSet(key, bio);
-    return bio;
+    const latest = await getLatestGrandTSheet();
+    if (!latest?.sheetUrl) return new Map();
+    const players = await getGrandTRanking(latest.sheetUrl, position as GrandTPosition);
+    const map = new Map<string, number>();
+    for (const p of players) {
+      const surname = p.name.split(",")[0]?.trim() ?? p.name; // planilla: "Apellido, Nombre"
+      map.set(normalize(surname), p.points);
+    }
+    cacheSet(key, Object.fromEntries(map), GRANDT_TTL_MS);
+    return map;
   } catch {
-    return EMPTY_BIO; // no cachea el fallo — puede ser un problema de red puntual, no "no existe"
+    return new Map();
   }
 }
 
-function clamp(v: number, min: number, max: number) { return Math.min(max, Math.max(min, v)); }
-
-function buildSummary(team: RefuerzoTeam, position: RefuerzoPosition, count: number, avgAge: number | null, style: TeamStyle): string {
-  const posLabel = REFUERZO_POSITIONS.find((p) => p.key === position)?.label ?? position;
-  const parts = [
-    `${team.name} tiene ${count} jugador${count === 1 ? "" : "es"} con participación registrada como ${posLabel.toLowerCase()} esta temporada`,
-    avgAge != null ? `edad promedio ${avgAge} años (dato biográfico, no de rendimiento)` : null,
-    `${style.goalsForAvg.toFixed(1)} goles a favor y ${style.goalsAgainstAvg.toFixed(1)} en contra por partido en ${style.played} PJ`,
-  ].filter((p): p is string => !!p);
-  return parts.join(" · ");
+// ── Paso 2: perfil de necesidad (interno, nunca se explica en la UI) ───
+interface NeedProfile {
+  incumbents: RefuerzoCandidate[];
+  defensiveNeed: number;
+  offensiveNeed: number;
+  depthNeed: number;
 }
 
-// ── Paso 1: perfil de necesidad ─────────────────────────────────────────
-export async function getNeedProfile(team: RefuerzoTeam, position: RefuerzoPosition): Promise<NeedProfile> {
-  const [pool, groups] = await Promise.all([getCandidatePool(), getTablaPosiciones(LEAGUE_SLUG)]);
+async function getNeedProfile(team: RefuerzoTeam, position: RefuerzoPosition, pool: RefuerzoCandidate[], groups: PromiedosStandingGroup[]): Promise<NeedProfile> {
   const incumbents = pool.filter((c) => c.teamId === team.id && c.position === position);
   const style = styleFromStandings(team.id, groups);
+  const xg = getAllTeamXG()[team.id];
 
-  // Bio de incumbentes acotada (típicamente pocos jugadores) — best-effort,
-  // no bloquea si no hay match.
-  const bios = await Promise.all(incumbents.map((c) => enrichBio(c.name)));
-  const ages = bios.map((b) => b.age).filter((a): a is number => a != null);
-  const avgAge = ages.length ? Math.round((ages.reduce((s, a) => s + a, 0) / ages.length) * 10) / 10 : null;
+  // Combina goles reales (siempre disponibles) con xG cargado a mano (si
+  // existe para este equipo) — promedio simple. Sin xG cargado, se usa
+  // solo el dato real de Promiedos.
+  const attackSignal = xg ? (style.goalsForAvg + xg.xGFor) / 2 : style.goalsForAvg;
+  const defenseSignal = xg ? (style.goalsAgainstAvg + xg.xGAgainst) / 2 : style.goalsAgainstAvg;
 
-  const defensiveNeed = clamp(0.7 + style.goalsAgainstAvg * 0.5, 0.7, 1.5);
-  const offensiveNeed = clamp(1.5 - style.goalsForAvg * 0.4, 0.7, 1.5);
+  const offensiveNeed = clamp(1.5 - attackSignal * 0.4, 0.7, 1.5);
+  const defensiveNeed = clamp(0.7 + defenseSignal * 0.5, 0.7, 1.5);
   const depthNeed = incumbents.length <= 1 ? 1.3 : incumbents.length <= 3 ? 1.1 : 1.0;
 
-  return {
-    team, position, incumbents, avgAge, style,
-    defensiveNeed, offensiveNeed, depthNeed,
-    summary: buildSummary(team, position, incumbents.length, avgAge, style),
-  };
+  return { incumbents, defensiveNeed, offensiveNeed, depthNeed };
 }
 
-// ── Paso 3: scoring ──────────────────────────────────────────────────────
-// Sin datos de minutos jugados en ninguna fuente 2026 disponible: no se
-// puede normalizar "por 90 minutos" (a diferencia del diseño anterior
-// sobre API-Football) — se usan totales acumulados tal cual, lo que
-// favorece a quien jugó más partidos. Documentado, no corregido (no hay
-// con qué corregirlo sin ese dato).
-// ARQ queda sin entrada: Promiedos no tiene estadística de arquero por
-// jugador en ninguna tabla — se corta antes de intentar puntuar (ver
-// recommend() más abajo), no se arma un ranking vacío disimulado.
-const WEIGHTS: Record<RefuerzoPosition, { key: keyof RefuerzoCandidate; invert?: boolean; weight: number; label: string; kind: "def" | "off" }[]> = {
+// ── Paso 5.1: scoring (interno) ─────────────────────────────────────────
+// ARQ sin entrada: ni Promiedos ni ESPN dan estadística de arquero
+// atribuible a un jugador puntual para esta liga (ver recommend()).
+const WEIGHTS: Record<RefuerzoPosition, { key: "goals" | "assists" | "yellowCards" | "redCards" | "foulsConceded"; invert?: boolean; weight: number; kind: "def" | "off" }[]> = {
   ARQ: [],
   DEF: [
-    { key: "yellowCards",    invert: true, weight: 0.35, label: "menos tarjetas amarillas", kind: "def" },
-    { key: "redCards",       invert: true, weight: 0.25, label: "menos tarjetas rojas", kind: "def" },
-    { key: "foulsConceded",  invert: true, weight: 0.20, label: "menos faltas cometidas", kind: "def" },
-    { key: "goals",          weight: 0.10, label: "goles", kind: "off" },
-    { key: "assists",        weight: 0.10, label: "asistencias", kind: "off" },
+    { key: "yellowCards",   invert: true, weight: 0.30, kind: "def" },
+    { key: "redCards",      invert: true, weight: 0.25, kind: "def" },
+    { key: "foulsConceded", invert: true, weight: 0.20, kind: "def" },
+    { key: "goals",         weight: 0.15, kind: "off" },
+    { key: "assists",       weight: 0.10, kind: "off" },
   ],
   VOL: [
-    { key: "assists",     weight: 0.45, label: "asistencias", kind: "off" },
-    { key: "goals",       weight: 0.30, label: "goles", kind: "off" },
-    { key: "yellowCards", invert: true, weight: 0.15, label: "menos tarjetas amarillas", kind: "def" },
-    { key: "redCards",    invert: true, weight: 0.10, label: "menos tarjetas rojas", kind: "def" },
+    { key: "assists",     weight: 0.45, kind: "off" },
+    { key: "goals",       weight: 0.30, kind: "off" },
+    { key: "yellowCards", invert: true, weight: 0.15, kind: "def" },
+    { key: "redCards",    invert: true, weight: 0.10, kind: "def" },
   ],
   DEL: [
-    { key: "goals",       weight: 0.55, label: "goles", kind: "off" },
-    { key: "assists",     weight: 0.35, label: "asistencias", kind: "off" },
-    { key: "yellowCards", invert: true, weight: 0.10, label: "menos tarjetas amarillas", kind: "def" },
+    { key: "goals",       weight: 0.55, kind: "off" },
+    { key: "assists",     weight: 0.35, kind: "off" },
+    { key: "yellowCards", invert: true, weight: 0.10, kind: "def" },
   ],
 };
 
@@ -344,54 +306,60 @@ function scoreCandidates(candidates: RefuerzoCandidate[], position: RefuerzoPosi
     return { ...d, effectiveWeight };
   });
   const weightSum = dims.reduce((s, d) => s + d.effectiveWeight, 0);
-  const raw = candidates.map((c) => dims.map((d) => c[d.key] as number));
+  const raw = candidates.map((c) => dims.map((d) => c[d.key]));
   const maxes = dims.map((_, i) => Math.max(1e-6, ...raw.map((r) => r[i])));
 
   return candidates.map((c, idx) => {
     let weighted = 0;
-    const reasons: string[] = [];
     dims.forEach((d, i) => {
       const ratio = raw[idx][i] / maxes[i];
-      const norm = d.invert ? 1 - ratio : ratio; // invert: menos es mejor (tarjetas/faltas)
+      const norm = d.invert ? 1 - ratio : ratio;
       weighted += norm * d.effectiveWeight;
-      if (norm > 0.6) reasons.push(d.label);
     });
     const base = weightSum > 0 ? weighted / weightSum : 0;
     const boosted = base * need.depthNeed;
-    return { ...c, fit: { score: Math.round(clamp(boosted * 100, 0, 100)), reasons } };
+    return { ...c, fit: { score: Math.round(clamp(boosted * 100, 0, 100)) } };
   });
 }
 
-// ── Punto de entrada: perfil de necesidad + top 4 candidatos ───────────
-export async function recommend(team: RefuerzoTeam, position: RefuerzoPosition): Promise<{ need: NeedProfile; candidates: RefuerzoResult[]; noDataForPosition: boolean }> {
-  const key = `pelotita_refuerzos_reco_v2_${team.id}_${position}`;
-  const cached = cacheGet<{ need: NeedProfile; candidates: RefuerzoResult[]; noDataForPosition: boolean }>(key);
-  if (cached) return cached;
+// Desempate silencioso (Paso 5.2): si dos candidatos quedan a menos de 3
+// puntos de fit, gana el de más puntos acumulados en Gran DT de esa
+// posición. Comparador "casi empate" no es estrictamente transitivo en
+// una lista larga — aceptable acá porque solo se usa para ordenar un
+// puñado de candidatos antes de cortar el top 4, no como ranking formal.
+function sortWithTiebreak(candidates: RefuerzoResult[], grandTPoints: Map<string, number>): RefuerzoResult[] {
+  return [...candidates].sort((a, b) => {
+    const diff = b.fit.score - a.fit.score;
+    if (Math.abs(diff) >= 3) return diff;
+    const gtA = grandTPoints.get(normalize(a.surname)) ?? 0;
+    const gtB = grandTPoints.get(normalize(b.surname)) ?? 0;
+    if (gtA !== gtB) return gtB - gtA;
+    return diff;
+  });
+}
 
-  const need = await getNeedProfile(team, position);
-
+// ── Punto de entrada: top 4 candidatos (perfil de necesidad + desempate
+// con Gran DT, ambos internos, nunca expuestos) ─────────────────────────
+export async function recommend(team: RefuerzoTeam, position: RefuerzoPosition): Promise<{ candidates: RefuerzoResult[]; noDataForPosition: boolean }> {
   if (position === "ARQ") {
-    // Sin estadística de arquero por jugador en ninguna fuente 2026 — no
-    // se arma ranking con datos de otra posición ni de otra temporada.
-    const result = { need, candidates: [], noDataForPosition: true };
-    cacheSet(key, result, POOL_TTL_MS);
-    return result;
+    // Sin estadística de arquero atribuible a un jugador puntual en
+    // ninguna fuente — no se arma ranking con datos de otra posición.
+    return { candidates: [], noDataForPosition: true };
   }
 
-  const pool = await getCandidatePool();
+  const [pool, groups] = await Promise.all([getCandidatePool(), getTablaPosiciones(LEAGUE_SLUG)]);
+  const need = await getNeedProfile(team, position, pool, groups);
   const eligible = pool.filter((c) => c.position === position && c.teamId !== team.id);
-  const top4 = scoreCandidates(eligible, position, need).sort((a, b) => b.fit.score - a.fit.score).slice(0, 4);
+  const scored = scoreCandidates(eligible, position, need);
 
-  // Bio SOLO de los 4 finalistas (no de todo el pool) — acota cuota de API-Football.
-  const candidates = await Promise.all(top4.map(async (c) => ({ ...c, ...(await enrichBio(c.name)) })));
+  const grandTPoints = await getGrandTPointsBySurname(position);
+  const ordered = sortWithTiebreak(scored, grandTPoints);
 
-  const result = { need, candidates, noDataForPosition: false };
-  cacheSet(key, result, POOL_TTL_MS);
-  return result;
+  return { candidates: ordered.slice(0, 4), noDataForPosition: false };
 }
 
 export async function refreshRecommendation(team: RefuerzoTeam, position: RefuerzoPosition) {
-  localStorage.removeItem(`pelotita_refuerzos_reco_v2_${team.id}_${position}`);
-  localStorage.removeItem(`pelotita_refuerzos_pool_v2_${LEAGUE_SLUG}`);
+  localStorage.removeItem(`pelotita_refuerzos_pool_v3_${LEAGUE_SLUG}`);
+  localStorage.removeItem(`pelotita_refuerzos_grandt_${position}`);
   return recommend(team, position);
 }

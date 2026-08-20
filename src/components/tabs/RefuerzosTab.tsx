@@ -2,67 +2,66 @@
 
 import { useEffect, useState } from "react";
 import {
-  getTeams, recommend, refreshRecommendation, REFUERZO_POSITIONS,
-  type RefuerzoTeam, type RefuerzoPosition, type NeedProfile, type RefuerzoResult,
+  getTeams, recommend, refreshRecommendation, getAllTeamXG, setTeamXG, REFUERZO_POSITIONS,
+  type RefuerzoTeam, type RefuerzoPosition, type RefuerzoResult, type TeamXG,
 } from "@/lib/refuerzos";
 
-// ── Foto de jugador circular, con silueta genérica si no hay foto o falla
-// la carga — nunca un espacio roto. ──────────────────────────────────────
-function PlayerPhoto({ src, alt }: { src: string | null; alt: string }) {
-  const [failed, setFailed] = useState(false);
-  const showFallback = !src || failed;
+// ── Foto de jugador: ninguna de las fuentes integradas (Promiedos/ESPN)
+// expone foto de cara de jugador — confirmado, no es limitación de
+// implementación. Silueta genérica siempre, mismo marco circular que un
+// escudo de equipo. ────────────────────────────────────────────────────
+function PlayerPhoto() {
   return (
     <div className="w-20 h-20 rounded-full border-2 border-orange/40 bg-bg-deep overflow-hidden flex items-center justify-center shrink-0">
-      {showFallback ? (
-        <span className="text-3xl text-cream/20">👤</span>
-      ) : (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={src} alt={alt} className="w-full h-full object-cover" onError={() => setFailed(true)} />
-      )}
+      <span className="text-3xl text-cream/20">👤</span>
     </div>
   );
 }
 
-// ── Filas de estadísticas de la ficha. Todo lo que ves acá es de la
-// temporada 2026 en curso vía Promiedos, salvo edad/nacionalidad (bio de
-// API-Football, no cambia de temporada a temporada). Sin minutos jugados
-// — ninguna de las 3 fuentes lo expone por jugador para esta liga. ───────
+// ── Filas de la ficha, exactamente los campos pedidos por posición. Los
+// que ninguna fuente expone por jugador (vallas invictas, minutos,
+// partidos, paradas) se muestran igual, en blanco — nunca inventados. ──
 function statRows(c: RefuerzoResult): { label: string; value: string }[] {
-  const common = [
-    { label: "Edad", value: c.age != null ? `${c.age} años` : "—" },
-    { label: "Nacionalidad", value: c.nationality ?? "—" },
-    { label: "Equipo actual", value: c.teamName },
-  ];
+  const dash = "—";
+  const tarjetas = { label: "Amarillas / Rojas", value: `${c.yellowCards} / ${c.redCards}` };
+  const goles = { label: "Goles", value: String(c.goals) };
+  const asistencias = { label: "Asistencias", value: String(c.assists) };
   const byPosition: Record<RefuerzoPosition, { label: string; value: string }[]> = {
-    ARQ: [],
+    ARQ: [
+      { label: "Vallas invictas", value: dash },
+      { label: "Minutos", value: dash },
+      { label: "Partidos", value: dash },
+      { label: "Paradas", value: dash },
+    ],
     DEF: [
-      { label: "Goles", value: String(c.goals) },
-      { label: "Asistencias", value: String(c.assists) },
-      { label: "Faltas cometidas", value: String(c.foulsConceded) },
-      { label: "Tarjetas", value: `${c.yellowCards}A / ${c.redCards}R` },
+      { label: "Vallas invictas", value: dash },
+      { label: "Minutos", value: dash },
+      { label: "Partidos", value: dash },
+      asistencias, goles, tarjetas,
     ],
     VOL: [
-      { label: "Asistencias", value: String(c.assists) },
-      { label: "Goles", value: String(c.goals) },
-      { label: "Tarjetas", value: `${c.yellowCards}A / ${c.redCards}R` },
+      { label: "Minutos", value: dash },
+      { label: "Partidos", value: dash },
+      asistencias, goles, tarjetas,
     ],
     DEL: [
-      { label: "Goles", value: String(c.goals) },
-      { label: "Asistencias", value: String(c.assists) },
-      { label: "Tarjetas", value: `${c.yellowCards}A / ${c.redCards}R` },
+      { label: "Minutos", value: dash },
+      { label: "Partidos", value: dash },
+      asistencias, goles, tarjetas,
     ],
   };
-  return [...common, ...byPosition[c.position]];
+  return byPosition[c.position];
 }
 
-// ── Tarjeta de candidato, desplegable e independiente (no exclusiva) ──
+// ── Tarjeta de candidato, desplegable e independiente (no exclusiva).
+// Solo estadísticas — nunca el motivo del puntaje. ──────────────────────
 
 function CandidateCard({ candidate, isOpen, onToggle }: { candidate: RefuerzoResult; isOpen: boolean; onToggle: () => void }) {
   const scoreColor = candidate.fit.score >= 70 ? "text-green-400" : candidate.fit.score >= 45 ? "text-orange" : "text-cream/40";
   return (
     <div className="rounded-lg border border-bg-card bg-bg-card/10 overflow-hidden">
       <button onClick={onToggle} className="w-full flex flex-col items-center gap-2 p-4 text-center hover:bg-bg-card/20 transition-colors">
-        <PlayerPhoto src={candidate.photo} alt={candidate.name} />
+        <PlayerPhoto />
         <div className="font-mono text-cream text-xs font-bold leading-tight">{candidate.name}</div>
         <div className="font-mono text-cream/40 text-[10px]">{candidate.teamName}</div>
         <div className={["font-mono text-lg font-bold tabular-nums", scoreColor].join(" ")}>{candidate.fit.score}<span className="text-[10px] text-cream/30">/100 fit</span></div>
@@ -70,40 +69,96 @@ function CandidateCard({ candidate, isOpen, onToggle }: { candidate: RefuerzoRes
       </button>
 
       {isOpen && (
-        <div className="px-4 pb-4 border-t border-bg-card/60 pt-3 space-y-3">
-          <div className="space-y-1">
-            {statRows(candidate).map((r) => (
-              <div key={r.label} className="flex items-center justify-between font-mono text-[10px]">
-                <span className="text-cream/40">{r.label}</span>
-                <span className="text-warm-white font-bold">{r.value}</span>
-              </div>
-            ))}
-          </div>
-          <div>
-            <div className="font-mono text-[9px] text-orange/60 tracking-widest mb-1">POR QUÉ ENCAJA</div>
-            {candidate.fit.reasons.length > 0 ? (
-              <ul className="space-y-0.5">
-                {candidate.fit.reasons.map((r) => (
-                  <li key={r} className="font-mono text-[10px] text-cream/60">· {r}</li>
-                ))}
-              </ul>
-            ) : (
-              <div className="font-mono text-[10px] text-cream/25">ninguna estadística se destacó por encima del resto del pool</div>
-            )}
-          </div>
+        <div className="px-4 pb-4 border-t border-bg-card/60 pt-3 space-y-1">
+          {statRows(candidate).map((r) => (
+            <div key={r.label} className="flex items-center justify-between font-mono text-[10px]">
+              <span className="text-cream/40">{r.label}</span>
+              <span className="text-warm-white font-bold">{r.value}</span>
+            </div>
+          ))}
         </div>
       )}
     </div>
   );
 }
 
-// ── Resumen del perfil de necesidad del equipo ──
+// ── Panel de xG manual (Paso 1) — colapsable, no invasivo ───────────────
 
-function NeedSummary({ need }: { need: NeedProfile }) {
+function XGPanel({ teams }: { teams: RefuerzoTeam[] }) {
+  const [open, setOpen] = useState(false);
+  const [xgByTeam, setXgByTeam] = useState<Record<string, TeamXG>>({});
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [draftFor, setDraftFor] = useState("");
+  const [draftAgainst, setDraftAgainst] = useState("");
+
+  useEffect(() => { if (open) queueMicrotask(() => setXgByTeam(getAllTeamXG())); }, [open]);
+
+  function startEdit(team: RefuerzoTeam) {
+    const existing = xgByTeam[team.id];
+    setDraftFor(existing ? String(existing.xGFor) : "");
+    setDraftAgainst(existing ? String(existing.xGAgainst) : "");
+    setEditingId(team.id);
+  }
+  function saveEdit(teamId: string) {
+    const xGFor = parseFloat(draftFor) || 0;
+    const xGAgainst = parseFloat(draftAgainst) || 0;
+    setTeamXG(teamId, xGFor, xGAgainst);
+    setXgByTeam(getAllTeamXG());
+    setEditingId(null);
+  }
+
   return (
-    <div className="rounded-lg border border-bg-card bg-bg-card/10 p-4">
-      <div className="font-mono text-orange text-xs tracking-widest mb-2">📋 PERFIL DE NECESIDAD</div>
-      <p className="font-mono text-cream/70 text-xs leading-relaxed">{need.summary}</p>
+    <div className="rounded-lg border border-bg-card bg-bg-card/10">
+      <button onClick={() => setOpen((o) => !o)} className="w-full flex items-center justify-between px-4 py-2.5 text-left hover:bg-bg-card/20 transition-colors">
+        <span className="font-mono text-orange text-[10px] tracking-widest">⚙ DATOS DE xG (carga manual)</span>
+        <span className={["font-mono text-orange text-xs transition-transform", open ? "rotate-180" : ""].join(" ")}>⌄</span>
+      </button>
+      {open && (
+        <div className="px-4 pb-4 border-t border-bg-card/60 pt-3">
+          <p className="font-mono text-cream/30 text-[9px] mb-2 leading-relaxed">
+            Ninguna fuente integrada tiene xG — se carga a mano por equipo, sin vencimiento, se usa tal cual hasta que se edite.
+          </p>
+          <div className="max-h-[280px] overflow-y-auto">
+            <table className="w-full text-[10px] font-mono">
+              <thead className="text-cream/40 text-left">
+                <tr><th className="py-1">Equipo</th><th className="text-center">xG a favor</th><th className="text-center">xG en contra</th><th /></tr>
+              </thead>
+              <tbody>
+                {teams.map((t) => {
+                  const xg = xgByTeam[t.id];
+                  const isEditing = editingId === t.id;
+                  return (
+                    <tr key={t.id} className="border-t border-bg-deep/40">
+                      <td className="py-1 text-cream">{t.name}</td>
+                      {isEditing ? (
+                        <>
+                          <td className="text-center px-1">
+                            <input value={draftFor} onChange={(e) => setDraftFor(e.target.value)} className="w-14 bg-bg-deep border border-orange/40 text-cream text-center rounded px-1" />
+                          </td>
+                          <td className="text-center px-1">
+                            <input value={draftAgainst} onChange={(e) => setDraftAgainst(e.target.value)} className="w-14 bg-bg-deep border border-orange/40 text-cream text-center rounded px-1" />
+                          </td>
+                          <td className="text-center">
+                            <button onClick={() => saveEdit(t.id)} className="text-green-400 hover:text-green-300 px-1">✓</button>
+                          </td>
+                        </>
+                      ) : (
+                        <>
+                          <td className="text-center text-warm-white">{xg ? xg.xGFor.toFixed(2) : "—"}</td>
+                          <td className="text-center text-warm-white">{xg ? xg.xGAgainst.toFixed(2) : "—"}</td>
+                          <td className="text-center">
+                            <button onClick={() => startEdit(t)} className="text-cream/30 hover:text-orange px-1">editar</button>
+                          </td>
+                        </>
+                      )}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -117,7 +172,7 @@ export default function RefuerzosTab() {
   const [teamId, setTeamId] = useState<string>("");
   const [position, setPosition] = useState<RefuerzoPosition>("DEL");
 
-  const [result, setResult] = useState<{ need: NeedProfile; candidates: RefuerzoResult[]; noDataForPosition: boolean } | null>(null);
+  const [result, setResult] = useState<{ candidates: RefuerzoResult[]; noDataForPosition: boolean } | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [openCards, setOpenCards] = useState<Set<string>>(new Set());
@@ -157,20 +212,20 @@ export default function RefuerzosTab() {
     }
   }
 
+  const selectedTeamName = teams.find((t) => t.id === teamId)?.name ?? "";
+
   return (
     <div className="h-full overflow-auto p-4">
       <div className="max-w-[1100px] mx-auto space-y-4">
+        <XGPanel teams={teams} />
+
         {/* ── Buscador ── */}
         <div className="rounded-lg border border-bg-card bg-bg-card/10 p-4">
           <div className="font-mono text-orange text-xs tracking-widest mb-3">⚽ BUSCADOR DE REFUERZOS</div>
           <p className="font-mono text-cream/30 text-[10px] mb-3 leading-relaxed">
-            Liga Profesional Argentina, temporada 2026 en curso — goles, asistencias y tarjetas vía Promiedos
-            (se actualiza con la fecha jugada). Foto/nacionalidad/edad vía API-Football (dato biográfico, no de
-            rendimiento — no cambia de temporada a temporada). Sin dato de minutos jugados en ninguna fuente
-            disponible: los totales no están normalizados por partidos jugados. Arquero no tiene ranking —
-            ninguna fuente expone estadística de arquero por jugador para esta liga. Defensor: sin duelos/
-            intercepciones/pases disponibles, el puntaje se arma con disciplina (tarjetas, faltas) y aporte
-            ofensivo ocasional — más débil que Delantero/Mediocampista.
+            Liga Profesional Argentina, temporada 2026 en curso (Promiedos). Sin foto de jugador en ninguna
+            fuente disponible — silueta genérica. Arquero sin ranking: ninguna fuente expone estadística de
+            arquero por jugador para esta liga.
           </p>
           <div className="flex flex-wrap items-end gap-3">
             <label className="flex flex-col gap-1">
@@ -226,27 +281,29 @@ export default function RefuerzosTab() {
         </div>
 
         {/* ── Resultado ── */}
-        {result && !loading && (
-          <>
-            <NeedSummary need={result.need} />
+        {loading && (
+          <div className="flex flex-col items-center justify-center py-16 gap-3 text-center">
+            <div className="font-mono text-orange text-sm animate-pulse">Analizando necesidades de {selectedTeamName}...</div>
+          </div>
+        )}
 
-            {result.noDataForPosition ? (
-              <div className="text-cream/20 font-mono text-xs py-6 text-center max-w-md mx-auto">
-                Arquero no tiene ranking de candidatos: ni Promiedos ni API-Football (temporada accesible) exponen
-                estadística de arquero por jugador para la Liga Profesional Argentina. No se inventa el dato.
-              </div>
-            ) : result.candidates.length === 0 ? (
-              <div className="text-cream/20 font-mono text-xs py-6 text-center">
-                Sin candidatos con datos suficientes para esta posición esta fecha.
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {result.candidates.map((c) => (
-                  <CandidateCard key={c.id} candidate={c} isOpen={openCards.has(c.id)} onToggle={() => toggleCard(c.id)} />
-                ))}
-              </div>
-            )}
-          </>
+        {result && !loading && (
+          result.noDataForPosition ? (
+            <div className="text-cream/20 font-mono text-xs py-6 text-center max-w-md mx-auto">
+              Arquero no tiene ranking de candidatos: ninguna fuente expone estadística de arquero por jugador
+              para la Liga Profesional Argentina. No se inventa el dato.
+            </div>
+          ) : result.candidates.length === 0 ? (
+            <div className="text-cream/20 font-mono text-xs py-6 text-center">
+              Sin candidatos con datos suficientes para esta posición esta fecha.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {result.candidates.map((c) => (
+                <CandidateCard key={c.id} candidate={c} isOpen={openCards.has(c.id)} onToggle={() => toggleCard(c.id)} />
+              ))}
+            </div>
+          )
         )}
 
         {!result && !loading && (
