@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import TacticoTab from "@/components/tabs/TacticoTab";
-import RefuerzosTab from "@/components/tabs/RefuerzosTab";
 import EnVivoTab from "@/components/tabs/EnVivoTab";
 import GrandTTab from "@/components/tabs/GrandTTab";
 import FantasyPremierTab from "@/components/tabs/FantasyPremierTab";
@@ -10,7 +9,6 @@ import ApiQuotaCounter from "@/components/ApiQuotaCounter";
 
 const TABS = [
   { id: "tactico",   label: "AYUDANTE TÁCTICO" },
-  { id: "refuerzos", label: "BUSCADOR DE REFUERZOS" },
   { id: "vivo",      label: "FIXTURE" },
   { id: "grandt",    label: "GRAN DT" },
   { id: "fantasy",   label: "FANTASY PREMIER" },
@@ -54,7 +52,6 @@ export default function Home() {
       {/* ── Contenido del tab activo ── */}
       <div className="flex-1 overflow-auto">
         {activeTab === "tactico"   && <TacticoTab />}
-        {activeTab === "refuerzos" && <RefuerzosTab />}
         {activeTab === "vivo"      && <EnVivoTab />}
         {activeTab === "grandt"    && <GrandTTab />}
         {activeTab === "fantasy"   && <FantasyPremierTab />}
