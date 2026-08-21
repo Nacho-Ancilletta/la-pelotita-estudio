@@ -738,6 +738,83 @@ function ensureDistinctScores(sorted: RMResult[]): RMResult[] {
   return out;
 }
 
+// ── Franjas de equipo (Paso 1-2, ago 2026) — simula que un equipo
+// grande pelea por los mejores candidatos de la liga y uno chico solo
+// por los más accesibles. Franja ALTA es fija por poder económico/
+// histórico real (NO por posición en la tabla — un "grande" sigue
+// siendo grande aunque ande mal el torneo), los 30-10=20 restantes se
+// dividen dinámicamente en MEDIA/BAJA por posición real en la tabla
+// anual de Promiedos (mejor mitad / peor mitad). Nombres en el mismo
+// formato que PROMIEDOS_ID_TO_JSON_TEAM (FootyStats/JSON), ya validado
+// contra los 30 equipos reales de Promiedos.
+const FRANJA_ALTA_TEAMS = new Set<string>([
+  "CA River Plate", "CA Boca Juniors", "Racing Club de Avellaneda", "CA Rosario Central",
+  "Estudiantes de La Plata", "CA Talleres de Cordoba", "CA San Lorenzo de Almagro",
+  "CA Lanus", "CA Independiente", "Argentinos Juniors",
+]);
+type Franja = "ALTA" | "MEDIA" | "BAJA";
+
+function computeDynamicFranjas(teamPositionById: Map<string, number>): { media: Set<string>; baja: Set<string> } {
+  const nonFixed = [...teamPositionById.entries()]
+    .filter(([id]) => {
+      const jsonName = PROMIEDOS_ID_TO_JSON_TEAM[id];
+      return !jsonName || !FRANJA_ALTA_TEAMS.has(jsonName);
+    })
+    .sort((a, b) => a[1] - b[1]); // por posición real en la tabla, mejor ubicado primero
+  return {
+    media: new Set(nonFixed.slice(0, 10).map(([id]) => id)),
+    baja: new Set(nonFixed.slice(10, 20).map(([id]) => id)),
+  };
+}
+
+function getFranja(team: RMTeam, dynamic: { media: Set<string>; baja: Set<string> }): Franja {
+  const jsonName = PROMIEDOS_ID_TO_JSON_TEAM[team.id];
+  if (jsonName && FRANJA_ALTA_TEAMS.has(jsonName)) return "ALTA";
+  if (dynamic.media.has(team.id)) return "MEDIA";
+  return "BAJA";
+}
+
+// Ventana del ranking (ya ordenado de mejor a peor fit) según la franja
+// del equipo buscador — con superposición entre franjas vecinas (pedido
+// explícito, para que no haya un salto brusco). Si el pool disponible es
+// chico (ej. arqueros, ~15 candidatos en vez de ~90) o la ventana quedó
+// angosta, se ensancha hacia el resto del pool en vez de dejar muy pocos
+// candidatos para sortear con variedad real.
+function selectWindow(sorted: RMResult[], franja: Franja): RMResult[] {
+  const n = sorted.length;
+  let start: number, end: number;
+  if (franja === "ALTA") { start = 0; end = 10; }
+  else if (franja === "MEDIA") { start = 7; end = 20; }
+  else { start = 17; end = n; }
+  start = Math.min(start, n);
+  end = Math.min(end, n);
+  let window = sorted.slice(start, end);
+  if (window.length < 4) window = sorted.slice(Math.max(0, n - 10), n);
+  if (window.length === 0) window = sorted;
+  return window;
+}
+
+// Sorteo ponderado sin reemplazo (Paso 3.1) — mayor fit = más chance de
+// salir, pero NUNCA 100% determinístico dentro de la ventana permitida.
+// Nunca inventa candidatos: solo cambia CUÁLES de los ya calculados con
+// datos reales se eligen.
+function weightedSampleWithoutReplacement<T>(items: { item: T; weight: number }[], count: number): T[] {
+  const pool = [...items];
+  const result: T[] = [];
+  for (let i = 0; i < count && pool.length > 0; i++) {
+    const total = pool.reduce((s, p) => s + p.weight, 0);
+    let r = Math.random() * total;
+    let idx = 0;
+    for (; idx < pool.length - 1; idx++) {
+      r -= pool[idx].weight;
+      if (r <= 0) break;
+    }
+    result.push(pool[idx].item);
+    pool.splice(idx, 1);
+  }
+  return result;
+}
+
 export async function recommend(team: RMTeam): Promise<{ picks: RMResult[]; composition: RMPosition[] }> {
   const groups = await getTablaPosiciones(LEAGUE_SLUG);
   const composition = getComposition(team);
@@ -748,26 +825,58 @@ export async function recommend(team: RMTeam): Promise<{ picks: RMResult[]; comp
   const needByPosition = new Map<RMPosition, number>();
   for (const p of composition) needByPosition.set(p, (needByPosition.get(p) ?? 0) + 1);
 
-  const picks: RMResult[] = [];
-  for (const [position, count] of needByPosition) {
-    const pool = await getCandidatePool(position);
-    // Para arquero no hay teamId confiable siempre (el JSON no trae
-    // team_id de Promiedos) — se excluye por NOMBRE contra el equipo
-    // buscado en vez de por ID, best-effort.
-    const eligible = position === "ARQ"
-      ? pool.filter((c) => !c.teamName || normalize(c.teamName) !== normalize(team.shortName || team.name))
-      : pool.filter((c) => c.teamId !== team.id);
+  const franja = getFranja(team, computeDynamicFranjas(teamPositionById));
+  const needFactors = computeNeedFactors(team);
 
-    // Gran DT ya NO filtra a nadie afuera (ver nota del bug al inicio del
-    // archivo) — solo se adjunta el puntaje real como dato, WEIGHTS lo
-    // usa como bonus de forma.
-    const grandTPoints = await getGrandTPointsBySurname(position);
-    const withGrandT = eligible.map((c) => ({ ...c, grandTPoints: grandTPoints.get(normalize(c.surname)) ?? null }));
+  // Paso 3.2: no repetir siempre los mismos 4 al buscar el MISMO equipo
+  // dos veces seguidas — se guarda en localStorage (sin TTL, se compara
+  // siempre contra la última búsqueda real de ESE equipo puntual) y si
+  // el sorteo da 3 o 4 nombres iguales a la vez anterior, se vuelve a
+  // sortear (hasta 6 intentos, después se acepta lo que salga para no
+  // colgar la búsqueda).
+  const lastKey = `pelotita_rm_last_picks_${team.id}`;
+  const lastNames = cacheGet<string[]>(lastKey) ?? [];
 
-    const scored = applyTeamQualityAdjustment(scoreCandidates(withGrandT, position, computeNeedFactors(team)), teamPositionById, totalTeams);
-    const top = ensureDistinctScores(scored.sort((a, b) => b.fit.score - a.fit.score).slice(0, count));
-    picks.push(...top);
+  let picks: RMResult[] = [];
+  const MAX_ATTEMPTS = 6;
+  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+    picks = [];
+    for (const [position, count] of needByPosition) {
+      const pool = await getCandidatePool(position);
+      // Para arquero no hay teamId confiable siempre (el JSON no trae
+      // team_id de Promiedos) — se excluye por NOMBRE contra el equipo
+      // buscado en vez de por ID, best-effort.
+      const eligible = position === "ARQ"
+        ? pool.filter((c) => !c.teamName || normalize(c.teamName) !== normalize(team.shortName || team.name))
+        : pool.filter((c) => c.teamId !== team.id);
+
+      // Gran DT ya NO filtra a nadie afuera (ver nota del bug al inicio
+      // del archivo) — solo se adjunta el puntaje real como dato,
+      // WEIGHTS lo usa como bonus de forma.
+      const grandTPoints = await getGrandTPointsBySurname(position);
+      const withGrandT = eligible.map((c) => ({ ...c, grandTPoints: grandTPoints.get(normalize(c.surname)) ?? null }));
+
+      const scored = applyTeamQualityAdjustment(scoreCandidates(withGrandT, position, needFactors), teamPositionById, totalTeams);
+      const sorted = scored.sort((a, b) => b.fit.score - a.fit.score);
+
+      // Paso 1-2: la franja del equipo buscador decide QUÉ VENTANA del
+      // ranking está disponible (grande pelea arriba, chico solo abajo)
+      // — Paso 3.1: dentro de esa ventana, sorteo ponderado por fit, no
+      // siempre el de mayor puntaje.
+      const window = selectWindow(sorted, franja);
+      const chosen = weightedSampleWithoutReplacement(
+        window.map((c) => ({ item: c, weight: Math.max(1, c.fit.score) })),
+        count,
+      );
+      const top = ensureDistinctScores(chosen.sort((a, b) => b.fit.score - a.fit.score));
+      picks.push(...top);
+    }
+
+    const currentNames = picks.map((p) => p.name);
+    const overlap = currentNames.filter((n) => lastNames.includes(n)).length;
+    if (lastNames.length === 0 || overlap <= 1 || attempt === MAX_ATTEMPTS - 1) break;
   }
+  cacheSet(lastKey, picks.map((p) => p.name));
 
   const teams = await getTeams();
   const enriched = await enrichWithBio(picks, teams);
