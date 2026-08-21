@@ -6,7 +6,6 @@ import EnVivoTab from "@/components/tabs/EnVivoTab";
 import GrandTTab from "@/components/tabs/GrandTTab";
 import FantasyPremierTab from "@/components/tabs/FantasyPremierTab";
 import RefuerzoMagicoTab from "@/components/tabs/RefuerzoMagicoTab";
-import ApiQuotaCounter from "@/components/ApiQuotaCounter";
 
 const TABS = [
   { id: "tactico",   label: "AYUDANTE TÁCTICO" },
@@ -23,7 +22,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col flex-1">
-      {/* ── Barra de tabs + contador de cuota ── */}
+      {/* ── Barra de tabs ── */}
       <div className="flex items-stretch border-b border-bg-card">
         <nav className="flex flex-1 font-mono text-xs">
           {TABS.map((tab) => {
@@ -44,11 +43,6 @@ export default function Home() {
             );
           })}
         </nav>
-
-        {/* Contador de cuota API — siempre visible */}
-        <div className="flex items-center px-4 border-l border-bg-card">
-          <ApiQuotaCounter />
-        </div>
       </div>
 
       {/* ── Contenido del tab activo ── */}

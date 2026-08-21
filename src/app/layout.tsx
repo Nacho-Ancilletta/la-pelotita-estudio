@@ -30,7 +30,7 @@ export default function RootLayout({
         {/* ── Header ── */}
         <header className="border-b border-bg-card px-5 py-2 flex items-center justify-between">
           <span className="font-mono text-xs text-orange tracking-widest">
-            ⚽  GOL A GOL · ANÁLISIS TÁCTICO
+            GOL A GOL · ANÁLISIS TÁCTICO
           </span>
           <span className="font-mono text-sm font-bold tracking-[0.25em] text-cream">
             LA PELOTITA ESTUDIO

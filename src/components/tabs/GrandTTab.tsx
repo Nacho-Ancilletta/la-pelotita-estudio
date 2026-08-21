@@ -161,7 +161,7 @@ function StandingsColumn({ zoneName, rows, recommendedNames }: {
 }) {
   return (
     <div className="rounded-lg border border-bg-card bg-bg-card/10 p-4">
-      <div className="font-mono text-orange text-xs tracking-widest mb-3">📊 {zoneName.toUpperCase()}</div>
+      <div className="font-mono text-orange text-xs tracking-widest mb-3">{zoneName.toUpperCase()}</div>
       {rows.length === 0 && <div className="text-cream/20 font-mono text-xs py-2">sin datos de Promiedos</div>}
       {rows.length > 0 && (
         <div className="space-y-1 max-h-[380px] overflow-y-auto pr-1">
@@ -212,7 +212,7 @@ function formatKickoff(startTime: string): string {
 function UpcomingFixturesPanel({ games }: { games: PromiedosGame[] }) {
   return (
     <div className="rounded-lg border border-bg-card bg-bg-card/10 p-4">
-      <div className="font-mono text-orange text-xs tracking-widest mb-3">📅 PRÓXIMOS PARTIDOS</div>
+      <div className="font-mono text-orange text-xs tracking-widest mb-3">PRÓXIMOS PARTIDOS</div>
       {games.length === 0 && <div className="text-cream/20 font-mono text-xs py-2">sin fixture disponible</div>}
       {games.length > 0 && (
         <div className="space-y-2 max-h-[380px] overflow-y-auto pr-1">

@@ -179,7 +179,7 @@ export default function RefuerzoMagicoTab() {
     <div className="h-full overflow-auto p-4">
       <div className="max-w-[1100px] mx-auto space-y-4">
         <div className="rounded-lg border border-bg-card bg-bg-card/10 p-4">
-          <div className="font-mono text-orange text-xs tracking-widest mb-3">✨ REFUERZO MÁGICO</div>
+          <div className="font-mono text-orange text-xs tracking-widest mb-3">REFUERZO MÁGICO</div>
           <div className="flex flex-wrap items-end gap-3">
             <label className="flex flex-col gap-1">
               <span className="font-mono text-[10px] text-orange/70 tracking-widest">EQUIPO</span>
