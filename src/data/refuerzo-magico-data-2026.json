@@ -1,1321 +1,1321 @@
 {
-    "meta": {
-        "fuente": "footystats.org/argentina/primera-division",
-        "temporada": "2026 (datos acumulados a la fecha, ~19-25 PJ por equipo segun tabla)",
-        "capturado": "2026-08-20",
-        "nota_importante": "Existe una tabla adicional (home-away-league-table) con MP mucho mas bajos (8-15) por equipo que estas 4 tablas principales (19-25 PJ) - posiblemente corresponde solo al Torneo Clausura por separado, no al acumulado anual. NO se uso para el diagnostico de necesidades para evitar mezclar bases de partidos distintas. Si se quiere usar, homogeneizar primero.",
-        "nota_arqueros": "Ver 'cleanSheetsPlayersPageNote' en playerStats: hay una segunda lista de 'most clean sheets' con nombres distintos a partir del puesto 2, posiblemente incluye jugadores de campo. Se prioriza 'cleanSheetsGoalkeepers' (pagina dedicada) como fuente confiable por arquero.",
-        "fuentesAdicionalesInvestigadas": {
-            "tribuna.com": "BLOQUEADA (bot detection), incluso en subpaginas especificas encontradas via busqueda. Descartada.",
-            "as.com": "BLOQUEADA (site blocked) + la URL que se probo era de temporada 2025, no 2026. Descartada.",
-            "fichajes.com": "FUNCIONA SIN BLOQUEOS. Cubre casi el mismo catalogo que se buscaba en Tribuna: duelos ganados, tiros/tiros a puerta, regates completados, pases acertados, pases adelante, pases clave, entradas ganadas, intercepciones, porteria a cero, paradas realizadas, ocasiones claras creadas. Ya integrada en el prompt de REFUERZO MAGICO como tercera fuente."
-        },
-        "pendientesFuturos": [
-            "Sumar datos de plantel por equipo desde Promiedos (edad, altura, fecha de nacimiento) - el usuario mostro un ejemplo de Argentinos Juniors. Pendiente hasta recuperar creditos.",
-            "Confirmar y reconciliar la discrepancia de MP entre las 4 tablas principales (19-25 PJ, acumulado anual) y la tabla home-away-league-table (8-15 PJ, posible Clausura por separado)."
-        ]
+  "meta": {
+    "fuente": "footystats.org/argentina/primera-division",
+    "temporada": "2026 (datos acumulados a la fecha, ~19-25 PJ por equipo segun tabla)",
+    "capturado": "2026-08-20",
+    "nota_importante": "Existe una tabla adicional (home-away-league-table) con MP mucho mas bajos (8-15) por equipo que estas 4 tablas principales (19-25 PJ) - posiblemente corresponde solo al Torneo Clausura por separado, no al acumulado anual. NO se uso para el diagnostico de necesidades para evitar mezclar bases de partidos distintas. Si se quiere usar, homogeneizar primero.",
+    "nota_arqueros": "Ver 'cleanSheetsPlayersPageNote' en playerStats: hay una segunda lista de 'most clean sheets' con nombres distintos a partir del puesto 2, posiblemente incluye jugadores de campo. Se prioriza 'cleanSheetsGoalkeepers' (pagina dedicada) como fuente confiable por arquero.",
+    "fuentesAdicionalesInvestigadas": {
+      "tribuna.com": "BLOQUEADA (bot detection), incluso en subpaginas especificas encontradas via busqueda. Descartada.",
+      "as.com": "BLOQUEADA (site blocked) + la URL que se probo era de temporada 2025, no 2026. Descartada.",
+      "fichajes.com": "FUNCIONA SIN BLOQUEOS. Cubre casi el mismo catalogo que se buscaba en Tribuna: duelos ganados, tiros/tiros a puerta, regates completados, pases acertados, pases adelante, pases clave, entradas ganadas, intercepciones, porteria a cero, paradas realizadas, ocasiones claras creadas. Ya integrada en el prompt de REFUERZO MAGICO como tercera fuente."
     },
-    "ligaPromedios": {
-        "GF_per_match": 1.026,
-        "GA_per_match": 1.038,
-        "xG_per_match": 1.428,
-        "xGA_per_match": 1.439,
-        "cleanSheetPct": 34.63,
-        "failedToScorePct": 35.07
+    "pendientesFuturos": [
+      "Sumar datos de plantel por equipo desde Promiedos (edad, altura, fecha de nacimiento) - el usuario mostro un ejemplo de Argentinos Juniors. Pendiente hasta recuperar creditos.",
+      "Confirmar y reconciliar la discrepancia de MP entre las 4 tablas principales (19-25 PJ, acumulado anual) y la tabla home-away-league-table (8-15 PJ, posible Clausura por separado)."
+    ]
+  },
+  "ligaPromedios": {
+    "GF_per_match": 1.026,
+    "GA_per_match": 1.038,
+    "xG_per_match": 1.428,
+    "xGA_per_match": 1.439,
+    "cleanSheetPct": 34.63,
+    "failedToScorePct": 35.07
+  },
+  "equipos": {
+    "CA Union de Santa Fe": {
+      "goalsTotal": {
+        "mp": 23,
+        "totalGoals": 62,
+        "avg": 2.7,
+        "home": 2.2,
+        "away": 3.08
+      },
+      "cleanSheets": {
+        "mp": 23,
+        "cs": 5,
+        "csPct": 22
+      },
+      "failedToScore": {
+        "mp": 23,
+        "fts": 7,
+        "ftsPct": 30
+      },
+      "xG": {
+        "mp": 23,
+        "xG": 1.76,
+        "xGA": 1.34,
+        "xGD": 0.42,
+        "GF": 1.35,
+        "GA": 1.35,
+        "xGvsActual": -0.41
+      }
     },
-    "equipos": {
-        "CA Union de Santa Fe": {
-            "goalsTotal": {
-                "mp": 23,
-                "totalGoals": 62,
-                "avg": 2.7,
-                "home": 2.2,
-                "away": 3.08
-            },
-            "cleanSheets": {
-                "mp": 23,
-                "cs": 5,
-                "csPct": 22
-            },
-            "failedToScore": {
-                "mp": 23,
-                "fts": 7,
-                "ftsPct": 30
-            },
-            "xG": {
-                "mp": 23,
-                "xG": 1.76,
-                "xGA": 1.34,
-                "xGD": 0.42,
-                "GF": 1.35,
-                "GA": 1.35,
-                "xGvsActual": -0.41
-            }
-        },
-        "CS Independiente Rivadavia": {
-            "goalsTotal": {
-                "mp": 22,
-                "totalGoals": 58,
-                "avg": 2.64,
-                "home": 3.17,
-                "away": 2.0
-            },
-            "cleanSheets": {
-                "mp": 22,
-                "cs": 5,
-                "csPct": 23
-            },
-            "failedToScore": {
-                "mp": 22,
-                "fts": 4,
-                "ftsPct": 18
-            },
-            "xG": {
-                "mp": 22,
-                "xG": 1.66,
-                "xGA": 1.34,
-                "xGD": 0.32,
-                "GF": 1.59,
-                "GA": 1.05,
-                "xGvsActual": -0.07
-            }
-        },
-        "CA Independiente": {
-            "goalsTotal": {
-                "mp": 22,
-                "totalGoals": 57,
-                "avg": 2.59,
-                "home": 2.6,
-                "away": 2.58
-            },
-            "cleanSheets": {
-                "mp": 22,
-                "cs": 6,
-                "csPct": 27
-            },
-            "failedToScore": {
-                "mp": 22,
-                "fts": 3,
-                "ftsPct": 14
-            },
-            "xG": {
-                "mp": 22,
-                "xG": 1.49,
-                "xGA": 1.28,
-                "xGD": 0.21,
-                "GF": 1.41,
-                "GA": 1.18,
-                "xGvsActual": -0.08
-            }
-        },
-        "Newells Old Boys": {
-            "goalsTotal": {
-                "mp": 21,
-                "totalGoals": 53,
-                "avg": 2.52,
-                "home": 2.09,
-                "away": 3.0
-            },
-            "cleanSheets": {
-                "mp": 21,
-                "cs": 4,
-                "csPct": 19
-            },
-            "failedToScore": {
-                "mp": 21,
-                "fts": 7,
-                "ftsPct": 33
-            },
-            "xG": {
-                "mp": 21,
-                "xG": 1.23,
-                "xGA": 1.55,
-                "xGD": -0.32,
-                "GF": 1.0,
-                "GA": 1.52,
-                "xGvsActual": -0.23
-            }
-        },
-        "CSD Defensa y Justicia": {
-            "goalsTotal": {
-                "mp": 21,
-                "totalGoals": 52,
-                "avg": 2.48,
-                "home": 2.27,
-                "away": 2.7
-            },
-            "cleanSheets": {
-                "mp": 21,
-                "cs": 5,
-                "csPct": 24
-            },
-            "failedToScore": {
-                "mp": 21,
-                "fts": 6,
-                "ftsPct": 29
-            },
-            "xG": {
-                "mp": 21,
-                "xG": 1.4,
-                "xGA": 1.43,
-                "xGD": -0.03,
-                "GF": 1.14,
-                "GA": 1.33,
-                "xGvsActual": -0.26
-            }
-        },
-        "CA Sarmiento": {
-            "goalsTotal": {
-                "mp": 21,
-                "totalGoals": 51,
-                "avg": 2.43,
-                "home": 2.27,
-                "away": 2.6
-            },
-            "cleanSheets": {
-                "mp": 21,
-                "cs": 6,
-                "csPct": 29
-            },
-            "failedToScore": {
-                "mp": 21,
-                "fts": 6,
-                "ftsPct": 29
-            },
-            "xG": {
-                "mp": 21,
-                "xG": 1.27,
-                "xGA": 1.71,
-                "xGD": -0.44,
-                "GF": 1.1,
-                "GA": 1.33,
-                "xGvsActual": -0.17
-            }
-        },
-        "Gimnasia y Esgrima La Plata": {
-            "goalsTotal": {
-                "mp": 23,
-                "totalGoals": 54,
-                "avg": 2.35,
-                "home": 2.4,
-                "away": 2.31
-            },
-            "cleanSheets": {
-                "mp": 23,
-                "cs": 8,
-                "csPct": 35
-            },
-            "failedToScore": {
-                "mp": 23,
-                "fts": 7,
-                "ftsPct": 30
-            },
-            "xG": {
-                "mp": 23,
-                "xG": 1.28,
-                "xGA": 1.68,
-                "xGD": -0.4,
-                "GF": 1.13,
-                "GA": 1.22,
-                "xGvsActual": -0.15
-            }
-        },
-        "CA Boca Juniors": {
-            "goalsTotal": {
-                "mp": 22,
-                "totalGoals": 48,
-                "avg": 2.18,
-                "home": 1.73,
-                "away": 2.64
-            },
-            "cleanSheets": {
-                "mp": 22,
-                "cs": 10,
-                "csPct": 45
-            },
-            "failedToScore": {
-                "mp": 22,
-                "fts": 3,
-                "ftsPct": 14
-            },
-            "xG": {
-                "mp": 22,
-                "xG": 1.62,
-                "xGA": 1.15,
-                "xGD": 0.47,
-                "GF": 1.32,
-                "GA": 0.86,
-                "xGvsActual": -0.3
-            }
-        },
-        "CA Rosario Central": {
-            "goalsTotal": {
-                "mp": 24,
-                "totalGoals": 52,
-                "avg": 2.17,
-                "home": 2.25,
-                "away": 2.08
-            },
-            "cleanSheets": {
-                "mp": 24,
-                "cs": 7,
-                "csPct": 29
-            },
-            "failedToScore": {
-                "mp": 24,
-                "fts": 6,
-                "ftsPct": 25
-            },
-            "xG": {
-                "mp": 24,
-                "xG": 1.56,
-                "xGA": 1.43,
-                "xGD": 0.13,
-                "GF": 1.25,
-                "GA": 0.92,
-                "xGvsActual": -0.31
-            }
-        },
-        "CA Talleres de Cordoba": {
-            "goalsTotal": {
-                "mp": 22,
-                "totalGoals": 47,
-                "avg": 2.14,
-                "home": 2.2,
-                "away": 2.08
-            },
-            "cleanSheets": {
-                "mp": 22,
-                "cs": 7,
-                "csPct": 32
-            },
-            "failedToScore": {
-                "mp": 22,
-                "fts": 8,
-                "ftsPct": 36
-            },
-            "xG": {
-                "mp": 22,
-                "xG": 1.44,
-                "xGA": 1.48,
-                "xGD": -0.04,
-                "GF": 1.05,
-                "GA": 1.09,
-                "xGvsActual": -0.39
-            }
-        },
-        "CA Lanus": {
-            "goalsTotal": {
-                "mp": 22,
-                "totalGoals": 47,
-                "avg": 2.14,
-                "home": 1.82,
-                "away": 2.45
-            },
-            "cleanSheets": {
-                "mp": 22,
-                "cs": 9,
-                "csPct": 41
-            },
-            "failedToScore": {
-                "mp": 22,
-                "fts": 8,
-                "ftsPct": 36
-            },
-            "xG": {
-                "mp": 22,
-                "xG": 1.48,
-                "xGA": 1.45,
-                "xGD": 0.03,
-                "GF": 1.09,
-                "GA": 1.05,
-                "xGvsActual": -0.39
-            }
-        },
-        "CA Banfield": {
-            "goalsTotal": {
-                "mp": 21,
-                "totalGoals": 45,
-                "avg": 2.14,
-                "home": 2.3,
-                "away": 2.0
-            },
-            "cleanSheets": {
-                "mp": 21,
-                "cs": 6,
-                "csPct": 29
-            },
-            "failedToScore": {
-                "mp": 21,
-                "fts": 8,
-                "ftsPct": 38
-            },
-            "xG": {
-                "mp": 21,
-                "xG": 1.35,
-                "xGA": 1.82,
-                "xGD": -0.47,
-                "GF": 1.0,
-                "GA": 1.14,
-                "xGvsActual": -0.35
-            }
-        },
-        "Atletico Gimnasia y Esgrima de Mendoza": {
-            "goalsTotal": {
-                "mp": 21,
-                "totalGoals": 45,
-                "avg": 2.14,
-                "home": 2.18,
-                "away": 2.1
-            },
-            "cleanSheets": {
-                "mp": 21,
-                "cs": 6,
-                "csPct": 29
-            },
-            "failedToScore": {
-                "mp": 21,
-                "fts": 7,
-                "ftsPct": 33
-            },
-            "xG": {
-                "mp": 21,
-                "xG": 1.31,
-                "xGA": 1.52,
-                "xGD": -0.21,
-                "GF": 0.95,
-                "GA": 1.19,
-                "xGvsActual": -0.36
-            }
-        },
-        "CA River Plate": {
-            "goalsTotal": {
-                "mp": 25,
-                "totalGoals": 52,
-                "avg": 2.08,
-                "home": 2.53,
-                "away": 1.4
-            },
-            "cleanSheets": {
-                "mp": 25,
-                "cs": 10,
-                "csPct": 40
-            },
-            "failedToScore": {
-                "mp": 25,
-                "fts": 9,
-                "ftsPct": 36
-            },
-            "xG": {
-                "mp": 25,
-                "xG": 1.79,
-                "xGA": 1.05,
-                "xGD": 0.74,
-                "GF": 1.24,
-                "GA": 0.84,
-                "xGvsActual": -0.55
-            }
-        },
-        "Racing Club de Avellaneda": {
-            "goalsTotal": {
-                "mp": 23,
-                "totalGoals": 47,
-                "avg": 2.04,
-                "home": 2.2,
-                "away": 1.92
-            },
-            "cleanSheets": {
-                "mp": 23,
-                "cs": 8,
-                "csPct": 35
-            },
-            "failedToScore": {
-                "mp": 23,
-                "fts": 7,
-                "ftsPct": 30
-            },
-            "xG": {
-                "mp": 23,
-                "xG": 1.4,
-                "xGA": 1.29,
-                "xGD": 0.11,
-                "GF": 1.0,
-                "GA": 1.04,
-                "xGvsActual": -0.4
-            }
-        },
-        "Argentinos Juniors": {
-            "goalsTotal": {
-                "mp": 24,
-                "totalGoals": 49,
-                "avg": 2.04,
-                "home": 1.79,
-                "away": 2.4
-            },
-            "cleanSheets": {
-                "mp": 24,
-                "cs": 12,
-                "csPct": 50
-            },
-            "failedToScore": {
-                "mp": 24,
-                "fts": 5,
-                "ftsPct": 21
-            },
-            "xG": {
-                "mp": 24,
-                "xG": 1.7,
-                "xGA": 1.17,
-                "xGD": 0.53,
-                "GF": 1.25,
-                "GA": 0.79,
-                "xGvsActual": -0.45
-            }
-        },
-        "CA Tucuman": {
-            "goalsTotal": {
-                "mp": 21,
-                "totalGoals": 41,
-                "avg": 1.95,
-                "home": 1.7,
-                "away": 2.18
-            },
-            "cleanSheets": {
-                "mp": 21,
-                "cs": 9,
-                "csPct": 43
-            },
-            "failedToScore": {
-                "mp": 21,
-                "fts": 6,
-                "ftsPct": 29
-            },
-            "xG": {
-                "mp": 21,
-                "xG": 1.39,
-                "xGA": 1.3,
-                "xGD": 0.09,
-                "GF": 0.9,
-                "GA": 1.05,
-                "xGvsActual": -0.49
-            }
-        },
-        "Instituto AC Cordoba": {
-            "goalsTotal": {
-                "mp": 21,
-                "totalGoals": 41,
-                "avg": 1.95,
-                "home": 2.3,
-                "away": 1.64
-            },
-            "cleanSheets": {
-                "mp": 21,
-                "cs": 7,
-                "csPct": 33
-            },
-            "failedToScore": {
-                "mp": 21,
-                "fts": 6,
-                "ftsPct": 29
-            },
-            "xG": {
-                "mp": 21,
-                "xG": 1.56,
-                "xGA": 1.17,
-                "xGD": 0.39,
-                "GF": 1.05,
-                "GA": 0.9,
-                "xGvsActual": -0.51
-            }
-        },
-        "CA Belgrano de Cordoba": {
-            "goalsTotal": {
-                "mp": 25,
-                "totalGoals": 48,
-                "avg": 1.92,
-                "home": 2.0,
-                "away": 1.85
-            },
-            "cleanSheets": {
-                "mp": 25,
-                "cs": 13,
-                "csPct": 52
-            },
-            "failedToScore": {
-                "mp": 25,
-                "fts": 7,
-                "ftsPct": 28
-            },
-            "xG": {
-                "mp": 25,
-                "xG": 1.37,
-                "xGA": 1.44,
-                "xGD": -0.07,
-                "GF": 1.2,
-                "GA": 0.72,
-                "xGvsActual": -0.17
-            }
-        },
-        "CA Huracan": {
-            "goalsTotal": {
-                "mp": 23,
-                "totalGoals": 44,
-                "avg": 1.91,
-                "home": 2.0,
-                "away": 1.85
-            },
-            "cleanSheets": {
-                "mp": 23,
-                "cs": 10,
-                "csPct": 43
-            },
-            "failedToScore": {
-                "mp": 23,
-                "fts": 8,
-                "ftsPct": 35
-            },
-            "xG": {
-                "mp": 23,
-                "xG": 1.36,
-                "xGA": 1.37,
-                "xGD": -0.01,
-                "GF": 1.04,
-                "GA": 0.87,
-                "xGvsActual": -0.32
-            }
-        },
-        "CA Central Cordoba de Santiago del Estero": {
-            "goalsTotal": {
-                "mp": 21,
-                "totalGoals": 40,
-                "avg": 1.9,
-                "home": 2.09,
-                "away": 1.7
-            },
-            "cleanSheets": {
-                "mp": 21,
-                "cs": 7,
-                "csPct": 33
-            },
-            "failedToScore": {
-                "mp": 21,
-                "fts": 12,
-                "ftsPct": 57
-            },
-            "xG": {
-                "mp": 21,
-                "xG": 1.09,
-                "xGA": 1.8,
-                "xGD": -0.71,
-                "GF": 0.67,
-                "GA": 1.24,
-                "xGvsActual": -0.42
-            }
-        },
-        "CA Tigre": {
-            "goalsTotal": {
-                "mp": 21,
-                "totalGoals": 39,
-                "avg": 1.86,
-                "home": 2.0,
-                "away": 1.73
-            },
-            "cleanSheets": {
-                "mp": 21,
-                "cs": 7,
-                "csPct": 33
-            },
-            "failedToScore": {
-                "mp": 21,
-                "fts": 8,
-                "ftsPct": 38
-            },
-            "xG": {
-                "mp": 21,
-                "xG": 1.53,
-                "xGA": 1.28,
-                "xGD": 0.25,
-                "GF": 1.05,
-                "GA": 0.81,
-                "xGvsActual": -0.48
-            }
-        },
-        "Club Atletico Velez Sarsfield": {
-            "goalsTotal": {
-                "mp": 22,
-                "totalGoals": 41,
-                "avg": 1.86,
-                "home": 1.67,
-                "away": 2.1
-            },
-            "cleanSheets": {
-                "mp": 22,
-                "cs": 9,
-                "csPct": 41
-            },
-            "failedToScore": {
-                "mp": 22,
-                "fts": 4,
-                "ftsPct": 18
-            },
-            "xG": {
-                "mp": 22,
-                "xG": 1.43,
-                "xGA": 1.59,
-                "xGD": -0.16,
-                "GF": 1.14,
-                "GA": 0.73,
-                "xGvsActual": -0.29
-            }
-        },
-        "CA Platense": {
-            "goalsTotal": {
-                "mp": 21,
-                "totalGoals": 39,
-                "avg": 1.86,
-                "home": 2.0,
-                "away": 1.7
-            },
-            "cleanSheets": {
-                "mp": 21,
-                "cs": 7,
-                "csPct": 33
-            },
-            "failedToScore": {
-                "mp": 21,
-                "fts": 11,
-                "ftsPct": 52
-            },
-            "xG": {
-                "mp": 21,
-                "xG": 1.46,
-                "xGA": 1.4,
-                "xGD": 0.06,
-                "GF": 0.71,
-                "GA": 1.14,
-                "xGvsActual": -0.75
-            }
-        },
-        "Estudiantes de La Plata": {
-            "goalsTotal": {
-                "mp": 22,
-                "totalGoals": 39,
-                "avg": 1.77,
-                "home": 2.08,
-                "away": 1.4
-            },
-            "cleanSheets": {
-                "mp": 22,
-                "cs": 11,
-                "csPct": 50
-            },
-            "failedToScore": {
-                "mp": 22,
-                "fts": 10,
-                "ftsPct": 45
-            },
-            "xG": {
-                "mp": 22,
-                "xG": 1.57,
-                "xGA": 1.31,
-                "xGD": 0.26,
-                "GF": 1.18,
-                "GA": 0.59,
-                "xGvsActual": -0.39
-            }
-        },
-        "AA Estudiantes de Rio Cuarto": {
-            "goalsTotal": {
-                "mp": 21,
-                "totalGoals": 37,
-                "avg": 1.76,
-                "home": 1.45,
-                "away": 2.1
-            },
-            "cleanSheets": {
-                "mp": 21,
-                "cs": 5,
-                "csPct": 24
-            },
-            "failedToScore": {
-                "mp": 21,
-                "fts": 15,
-                "ftsPct": 71
-            },
-            "xG": {
-                "mp": 21,
-                "xG": 1.22,
-                "xGA": 1.51,
-                "xGD": -0.29,
-                "GF": 0.33,
-                "GA": 1.43,
-                "xGvsActual": -0.89
-            }
-        },
-        "CA San Lorenzo de Almagro": {
-            "goalsTotal": {
-                "mp": 22,
-                "totalGoals": 38,
-                "avg": 1.73,
-                "home": 2.27,
-                "away": 1.18
-            },
-            "cleanSheets": {
-                "mp": 22,
-                "cs": 11,
-                "csPct": 50
-            },
-            "failedToScore": {
-                "mp": 22,
-                "fts": 8,
-                "ftsPct": 36
-            },
-            "xG": {
-                "mp": 22,
-                "xG": 1.29,
-                "xGA": 1.61,
-                "xGD": -0.32,
-                "GF": 0.82,
-                "GA": 0.91,
-                "xGvsActual": -0.47
-            }
-        },
-        "CA Barracas Central": {
-            "goalsTotal": {
-                "mp": 21,
-                "totalGoals": 36,
-                "avg": 1.71,
-                "home": 1.9,
-                "away": 1.55
-            },
-            "cleanSheets": {
-                "mp": 21,
-                "cs": 7,
-                "csPct": 33
-            },
-            "failedToScore": {
-                "mp": 21,
-                "fts": 8,
-                "ftsPct": 38
-            },
-            "xG": {
-                "mp": 21,
-                "xG": 1.27,
-                "xGA": 1.66,
-                "xGD": -0.39,
-                "GF": 0.86,
-                "GA": 0.86,
-                "xGvsActual": -0.41
-            }
-        },
-        "CA Aldosivi": {
-            "goalsTotal": {
-                "mp": 21,
-                "totalGoals": 34,
-                "avg": 1.62,
-                "home": 1.1,
-                "away": 2.09
-            },
-            "cleanSheets": {
-                "mp": 21,
-                "cs": 5,
-                "csPct": 24
-            },
-            "failedToScore": {
-                "mp": 21,
-                "fts": 12,
-                "ftsPct": 57
-            },
-            "xG": {
-                "mp": 21,
-                "xG": 1.28,
-                "xGA": 1.62,
-                "xGD": -0.34,
-                "GF": 0.43,
-                "GA": 1.19,
-                "xGvsActual": -0.85
-            }
-        },
-        "CD Riestra": {
-            "goalsTotal": {
-                "mp": 21,
-                "totalGoals": 28,
-                "avg": 1.33,
-                "home": 1.27,
-                "away": 1.4
-            },
-            "cleanSheets": {
-                "mp": 21,
-                "cs": 8,
-                "csPct": 38
-            },
-            "failedToScore": {
-                "mp": 21,
-                "fts": 14,
-                "ftsPct": 67
-            },
-            "xG": {
-                "mp": 21,
-                "xG": 1.28,
-                "xGA": 1.42,
-                "xGD": -0.14,
-                "GF": 0.52,
-                "GA": 0.81,
-                "xGvsActual": -0.76
-            }
-        }
+    "CS Independiente Rivadavia": {
+      "goalsTotal": {
+        "mp": 22,
+        "totalGoals": 58,
+        "avg": 2.64,
+        "home": 3.17,
+        "away": 2.0
+      },
+      "cleanSheets": {
+        "mp": 22,
+        "cs": 5,
+        "csPct": 23
+      },
+      "failedToScore": {
+        "mp": 22,
+        "fts": 4,
+        "ftsPct": 18
+      },
+      "xG": {
+        "mp": 22,
+        "xG": 1.66,
+        "xGA": 1.34,
+        "xGD": 0.32,
+        "GF": 1.59,
+        "GA": 1.05,
+        "xGvsActual": -0.07
+      }
     },
-    "diagnosticoNecesidades": {
-        "CA Union de Santa Fe": {
-            "ofensiva_score": -27.4,
-            "defensiva_score": 19.9,
-            "brecha_dominante": "DEFENSIVA",
-            "composicion_sugerida": "1 arquero + 2 defensores + 1 mediocampista"
-        },
-        "CS Independiente Rivadavia": {
-            "ofensiva_score": -35.6,
-            "defensiva_score": 9.3,
-            "brecha_dominante": "DEFENSIVA",
-            "composicion_sugerida": "1 arquero + 2 defensores + 1 mediocampista"
-        },
-        "CA Independiente": {
-            "ofensiva_score": -20.9,
-            "defensiva_score": 8.2,
-            "brecha_dominante": "DEFENSIVA",
-            "composicion_sugerida": "1 arquero + 2 defensores + 1 mediocampista"
-        },
-        "Newells Old Boys": {
-            "ofensiva_score": 8.2,
-            "defensiva_score": 33.1,
-            "brecha_dominante": "DEFENSIVA",
-            "composicion_sugerida": "1 arquero + 2 defensores + 1 mediocampista"
-        },
-        "CSD Defensa y Justicia": {
-            "ofensiva_score": -4.6,
-            "defensiva_score": 19.4,
-            "brecha_dominante": "DEFENSIVA",
-            "composicion_sugerida": "1 arquero + 2 defensores + 1 mediocampista"
-        },
-        "CA Sarmiento": {
-            "ofensiva_score": 1.9,
-            "defensiva_score": 21.1,
-            "brecha_dominante": "DEFENSIVA",
-            "composicion_sugerida": "1 arquero + 2 defensores + 1 mediocampista"
-        },
-        "Gimnasia y Esgrima La Plata": {
-            "ofensiva_score": 0.1,
-            "defensiva_score": 11.1,
-            "brecha_dominante": "PAREJA",
-            "composicion_sugerida": "2 ofensivos + 2 defensivos"
-        },
-        "CA Boca Juniors": {
-            "ofensiva_score": -21.1,
-            "defensiva_score": -22.4,
-            "brecha_dominante": "PAREJA",
-            "composicion_sugerida": "2 ofensivos + 2 defensivos"
-        },
-        "CA Rosario Central": {
-            "ofensiva_score": -15.6,
-            "defensiva_score": 1.4,
-            "brecha_dominante": "DEFENSIVA",
-            "composicion_sugerida": "1 arquero + 2 defensores + 1 mediocampista"
-        },
-        "CA Talleres de Cordoba": {
-            "ofensiva_score": -1.6,
-            "defensiva_score": 5.1,
-            "brecha_dominante": "PAREJA",
-            "composicion_sugerida": "2 ofensivos + 2 defensivos"
-        },
-        "CA Lanus": {
-            "ofensiva_score": -5.0,
-            "defensiva_score": -5.5,
-            "brecha_dominante": "PAREJA",
-            "composicion_sugerida": "2 ofensivos + 2 defensivos"
-        },
-        "CA Banfield": {
-            "ofensiva_score": 4.0,
-            "defensiva_score": 17.5,
-            "brecha_dominante": "PAREJA",
-            "composicion_sugerida": "2 ofensivos + 2 defensivos"
-        },
-        "Atletico Gimnasia y Esgrima de Mendoza": {
-            "ofensiva_score": 7.8,
-            "defensiva_score": 12.2,
-            "brecha_dominante": "PAREJA",
-            "composicion_sugerida": "2 ofensivos + 2 defensivos"
-        },
-        "CA River Plate": {
-            "ofensiva_score": -23.1,
-            "defensiva_score": -20.5,
-            "brecha_dominante": "PAREJA",
-            "composicion_sugerida": "2 ofensivos + 2 defensivos"
-        },
-        "Racing Club de Avellaneda": {
-            "ofensiva_score": 2.2,
-            "defensiva_score": -3.8,
-            "brecha_dominante": "PAREJA",
-            "composicion_sugerida": "2 ofensivos + 2 defensivos"
-        },
-        "Argentinos Juniors": {
-            "ofensiva_score": -20.5,
-            "defensiva_score": -29.0,
-            "brecha_dominante": "PAREJA",
-            "composicion_sugerida": "2 ofensivos + 2 defensivos"
-        },
-        "CA Tucuman": {
-            "ofensiva_score": 7.5,
-            "defensiva_score": -10.9,
-            "brecha_dominante": "OFENSIVA",
-            "composicion_sugerida": "2 delanteros + 2 mediocampistas"
-        },
-        "Instituto AC Cordoba": {
-            "ofensiva_score": -5.8,
-            "defensiva_score": -9.1,
-            "brecha_dominante": "PAREJA",
-            "composicion_sugerida": "2 ofensivos + 2 defensivos"
-        },
-        "CA Belgrano de Cordoba": {
-            "ofensiva_score": -6.5,
-            "defensiva_score": -26.9,
-            "brecha_dominante": "OFENSIVA",
-            "composicion_sugerida": "2 delanteros + 2 mediocampistas"
-        },
-        "CA Huracan": {
-            "ofensiva_score": 1.7,
-            "defensiva_score": -15.1,
-            "brecha_dominante": "OFENSIVA",
-            "composicion_sugerida": "2 delanteros + 2 mediocampistas"
-        },
-        "CA Central Cordoba de Santiago del Estero": {
-            "ofensiva_score": 29.2,
-            "defensiva_score": 16.4,
-            "brecha_dominante": "PAREJA",
-            "composicion_sugerida": "2 ofensivos + 2 defensivos"
-        },
-        "CA Tigre": {
-            "ofensiva_score": -4.8,
-            "defensiva_score": -9.4,
-            "brecha_dominante": "PAREJA",
-            "composicion_sugerida": "2 ofensivos + 2 defensivos"
-        },
-        "Club Atletico Velez Sarsfield": {
-            "ofensiva_score": -5.6,
-            "defensiva_score": -12.5,
-            "brecha_dominante": "PAREJA",
-            "composicion_sugerida": "2 ofensivos + 2 defensivos"
-        },
-        "CA Platense": {
-            "ofensiva_score": 14.3,
-            "defensiva_score": 3.9,
-            "brecha_dominante": "PAREJA",
-            "composicion_sugerida": "2 ofensivos + 2 defensivos"
-        },
-        "Estudiantes de La Plata": {
-            "ofensiva_score": -12.5,
-            "defensiva_score": -32.2,
-            "brecha_dominante": "OFENSIVA",
-            "composicion_sugerida": "2 delanteros + 2 mediocampistas"
-        },
-        "AA Estudiantes de Rio Cuarto": {
-            "ofensiva_score": 41.2,
-            "defensiva_score": 24.5,
-            "brecha_dominante": "OFENSIVA",
-            "composicion_sugerida": "2 delanteros + 2 mediocampistas"
-        },
-        "CA San Lorenzo de Almagro": {
-            "ofensiva_score": 14.9,
-            "defensiva_score": -14.9,
-            "brecha_dominante": "OFENSIVA",
-            "composicion_sugerida": "2 delanteros + 2 mediocampistas"
-        },
-        "CA Barracas Central": {
-            "ofensiva_score": 13.6,
-            "defensiva_score": 1.0,
-            "brecha_dominante": "PAREJA",
-            "composicion_sugerida": "2 ofensivos + 2 defensivos"
-        },
-        "CA Aldosivi": {
-            "ofensiva_score": 34.2,
-            "defensiva_score": 19.3,
-            "brecha_dominante": "PAREJA",
-            "composicion_sugerida": "2 ofensivos + 2 defensivos"
-        },
-        "CD Riestra": {
-            "ofensiva_score": 29.8,
-            "defensiva_score": -11.0,
-            "brecha_dominante": "OFENSIVA",
-            "composicion_sugerida": "2 delanteros + 2 mediocampistas"
-        }
+    "CA Independiente": {
+      "goalsTotal": {
+        "mp": 22,
+        "totalGoals": 57,
+        "avg": 2.59,
+        "home": 2.6,
+        "away": 2.58
+      },
+      "cleanSheets": {
+        "mp": 22,
+        "cs": 6,
+        "csPct": 27
+      },
+      "failedToScore": {
+        "mp": 22,
+        "fts": 3,
+        "ftsPct": 14
+      },
+      "xG": {
+        "mp": 22,
+        "xG": 1.49,
+        "xGA": 1.28,
+        "xGD": 0.21,
+        "GF": 1.41,
+        "GA": 1.18,
+        "xGvsActual": -0.08
+      }
     },
-    "playerStats": {
-        "topScorers": [
-            {
-                "player": "Jordy Josue Caicedo Medina",
-                "goals": 11
-            },
-            {
-                "player": "Gabriel Avalos",
-                "goals": 11
-            },
-            {
-                "player": "Junior Osvaldo Marabel Jara",
-                "goals": 10
-            },
-            {
-                "player": "Cristian Alberto Tarragona",
-                "goals": 9
-            },
-            {
-                "player": "Agustin Ignacio Modica",
-                "goals": 9
-            },
-            {
-                "player": "Luis Marcelo Torres",
-                "goals": 8
-            },
-            {
-                "player": "Jose David Romero",
-                "goals": 7
-            },
-            {
-                "player": "Leandro Nicolas Diaz",
-                "goals": 7
-            },
-            {
-                "player": "Fabrizio Sartori Prieto",
-                "goals": 7
-            },
-            {
-                "player": "Mauro Andres Mendez Acosta",
-                "goals": 6
-            }
-        ],
-        "assists": [
-            {
-                "player": "Julian Palacios",
-                "assists": 8
-            },
-            {
-                "player": "Sebastian Villa Cano",
-                "assists": 7
-            },
-            {
-                "player": "Facundo Lencioni",
-                "assists": 6
-            },
-            {
-                "player": "Lucas Giuliano Passerini",
-                "assists": 6
-            },
-            {
-                "player": "Matias Fernandez",
-                "assists": 5
-            },
-            {
-                "player": "Diego Alfonso Valdes Contreras",
-                "assists": 5
-            },
-            {
-                "player": "Rafael Profini",
-                "assists": 5
-            },
-            {
-                "player": "Alexis Steimbach",
-                "assists": 5
-            },
-            {
-                "player": "Gabriel Avalos",
-                "assists": 5
-            },
-            {
-                "player": "Santiago Solari",
-                "assists": 4
-            }
-        ],
-        "cleanSheetsGoalkeepers": [
-            {
-                "player": "Thiago Gaston Cardozo Brugman",
-                "mp": 24,
-                "cs": 13,
-                "csPct": 54
-            },
-            {
-                "player": "Brayan Josue Cortes Fernandez",
-                "mp": 24,
-                "cs": 12,
-                "csPct": 50
-            },
-            {
-                "player": "Orlando Gill",
-                "mp": 19,
-                "cs": 10,
-                "csPct": 53
-            },
-            {
-                "player": "Santiago Beltran",
-                "mp": 25,
-                "cs": 10,
-                "csPct": 40
-            },
-            {
-                "player": "Hernan Ismael Galindez",
-                "mp": 22,
-                "cs": 9,
-                "csPct": 41
-            },
-            {
-                "player": "Luis Ignacio Ingolotti",
-                "mp": 21,
-                "cs": 9,
-                "csPct": 43
-            },
-            {
-                "player": "Alvaro Montero",
-                "mp": 22,
-                "cs": 8,
-                "csPct": 36
-            },
-            {
-                "player": "Nahuel Hernan Losada",
-                "mp": 20,
-                "cs": 8,
-                "csPct": 40
-            },
-            {
-                "player": "Nestor Fernando Muslera Micol",
-                "mp": 15,
-                "cs": 8,
-                "csPct": 53
-            },
-            {
-                "player": "Nelson Federico Insfran",
-                "mp": 21,
-                "cs": 8,
-                "csPct": 38
-            },
-            {
-                "player": "Facundo Nicolas Cambeses",
-                "mp": 23,
-                "cs": 8,
-                "csPct": 35
-            },
-            {
-                "player": "Ignacio Mauricio Jesus Arce",
-                "mp": 21,
-                "cs": 8,
-                "csPct": 38
-            },
-            {
-                "player": "Matias Borgogno",
-                "mp": 21,
-                "cs": 6,
-                "csPct": 28
-            },
-            {
-                "player": "Alan Aguerre",
-                "mp": 19,
-                "cs": 6,
-                "csPct": 32
-            },
-            {
-                "player": "Cesar Pablo Rigamonti",
-                "mp": 19,
-                "cs": 6,
-                "csPct": 32
-            }
-        ],
-        "cleanSheetsPlayersPageNote": "Pagina /players muestra: 1 Thiago Gaston Cardozo Brugman 13, 2 Ramiro Hernandes 12, 3 Leonardo Morales 12, luego 6 Nicolas Adrian Oroz 12, 7 Adrian Sporle 12, 8 Tomas Molina 11, 9 Federico Fattori Mouzo 11, 10 Sebastian Prieto 11. Posiblemente incluye jugadores de campo acreditados con valla invicta, no solo arqueros. Usar 'cleanSheetsGoalkeepers' como fuente principal para el algoritmo.",
-        "xGLeadersForwards": [
-            {
-                "player": "Jordy Josue Caicedo Medina",
-                "xGTotal": 10.3,
-                "goals": 11,
-                "xG90": 0.49,
-                "shots": 41,
-                "pos": "FW",
-                "apps": 22
-            },
-            {
-                "player": "Cristian Alberto Tarragona",
-                "xGTotal": 10.24,
-                "goals": 9,
-                "xG90": 0.46,
-                "shots": 54,
-                "pos": "FW",
-                "apps": 23
-            },
-            {
-                "player": "Gabriel Avalos",
-                "xGTotal": 10.16,
-                "goals": 11,
-                "xG90": 0.49,
-                "shots": 52,
-                "pos": "FW",
-                "apps": 22
-            },
-            {
-                "player": "Junior Osvaldo Marabel Jara",
-                "xGTotal": 9.43,
-                "goals": 10,
-                "xG90": 0.53,
-                "shots": 40,
-                "pos": "FW",
-                "apps": 21
-            },
-            {
-                "player": "Alex Nahuel Luna",
-                "xGTotal": 9.24,
-                "goals": 6,
-                "xG90": 0.51,
-                "shots": 66,
-                "pos": "MF",
-                "apps": 20
-            },
-            {
-                "player": "Marcelo Luciano Estigarribia",
-                "xGTotal": 7.72,
-                "goals": 4,
-                "xG90": 0.47,
-                "shots": 63,
-                "pos": "FW",
-                "apps": 21
-            },
-            {
-                "player": "Luis Marcelo Torres",
-                "xGTotal": 7.4,
-                "goals": 8,
-                "xG90": 0.46,
-                "shots": 27,
-                "pos": "FW",
-                "apps": 19
-            },
-            {
-                "player": "Leandro Nicolas Diaz",
-                "xGTotal": 7.28,
-                "goals": 7,
-                "xG90": 0.51,
-                "shots": 35,
-                "pos": "FW",
-                "apps": 17
-            },
-            {
-                "player": "Agustin Ignacio Modica",
-                "xGTotal": 7.21,
-                "goals": 9,
-                "xG90": 0.54,
-                "shots": 36,
-                "pos": "FW",
-                "apps": 18
-            },
-            {
-                "player": "Miguel Merentiel",
-                "xGTotal": 7.14,
-                "goals": 6,
-                "xG90": 0.52,
-                "shots": 41,
-                "pos": "FW",
-                "apps": 19
-            }
-        ]
+    "Newells Old Boys": {
+      "goalsTotal": {
+        "mp": 21,
+        "totalGoals": 53,
+        "avg": 2.52,
+        "home": 2.09,
+        "away": 3.0
+      },
+      "cleanSheets": {
+        "mp": 21,
+        "cs": 4,
+        "csPct": 19
+      },
+      "failedToScore": {
+        "mp": 21,
+        "fts": 7,
+        "ftsPct": 33
+      },
+      "xG": {
+        "mp": 21,
+        "xG": 1.23,
+        "xGA": 1.55,
+        "xGD": -0.32,
+        "GF": 1.0,
+        "GA": 1.52,
+        "xGvsActual": -0.23
+      }
+    },
+    "CSD Defensa y Justicia": {
+      "goalsTotal": {
+        "mp": 21,
+        "totalGoals": 52,
+        "avg": 2.48,
+        "home": 2.27,
+        "away": 2.7
+      },
+      "cleanSheets": {
+        "mp": 21,
+        "cs": 5,
+        "csPct": 24
+      },
+      "failedToScore": {
+        "mp": 21,
+        "fts": 6,
+        "ftsPct": 29
+      },
+      "xG": {
+        "mp": 21,
+        "xG": 1.4,
+        "xGA": 1.43,
+        "xGD": -0.03,
+        "GF": 1.14,
+        "GA": 1.33,
+        "xGvsActual": -0.26
+      }
+    },
+    "CA Sarmiento": {
+      "goalsTotal": {
+        "mp": 21,
+        "totalGoals": 51,
+        "avg": 2.43,
+        "home": 2.27,
+        "away": 2.6
+      },
+      "cleanSheets": {
+        "mp": 21,
+        "cs": 6,
+        "csPct": 29
+      },
+      "failedToScore": {
+        "mp": 21,
+        "fts": 6,
+        "ftsPct": 29
+      },
+      "xG": {
+        "mp": 21,
+        "xG": 1.27,
+        "xGA": 1.71,
+        "xGD": -0.44,
+        "GF": 1.1,
+        "GA": 1.33,
+        "xGvsActual": -0.17
+      }
+    },
+    "Gimnasia y Esgrima La Plata": {
+      "goalsTotal": {
+        "mp": 23,
+        "totalGoals": 54,
+        "avg": 2.35,
+        "home": 2.4,
+        "away": 2.31
+      },
+      "cleanSheets": {
+        "mp": 23,
+        "cs": 8,
+        "csPct": 35
+      },
+      "failedToScore": {
+        "mp": 23,
+        "fts": 7,
+        "ftsPct": 30
+      },
+      "xG": {
+        "mp": 23,
+        "xG": 1.28,
+        "xGA": 1.68,
+        "xGD": -0.4,
+        "GF": 1.13,
+        "GA": 1.22,
+        "xGvsActual": -0.15
+      }
+    },
+    "CA Boca Juniors": {
+      "goalsTotal": {
+        "mp": 22,
+        "totalGoals": 48,
+        "avg": 2.18,
+        "home": 1.73,
+        "away": 2.64
+      },
+      "cleanSheets": {
+        "mp": 22,
+        "cs": 10,
+        "csPct": 45
+      },
+      "failedToScore": {
+        "mp": 22,
+        "fts": 3,
+        "ftsPct": 14
+      },
+      "xG": {
+        "mp": 22,
+        "xG": 1.62,
+        "xGA": 1.15,
+        "xGD": 0.47,
+        "GF": 1.32,
+        "GA": 0.86,
+        "xGvsActual": -0.3
+      }
+    },
+    "CA Rosario Central": {
+      "goalsTotal": {
+        "mp": 24,
+        "totalGoals": 52,
+        "avg": 2.17,
+        "home": 2.25,
+        "away": 2.08
+      },
+      "cleanSheets": {
+        "mp": 24,
+        "cs": 7,
+        "csPct": 29
+      },
+      "failedToScore": {
+        "mp": 24,
+        "fts": 6,
+        "ftsPct": 25
+      },
+      "xG": {
+        "mp": 24,
+        "xG": 1.56,
+        "xGA": 1.43,
+        "xGD": 0.13,
+        "GF": 1.25,
+        "GA": 0.92,
+        "xGvsActual": -0.31
+      }
+    },
+    "CA Talleres de Cordoba": {
+      "goalsTotal": {
+        "mp": 22,
+        "totalGoals": 47,
+        "avg": 2.14,
+        "home": 2.2,
+        "away": 2.08
+      },
+      "cleanSheets": {
+        "mp": 22,
+        "cs": 7,
+        "csPct": 32
+      },
+      "failedToScore": {
+        "mp": 22,
+        "fts": 8,
+        "ftsPct": 36
+      },
+      "xG": {
+        "mp": 22,
+        "xG": 1.44,
+        "xGA": 1.48,
+        "xGD": -0.04,
+        "GF": 1.05,
+        "GA": 1.09,
+        "xGvsActual": -0.39
+      }
+    },
+    "CA Lanus": {
+      "goalsTotal": {
+        "mp": 22,
+        "totalGoals": 47,
+        "avg": 2.14,
+        "home": 1.82,
+        "away": 2.45
+      },
+      "cleanSheets": {
+        "mp": 22,
+        "cs": 9,
+        "csPct": 41
+      },
+      "failedToScore": {
+        "mp": 22,
+        "fts": 8,
+        "ftsPct": 36
+      },
+      "xG": {
+        "mp": 22,
+        "xG": 1.48,
+        "xGA": 1.45,
+        "xGD": 0.03,
+        "GF": 1.09,
+        "GA": 1.05,
+        "xGvsActual": -0.39
+      }
+    },
+    "CA Banfield": {
+      "goalsTotal": {
+        "mp": 21,
+        "totalGoals": 45,
+        "avg": 2.14,
+        "home": 2.3,
+        "away": 2.0
+      },
+      "cleanSheets": {
+        "mp": 21,
+        "cs": 6,
+        "csPct": 29
+      },
+      "failedToScore": {
+        "mp": 21,
+        "fts": 8,
+        "ftsPct": 38
+      },
+      "xG": {
+        "mp": 21,
+        "xG": 1.35,
+        "xGA": 1.82,
+        "xGD": -0.47,
+        "GF": 1.0,
+        "GA": 1.14,
+        "xGvsActual": -0.35
+      }
+    },
+    "Atletico Gimnasia y Esgrima de Mendoza": {
+      "goalsTotal": {
+        "mp": 21,
+        "totalGoals": 45,
+        "avg": 2.14,
+        "home": 2.18,
+        "away": 2.1
+      },
+      "cleanSheets": {
+        "mp": 21,
+        "cs": 6,
+        "csPct": 29
+      },
+      "failedToScore": {
+        "mp": 21,
+        "fts": 7,
+        "ftsPct": 33
+      },
+      "xG": {
+        "mp": 21,
+        "xG": 1.31,
+        "xGA": 1.52,
+        "xGD": -0.21,
+        "GF": 0.95,
+        "GA": 1.19,
+        "xGvsActual": -0.36
+      }
+    },
+    "CA River Plate": {
+      "goalsTotal": {
+        "mp": 25,
+        "totalGoals": 52,
+        "avg": 2.08,
+        "home": 2.53,
+        "away": 1.4
+      },
+      "cleanSheets": {
+        "mp": 25,
+        "cs": 10,
+        "csPct": 40
+      },
+      "failedToScore": {
+        "mp": 25,
+        "fts": 9,
+        "ftsPct": 36
+      },
+      "xG": {
+        "mp": 25,
+        "xG": 1.79,
+        "xGA": 1.05,
+        "xGD": 0.74,
+        "GF": 1.24,
+        "GA": 0.84,
+        "xGvsActual": -0.55
+      }
+    },
+    "Racing Club de Avellaneda": {
+      "goalsTotal": {
+        "mp": 23,
+        "totalGoals": 47,
+        "avg": 2.04,
+        "home": 2.2,
+        "away": 1.92
+      },
+      "cleanSheets": {
+        "mp": 23,
+        "cs": 8,
+        "csPct": 35
+      },
+      "failedToScore": {
+        "mp": 23,
+        "fts": 7,
+        "ftsPct": 30
+      },
+      "xG": {
+        "mp": 23,
+        "xG": 1.4,
+        "xGA": 1.29,
+        "xGD": 0.11,
+        "GF": 1.0,
+        "GA": 1.04,
+        "xGvsActual": -0.4
+      }
+    },
+    "Argentinos Juniors": {
+      "goalsTotal": {
+        "mp": 24,
+        "totalGoals": 49,
+        "avg": 2.04,
+        "home": 1.79,
+        "away": 2.4
+      },
+      "cleanSheets": {
+        "mp": 24,
+        "cs": 12,
+        "csPct": 50
+      },
+      "failedToScore": {
+        "mp": 24,
+        "fts": 5,
+        "ftsPct": 21
+      },
+      "xG": {
+        "mp": 24,
+        "xG": 1.7,
+        "xGA": 1.17,
+        "xGD": 0.53,
+        "GF": 1.25,
+        "GA": 0.79,
+        "xGvsActual": -0.45
+      }
+    },
+    "CA Tucuman": {
+      "goalsTotal": {
+        "mp": 21,
+        "totalGoals": 41,
+        "avg": 1.95,
+        "home": 1.7,
+        "away": 2.18
+      },
+      "cleanSheets": {
+        "mp": 21,
+        "cs": 9,
+        "csPct": 43
+      },
+      "failedToScore": {
+        "mp": 21,
+        "fts": 6,
+        "ftsPct": 29
+      },
+      "xG": {
+        "mp": 21,
+        "xG": 1.39,
+        "xGA": 1.3,
+        "xGD": 0.09,
+        "GF": 0.9,
+        "GA": 1.05,
+        "xGvsActual": -0.49
+      }
+    },
+    "Instituto AC Cordoba": {
+      "goalsTotal": {
+        "mp": 21,
+        "totalGoals": 41,
+        "avg": 1.95,
+        "home": 2.3,
+        "away": 1.64
+      },
+      "cleanSheets": {
+        "mp": 21,
+        "cs": 7,
+        "csPct": 33
+      },
+      "failedToScore": {
+        "mp": 21,
+        "fts": 6,
+        "ftsPct": 29
+      },
+      "xG": {
+        "mp": 21,
+        "xG": 1.56,
+        "xGA": 1.17,
+        "xGD": 0.39,
+        "GF": 1.05,
+        "GA": 0.9,
+        "xGvsActual": -0.51
+      }
+    },
+    "CA Belgrano de Cordoba": {
+      "goalsTotal": {
+        "mp": 25,
+        "totalGoals": 48,
+        "avg": 1.92,
+        "home": 2.0,
+        "away": 1.85
+      },
+      "cleanSheets": {
+        "mp": 25,
+        "cs": 13,
+        "csPct": 52
+      },
+      "failedToScore": {
+        "mp": 25,
+        "fts": 7,
+        "ftsPct": 28
+      },
+      "xG": {
+        "mp": 25,
+        "xG": 1.37,
+        "xGA": 1.44,
+        "xGD": -0.07,
+        "GF": 1.2,
+        "GA": 0.72,
+        "xGvsActual": -0.17
+      }
+    },
+    "CA Huracan": {
+      "goalsTotal": {
+        "mp": 23,
+        "totalGoals": 44,
+        "avg": 1.91,
+        "home": 2.0,
+        "away": 1.85
+      },
+      "cleanSheets": {
+        "mp": 23,
+        "cs": 10,
+        "csPct": 43
+      },
+      "failedToScore": {
+        "mp": 23,
+        "fts": 8,
+        "ftsPct": 35
+      },
+      "xG": {
+        "mp": 23,
+        "xG": 1.36,
+        "xGA": 1.37,
+        "xGD": -0.01,
+        "GF": 1.04,
+        "GA": 0.87,
+        "xGvsActual": -0.32
+      }
+    },
+    "CA Central Cordoba de Santiago del Estero": {
+      "goalsTotal": {
+        "mp": 21,
+        "totalGoals": 40,
+        "avg": 1.9,
+        "home": 2.09,
+        "away": 1.7
+      },
+      "cleanSheets": {
+        "mp": 21,
+        "cs": 7,
+        "csPct": 33
+      },
+      "failedToScore": {
+        "mp": 21,
+        "fts": 12,
+        "ftsPct": 57
+      },
+      "xG": {
+        "mp": 21,
+        "xG": 1.09,
+        "xGA": 1.8,
+        "xGD": -0.71,
+        "GF": 0.67,
+        "GA": 1.24,
+        "xGvsActual": -0.42
+      }
+    },
+    "CA Tigre": {
+      "goalsTotal": {
+        "mp": 21,
+        "totalGoals": 39,
+        "avg": 1.86,
+        "home": 2.0,
+        "away": 1.73
+      },
+      "cleanSheets": {
+        "mp": 21,
+        "cs": 7,
+        "csPct": 33
+      },
+      "failedToScore": {
+        "mp": 21,
+        "fts": 8,
+        "ftsPct": 38
+      },
+      "xG": {
+        "mp": 21,
+        "xG": 1.53,
+        "xGA": 1.28,
+        "xGD": 0.25,
+        "GF": 1.05,
+        "GA": 0.81,
+        "xGvsActual": -0.48
+      }
+    },
+    "Club Atletico Velez Sarsfield": {
+      "goalsTotal": {
+        "mp": 22,
+        "totalGoals": 41,
+        "avg": 1.86,
+        "home": 1.67,
+        "away": 2.1
+      },
+      "cleanSheets": {
+        "mp": 22,
+        "cs": 9,
+        "csPct": 41
+      },
+      "failedToScore": {
+        "mp": 22,
+        "fts": 4,
+        "ftsPct": 18
+      },
+      "xG": {
+        "mp": 22,
+        "xG": 1.43,
+        "xGA": 1.59,
+        "xGD": -0.16,
+        "GF": 1.14,
+        "GA": 0.73,
+        "xGvsActual": -0.29
+      }
+    },
+    "CA Platense": {
+      "goalsTotal": {
+        "mp": 21,
+        "totalGoals": 39,
+        "avg": 1.86,
+        "home": 2.0,
+        "away": 1.7
+      },
+      "cleanSheets": {
+        "mp": 21,
+        "cs": 7,
+        "csPct": 33
+      },
+      "failedToScore": {
+        "mp": 21,
+        "fts": 11,
+        "ftsPct": 52
+      },
+      "xG": {
+        "mp": 21,
+        "xG": 1.46,
+        "xGA": 1.4,
+        "xGD": 0.06,
+        "GF": 0.71,
+        "GA": 1.14,
+        "xGvsActual": -0.75
+      }
+    },
+    "Estudiantes de La Plata": {
+      "goalsTotal": {
+        "mp": 22,
+        "totalGoals": 39,
+        "avg": 1.77,
+        "home": 2.08,
+        "away": 1.4
+      },
+      "cleanSheets": {
+        "mp": 22,
+        "cs": 11,
+        "csPct": 50
+      },
+      "failedToScore": {
+        "mp": 22,
+        "fts": 10,
+        "ftsPct": 45
+      },
+      "xG": {
+        "mp": 22,
+        "xG": 1.57,
+        "xGA": 1.31,
+        "xGD": 0.26,
+        "GF": 1.18,
+        "GA": 0.59,
+        "xGvsActual": -0.39
+      }
+    },
+    "AA Estudiantes de Rio Cuarto": {
+      "goalsTotal": {
+        "mp": 21,
+        "totalGoals": 37,
+        "avg": 1.76,
+        "home": 1.45,
+        "away": 2.1
+      },
+      "cleanSheets": {
+        "mp": 21,
+        "cs": 5,
+        "csPct": 24
+      },
+      "failedToScore": {
+        "mp": 21,
+        "fts": 15,
+        "ftsPct": 71
+      },
+      "xG": {
+        "mp": 21,
+        "xG": 1.22,
+        "xGA": 1.51,
+        "xGD": -0.29,
+        "GF": 0.33,
+        "GA": 1.43,
+        "xGvsActual": -0.89
+      }
+    },
+    "CA San Lorenzo de Almagro": {
+      "goalsTotal": {
+        "mp": 22,
+        "totalGoals": 38,
+        "avg": 1.73,
+        "home": 2.27,
+        "away": 1.18
+      },
+      "cleanSheets": {
+        "mp": 22,
+        "cs": 11,
+        "csPct": 50
+      },
+      "failedToScore": {
+        "mp": 22,
+        "fts": 8,
+        "ftsPct": 36
+      },
+      "xG": {
+        "mp": 22,
+        "xG": 1.29,
+        "xGA": 1.61,
+        "xGD": -0.32,
+        "GF": 0.82,
+        "GA": 0.91,
+        "xGvsActual": -0.47
+      }
+    },
+    "CA Barracas Central": {
+      "goalsTotal": {
+        "mp": 21,
+        "totalGoals": 36,
+        "avg": 1.71,
+        "home": 1.9,
+        "away": 1.55
+      },
+      "cleanSheets": {
+        "mp": 21,
+        "cs": 7,
+        "csPct": 33
+      },
+      "failedToScore": {
+        "mp": 21,
+        "fts": 8,
+        "ftsPct": 38
+      },
+      "xG": {
+        "mp": 21,
+        "xG": 1.27,
+        "xGA": 1.66,
+        "xGD": -0.39,
+        "GF": 0.86,
+        "GA": 0.86,
+        "xGvsActual": -0.41
+      }
+    },
+    "CA Aldosivi": {
+      "goalsTotal": {
+        "mp": 21,
+        "totalGoals": 34,
+        "avg": 1.62,
+        "home": 1.1,
+        "away": 2.09
+      },
+      "cleanSheets": {
+        "mp": 21,
+        "cs": 5,
+        "csPct": 24
+      },
+      "failedToScore": {
+        "mp": 21,
+        "fts": 12,
+        "ftsPct": 57
+      },
+      "xG": {
+        "mp": 21,
+        "xG": 1.28,
+        "xGA": 1.62,
+        "xGD": -0.34,
+        "GF": 0.43,
+        "GA": 1.19,
+        "xGvsActual": -0.85
+      }
+    },
+    "CD Riestra": {
+      "goalsTotal": {
+        "mp": 21,
+        "totalGoals": 28,
+        "avg": 1.33,
+        "home": 1.27,
+        "away": 1.4
+      },
+      "cleanSheets": {
+        "mp": 21,
+        "cs": 8,
+        "csPct": 38
+      },
+      "failedToScore": {
+        "mp": 21,
+        "fts": 14,
+        "ftsPct": 67
+      },
+      "xG": {
+        "mp": 21,
+        "xG": 1.28,
+        "xGA": 1.42,
+        "xGD": -0.14,
+        "GF": 0.52,
+        "GA": 0.81,
+        "xGvsActual": -0.76
+      }
     }
+  },
+  "diagnosticoNecesidades": {
+    "CA Union de Santa Fe": {
+      "ofensiva_score": -27.4,
+      "defensiva_score": 19.9,
+      "brecha_dominante": "DEFENSIVA",
+      "composicion_sugerida": "1 arquero + 2 defensores + 1 mediocampista"
+    },
+    "CS Independiente Rivadavia": {
+      "ofensiva_score": -35.6,
+      "defensiva_score": 9.3,
+      "brecha_dominante": "DEFENSIVA",
+      "composicion_sugerida": "1 arquero + 2 defensores + 1 mediocampista"
+    },
+    "CA Independiente": {
+      "ofensiva_score": -20.9,
+      "defensiva_score": 8.2,
+      "brecha_dominante": "DEFENSIVA",
+      "composicion_sugerida": "1 arquero + 2 defensores + 1 mediocampista"
+    },
+    "Newells Old Boys": {
+      "ofensiva_score": 8.2,
+      "defensiva_score": 33.1,
+      "brecha_dominante": "DEFENSIVA",
+      "composicion_sugerida": "1 arquero + 2 defensores + 1 mediocampista"
+    },
+    "CSD Defensa y Justicia": {
+      "ofensiva_score": -4.6,
+      "defensiva_score": 19.4,
+      "brecha_dominante": "DEFENSIVA",
+      "composicion_sugerida": "1 arquero + 2 defensores + 1 mediocampista"
+    },
+    "CA Sarmiento": {
+      "ofensiva_score": 1.9,
+      "defensiva_score": 21.1,
+      "brecha_dominante": "DEFENSIVA",
+      "composicion_sugerida": "1 arquero + 2 defensores + 1 mediocampista"
+    },
+    "Gimnasia y Esgrima La Plata": {
+      "ofensiva_score": 0.1,
+      "defensiva_score": 11.1,
+      "brecha_dominante": "PAREJA",
+      "composicion_sugerida": "2 ofensivos + 2 defensivos"
+    },
+    "CA Boca Juniors": {
+      "ofensiva_score": -21.1,
+      "defensiva_score": -22.4,
+      "brecha_dominante": "PAREJA",
+      "composicion_sugerida": "2 ofensivos + 2 defensivos"
+    },
+    "CA Rosario Central": {
+      "ofensiva_score": -15.6,
+      "defensiva_score": 1.4,
+      "brecha_dominante": "DEFENSIVA",
+      "composicion_sugerida": "1 arquero + 2 defensores + 1 mediocampista"
+    },
+    "CA Talleres de Cordoba": {
+      "ofensiva_score": -1.6,
+      "defensiva_score": 5.1,
+      "brecha_dominante": "PAREJA",
+      "composicion_sugerida": "2 ofensivos + 2 defensivos"
+    },
+    "CA Lanus": {
+      "ofensiva_score": -5.0,
+      "defensiva_score": -5.5,
+      "brecha_dominante": "PAREJA",
+      "composicion_sugerida": "2 ofensivos + 2 defensivos"
+    },
+    "CA Banfield": {
+      "ofensiva_score": 4.0,
+      "defensiva_score": 17.5,
+      "brecha_dominante": "PAREJA",
+      "composicion_sugerida": "2 ofensivos + 2 defensivos"
+    },
+    "Atletico Gimnasia y Esgrima de Mendoza": {
+      "ofensiva_score": 7.8,
+      "defensiva_score": 12.2,
+      "brecha_dominante": "PAREJA",
+      "composicion_sugerida": "2 ofensivos + 2 defensivos"
+    },
+    "CA River Plate": {
+      "ofensiva_score": -23.1,
+      "defensiva_score": -20.5,
+      "brecha_dominante": "PAREJA",
+      "composicion_sugerida": "2 ofensivos + 2 defensivos"
+    },
+    "Racing Club de Avellaneda": {
+      "ofensiva_score": 2.2,
+      "defensiva_score": -3.8,
+      "brecha_dominante": "PAREJA",
+      "composicion_sugerida": "2 ofensivos + 2 defensivos"
+    },
+    "Argentinos Juniors": {
+      "ofensiva_score": -20.5,
+      "defensiva_score": -29.0,
+      "brecha_dominante": "PAREJA",
+      "composicion_sugerida": "2 ofensivos + 2 defensivos"
+    },
+    "CA Tucuman": {
+      "ofensiva_score": 7.5,
+      "defensiva_score": -10.9,
+      "brecha_dominante": "OFENSIVA",
+      "composicion_sugerida": "2 delanteros + 2 mediocampistas"
+    },
+    "Instituto AC Cordoba": {
+      "ofensiva_score": -5.8,
+      "defensiva_score": -9.1,
+      "brecha_dominante": "PAREJA",
+      "composicion_sugerida": "2 ofensivos + 2 defensivos"
+    },
+    "CA Belgrano de Cordoba": {
+      "ofensiva_score": -6.5,
+      "defensiva_score": -26.9,
+      "brecha_dominante": "OFENSIVA",
+      "composicion_sugerida": "2 delanteros + 2 mediocampistas"
+    },
+    "CA Huracan": {
+      "ofensiva_score": 1.7,
+      "defensiva_score": -15.1,
+      "brecha_dominante": "OFENSIVA",
+      "composicion_sugerida": "2 delanteros + 2 mediocampistas"
+    },
+    "CA Central Cordoba de Santiago del Estero": {
+      "ofensiva_score": 29.2,
+      "defensiva_score": 16.4,
+      "brecha_dominante": "PAREJA",
+      "composicion_sugerida": "2 ofensivos + 2 defensivos"
+    },
+    "CA Tigre": {
+      "ofensiva_score": -4.8,
+      "defensiva_score": -9.4,
+      "brecha_dominante": "PAREJA",
+      "composicion_sugerida": "2 ofensivos + 2 defensivos"
+    },
+    "Club Atletico Velez Sarsfield": {
+      "ofensiva_score": -5.6,
+      "defensiva_score": -12.5,
+      "brecha_dominante": "PAREJA",
+      "composicion_sugerida": "2 ofensivos + 2 defensivos"
+    },
+    "CA Platense": {
+      "ofensiva_score": 14.3,
+      "defensiva_score": 3.9,
+      "brecha_dominante": "PAREJA",
+      "composicion_sugerida": "2 ofensivos + 2 defensivos"
+    },
+    "Estudiantes de La Plata": {
+      "ofensiva_score": -12.5,
+      "defensiva_score": -32.2,
+      "brecha_dominante": "OFENSIVA",
+      "composicion_sugerida": "2 delanteros + 2 mediocampistas"
+    },
+    "AA Estudiantes de Rio Cuarto": {
+      "ofensiva_score": 41.2,
+      "defensiva_score": 24.5,
+      "brecha_dominante": "OFENSIVA",
+      "composicion_sugerida": "2 delanteros + 2 mediocampistas"
+    },
+    "CA San Lorenzo de Almagro": {
+      "ofensiva_score": 14.9,
+      "defensiva_score": -14.9,
+      "brecha_dominante": "OFENSIVA",
+      "composicion_sugerida": "2 delanteros + 2 mediocampistas"
+    },
+    "CA Barracas Central": {
+      "ofensiva_score": 13.6,
+      "defensiva_score": 1.0,
+      "brecha_dominante": "PAREJA",
+      "composicion_sugerida": "2 ofensivos + 2 defensivos"
+    },
+    "CA Aldosivi": {
+      "ofensiva_score": 34.2,
+      "defensiva_score": 19.3,
+      "brecha_dominante": "PAREJA",
+      "composicion_sugerida": "2 ofensivos + 2 defensivos"
+    },
+    "CD Riestra": {
+      "ofensiva_score": 29.8,
+      "defensiva_score": -11.0,
+      "brecha_dominante": "OFENSIVA",
+      "composicion_sugerida": "2 delanteros + 2 mediocampistas"
+    }
+  },
+  "playerStats": {
+    "topScorers": [
+      {
+        "player": "Jordy Josue Caicedo Medina",
+        "goals": 11
+      },
+      {
+        "player": "Gabriel Avalos",
+        "goals": 11
+      },
+      {
+        "player": "Junior Osvaldo Marabel Jara",
+        "goals": 10
+      },
+      {
+        "player": "Cristian Alberto Tarragona",
+        "goals": 9
+      },
+      {
+        "player": "Agustin Ignacio Modica",
+        "goals": 9
+      },
+      {
+        "player": "Luis Marcelo Torres",
+        "goals": 8
+      },
+      {
+        "player": "Jose David Romero",
+        "goals": 7
+      },
+      {
+        "player": "Leandro Nicolas Diaz",
+        "goals": 7
+      },
+      {
+        "player": "Fabrizio Sartori Prieto",
+        "goals": 7
+      },
+      {
+        "player": "Mauro Andres Mendez Acosta",
+        "goals": 6
+      }
+    ],
+    "assists": [
+      {
+        "player": "Julian Palacios",
+        "assists": 8
+      },
+      {
+        "player": "Sebastian Villa Cano",
+        "assists": 7
+      },
+      {
+        "player": "Facundo Lencioni",
+        "assists": 6
+      },
+      {
+        "player": "Lucas Giuliano Passerini",
+        "assists": 6
+      },
+      {
+        "player": "Matias Fernandez",
+        "assists": 5
+      },
+      {
+        "player": "Diego Alfonso Valdes Contreras",
+        "assists": 5
+      },
+      {
+        "player": "Rafael Profini",
+        "assists": 5
+      },
+      {
+        "player": "Alexis Steimbach",
+        "assists": 5
+      },
+      {
+        "player": "Gabriel Avalos",
+        "assists": 5
+      },
+      {
+        "player": "Santiago Solari",
+        "assists": 4
+      }
+    ],
+    "cleanSheetsGoalkeepers": [
+      {
+        "player": "Thiago Gaston Cardozo Brugman",
+        "mp": 24,
+        "cs": 13,
+        "csPct": 54
+      },
+      {
+        "player": "Brayan Josue Cortes Fernandez",
+        "mp": 24,
+        "cs": 12,
+        "csPct": 50
+      },
+      {
+        "player": "Orlando Gill",
+        "mp": 19,
+        "cs": 10,
+        "csPct": 53
+      },
+      {
+        "player": "Santiago Beltran",
+        "mp": 25,
+        "cs": 10,
+        "csPct": 40
+      },
+      {
+        "player": "Hernan Ismael Galindez",
+        "mp": 22,
+        "cs": 9,
+        "csPct": 41
+      },
+      {
+        "player": "Luis Ignacio Ingolotti",
+        "mp": 21,
+        "cs": 9,
+        "csPct": 43
+      },
+      {
+        "player": "Alvaro Montero",
+        "mp": 22,
+        "cs": 8,
+        "csPct": 36
+      },
+      {
+        "player": "Nahuel Hernan Losada",
+        "mp": 20,
+        "cs": 8,
+        "csPct": 40
+      },
+      {
+        "player": "Nestor Fernando Muslera Micol",
+        "mp": 15,
+        "cs": 8,
+        "csPct": 53
+      },
+      {
+        "player": "Nelson Federico Insfran",
+        "mp": 21,
+        "cs": 8,
+        "csPct": 38
+      },
+      {
+        "player": "Facundo Nicolas Cambeses",
+        "mp": 23,
+        "cs": 8,
+        "csPct": 35
+      },
+      {
+        "player": "Ignacio Mauricio Jesus Arce",
+        "mp": 21,
+        "cs": 8,
+        "csPct": 38
+      },
+      {
+        "player": "Matias Borgogno",
+        "mp": 21,
+        "cs": 6,
+        "csPct": 28
+      },
+      {
+        "player": "Alan Aguerre",
+        "mp": 19,
+        "cs": 6,
+        "csPct": 32
+      },
+      {
+        "player": "Cesar Pablo Rigamonti",
+        "mp": 19,
+        "cs": 6,
+        "csPct": 32
+      }
+    ],
+    "cleanSheetsPlayersPageNote": "Pagina /players muestra: 1 Thiago Gaston Cardozo Brugman 13, 2 Ramiro Hernandes 12, 3 Leonardo Morales 12, luego 6 Nicolas Adrian Oroz 12, 7 Adrian Sporle 12, 8 Tomas Molina 11, 9 Federico Fattori Mouzo 11, 10 Sebastian Prieto 11. Posiblemente incluye jugadores de campo acreditados con valla invicta, no solo arqueros. Usar 'cleanSheetsGoalkeepers' como fuente principal para el algoritmo.",
+    "xGLeadersForwards": [
+      {
+        "player": "Jordy Josue Caicedo Medina",
+        "xGTotal": 10.3,
+        "goals": 11,
+        "xG90": 0.49,
+        "shots": 41,
+        "pos": "FW",
+        "apps": 22
+      },
+      {
+        "player": "Cristian Alberto Tarragona",
+        "xGTotal": 10.24,
+        "goals": 9,
+        "xG90": 0.46,
+        "shots": 54,
+        "pos": "FW",
+        "apps": 23
+      },
+      {
+        "player": "Gabriel Avalos",
+        "xGTotal": 10.16,
+        "goals": 11,
+        "xG90": 0.49,
+        "shots": 52,
+        "pos": "FW",
+        "apps": 22
+      },
+      {
+        "player": "Junior Osvaldo Marabel Jara",
+        "xGTotal": 9.43,
+        "goals": 10,
+        "xG90": 0.53,
+        "shots": 40,
+        "pos": "FW",
+        "apps": 21
+      },
+      {
+        "player": "Alex Nahuel Luna",
+        "xGTotal": 9.24,
+        "goals": 6,
+        "xG90": 0.51,
+        "shots": 66,
+        "pos": "MF",
+        "apps": 20
+      },
+      {
+        "player": "Marcelo Luciano Estigarribia",
+        "xGTotal": 7.72,
+        "goals": 4,
+        "xG90": 0.47,
+        "shots": 63,
+        "pos": "FW",
+        "apps": 21
+      },
+      {
+        "player": "Luis Marcelo Torres",
+        "xGTotal": 7.4,
+        "goals": 8,
+        "xG90": 0.46,
+        "shots": 27,
+        "pos": "FW",
+        "apps": 19
+      },
+      {
+        "player": "Leandro Nicolas Diaz",
+        "xGTotal": 7.28,
+        "goals": 7,
+        "xG90": 0.51,
+        "shots": 35,
+        "pos": "FW",
+        "apps": 17
+      },
+      {
+        "player": "Agustin Ignacio Modica",
+        "xGTotal": 7.21,
+        "goals": 9,
+        "xG90": 0.54,
+        "shots": 36,
+        "pos": "FW",
+        "apps": 18
+      },
+      {
+        "player": "Miguel Merentiel",
+        "xGTotal": 7.14,
+        "goals": 6,
+        "xG90": 0.52,
+        "shots": 41,
+        "pos": "FW",
+        "apps": 19
+      }
+    ]
+  }
 }

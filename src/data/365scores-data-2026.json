@@ -1,0 +1,1515 @@
+{
+  "meta": {
+    "fuente": "365scores.com/es/football/league/liga-profesional-72/stats",
+    "temporada": "2026 (Clausura en curso, fecha 5-6, capturado 21/8/2026)",
+    "nota_limite": "Cada categoria muestra top ~20 (limite real de la fuente via 'Ver mas', no resuelto via perfil individual segun confirmo Claude Code). Estas listas NO son la liga completa, solo los lideres de cada categoria.",
+    "nota_unidades_CRITICA": "Hay dos tipos de unidad que NO deben mezclarse: (1) TOTALES DE TEMPORADA (Goles, Asistencias, Tarjetas Amarillas/Rojas, Porterias a cero, Penaltis) y (2) PROMEDIOS POR PARTIDO (Barridas ganadas, Intercepciones, Goles recibidos, Atajadas -- todas con valores bajos tipo 0.2-5 que son promedios, no acumulados). El filtro de 70% de partidos jugados ya viene aplicado por el sitio en estas listas de promedio."
+  },
+  "goles": [
+    {
+      "player": "Junior Marabel",
+      "club": "Sarmiento Junin",
+      "valor": 4
+    },
+    {
+      "player": "Agustin Modica",
+      "club": "Gimnasia de Mendoza",
+      "valor": 5
+    },
+    {
+      "player": "Jordy Caicedo",
+      "club": "Huracan",
+      "valor": 3
+    },
+    {
+      "player": "Santiago Ascacibar",
+      "club": "Boca Juniors",
+      "valor": 3
+    },
+    {
+      "player": "Yoshan Valois",
+      "club": "Lanus",
+      "valor": 3
+    },
+    {
+      "player": "Alex Arce",
+      "club": "Independiente Rivadavia",
+      "valor": 3
+    },
+    {
+      "player": "Agustin Colazo",
+      "club": "Gimnasia La Plata",
+      "valor": 2
+    },
+    {
+      "player": "Antony Alonso",
+      "club": "Deportivo Riestra",
+      "valor": 2
+    },
+    {
+      "player": "David Barbona",
+      "club": "Defensa y Justicia",
+      "valor": 2
+    },
+    {
+      "player": "Diego Valdes",
+      "club": "Velez Sarsfield",
+      "valor": 2
+    },
+    {
+      "player": "Hernan Lopez Munoz",
+      "club": "Argentinos Juniors",
+      "valor": 2
+    },
+    {
+      "player": "Ignacio Russo",
+      "club": "Tigre",
+      "valor": 2
+    },
+    {
+      "player": "Julian Mavilla",
+      "club": "Sarmiento Junin",
+      "valor": 2
+    },
+    {
+      "player": "Lautaro Millan",
+      "club": "Independiente",
+      "valor": 2
+    },
+    {
+      "player": "Leandro Diaz",
+      "club": "Atletico Tucuman",
+      "valor": 2
+    },
+    {
+      "player": "Lucas Menossi",
+      "club": "Union de Santa Fe",
+      "valor": 2
+    },
+    {
+      "player": "Manuel Lanzini",
+      "club": "Velez Sarsfield",
+      "valor": 2
+    },
+    {
+      "player": "Michael Santos",
+      "club": "Central Cordoba SdE",
+      "valor": 2
+    },
+    {
+      "player": "Rick",
+      "club": "Talleres de Cordoba",
+      "valor": 2
+    },
+    {
+      "player": "Rodrigo Auzmendi",
+      "club": "San Lorenzo",
+      "valor": 2
+    }
+  ],
+  "golesEsperados_xG": [
+    {
+      "player": "Junior Marabel",
+      "club": "Sarmiento Junin",
+      "valor": 2.96
+    },
+    {
+      "player": "Agustin Modica",
+      "club": "Gimnasia de Mendoza",
+      "valor": 2.93
+    },
+    {
+      "player": "Alex Luna",
+      "club": "Instituto",
+      "valor": 2.61
+    },
+    {
+      "player": "Matias Tissera",
+      "club": "Instituto",
+      "valor": 2.45
+    },
+    {
+      "player": "Miguel Merentiel",
+      "club": "Boca Juniors",
+      "valor": 2.24
+    },
+    {
+      "player": "Alex Arce",
+      "club": "Independiente Rivadavia",
+      "valor": 2.23
+    },
+    {
+      "player": "Milton Celiz",
+      "club": "Deportivo Riestra",
+      "valor": 2.08
+    },
+    {
+      "player": "Facundo Lencioni",
+      "club": "Gimnasia de Mendoza",
+      "valor": 2.06
+    },
+    {
+      "player": "David Barbona",
+      "club": "Defensa y Justicia",
+      "valor": 1.94
+    },
+    {
+      "player": "Agustin Auzmendi",
+      "club": "Gimnasia La Plata",
+      "valor": 1.8
+    },
+    {
+      "player": "Rick",
+      "club": "Talleres de Cordoba",
+      "valor": 1.74
+    },
+    {
+      "player": "Michael Santos",
+      "club": "Central Cordoba SdE",
+      "valor": 1.72
+    },
+    {
+      "player": "Gaston Veron",
+      "club": "Argentinos Juniors",
+      "valor": 1.63
+    },
+    {
+      "player": "Diego Sosa",
+      "club": "Instituto",
+      "valor": 1.63
+    },
+    {
+      "player": "Yoshan Valois",
+      "club": "Lanus",
+      "valor": 1.56
+    },
+    {
+      "player": "Bruno Sepulveda",
+      "club": "Banfield",
+      "valor": 1.55
+    },
+    {
+      "player": "Guido Carrillo",
+      "club": "Estudiantes de La Plata",
+      "valor": 1.55
+    },
+    {
+      "player": "Santiago Ascacibar",
+      "club": "Boca Juniors",
+      "valor": 1.44
+    },
+    {
+      "player": "Antony Alonso",
+      "club": "Deportivo Riestra",
+      "valor": 1.42
+    },
+    {
+      "player": "Leandro Fernandez",
+      "club": "Defensa y Justicia",
+      "valor": 1.42
+    }
+  ],
+  "asistencias": [
+    {
+      "player": "Matias Fernandez",
+      "club": "Independiente Rivadavia",
+      "valor": 3
+    },
+    {
+      "player": "Martin Ortega",
+      "club": "Newells Old Boys",
+      "valor": 2
+    },
+    {
+      "player": "Eric Meza",
+      "club": "Estudiantes de La Plata",
+      "valor": 2
+    },
+    {
+      "player": "Alexis Steimbach",
+      "club": "Gimnasia La Plata",
+      "valor": 2
+    },
+    {
+      "player": "Diego Sosa",
+      "club": "Instituto",
+      "valor": 2
+    },
+    {
+      "player": "Facundo Guch",
+      "club": "Newells Old Boys",
+      "valor": 2
+    },
+    {
+      "player": "Jeremias Lazaro",
+      "club": "Instituto",
+      "valor": 2
+    },
+    {
+      "player": "Julian Palacios",
+      "club": "Union de Santa Fe",
+      "valor": 2
+    },
+    {
+      "player": "Pedro Silva Torrejon",
+      "club": "Gimnasia La Plata",
+      "valor": 2
+    },
+    {
+      "player": "Santiago Montiel",
+      "club": "Independiente",
+      "valor": 2
+    },
+    {
+      "player": "Tomas Molina",
+      "club": "Argentinos Juniors",
+      "valor": 2
+    },
+    {
+      "player": "Gregorio Rodriguez",
+      "club": "San Lorenzo (dejo el club)",
+      "valor": 1
+    },
+    {
+      "player": "Joaquin Correa",
+      "club": "Estudiantes de La Plata",
+      "valor": 1
+    },
+    {
+      "player": "Maximiliano Zalazar",
+      "club": "Gimnasia La Plata",
+      "valor": 1
+    },
+    {
+      "player": "Sebastian Zaracho",
+      "club": "Rosario Central",
+      "valor": 1
+    },
+    {
+      "player": "Adolfo Gaich",
+      "club": "Estudiantes de La Plata",
+      "valor": 1
+    },
+    {
+      "player": "Cesar Ibanez",
+      "club": "Huracan",
+      "valor": 1
+    },
+    {
+      "player": "Gaston Lodico",
+      "club": "Racing Club",
+      "valor": 1
+    },
+    {
+      "player": "Juan Carlos Gauto",
+      "club": "Platense",
+      "valor": 1
+    },
+    {
+      "player": "Leonardo Sequeira",
+      "club": "Central Cordoba SdE",
+      "valor": 1
+    }
+  ],
+  "asistenciasEsperadas_xA": [
+    {
+      "player": "David Barbona",
+      "club": "Defensa y Justicia",
+      "valor": 1.58
+    },
+    {
+      "player": "Giuliano Cerato",
+      "club": "Instituto",
+      "valor": 1.49
+    },
+    {
+      "player": "Alex Luna",
+      "club": "Instituto",
+      "valor": 1.41
+    },
+    {
+      "player": "Diego Sosa",
+      "club": "Instituto",
+      "valor": 1.37
+    },
+    {
+      "player": "Santiago Montiel",
+      "club": "Independiente",
+      "valor": 1.33
+    },
+    {
+      "player": "Lucas Zelarayan",
+      "club": "Belgrano",
+      "valor": 1.32
+    },
+    {
+      "player": "Hernan Lopez Munoz",
+      "club": "Argentinos Juniors",
+      "valor": 1.18
+    },
+    {
+      "player": "Manuel Lanzini",
+      "club": "Velez Sarsfield",
+      "valor": 1.12
+    },
+    {
+      "player": "Alexis Soto",
+      "club": "Rosario Central",
+      "valor": 1.07
+    },
+    {
+      "player": "Jaminton Campaz",
+      "club": "Rosario Central",
+      "valor": 1.07
+    },
+    {
+      "player": "Pedro Silva Torrejon",
+      "club": "Gimnasia La Plata",
+      "valor": 1.02
+    },
+    {
+      "player": "Facundo Lencioni",
+      "club": "Gimnasia de Mendoza",
+      "valor": 1.02
+    },
+    {
+      "player": "Santiago Ascacibar",
+      "club": "Boca Juniors",
+      "valor": 1.01
+    },
+    {
+      "player": "Sebastian Villa",
+      "club": "Boca Juniors",
+      "valor": 0.98
+    },
+    {
+      "player": "Tiziano Perrotta",
+      "club": "Defensa y Justicia",
+      "valor": 0.93
+    },
+    {
+      "player": "Matias Fernandez",
+      "club": "Independiente Rivadavia",
+      "valor": 0.91
+    },
+    {
+      "player": "Santiago Lopez",
+      "club": "Tigre",
+      "valor": 0.91
+    },
+    {
+      "player": "Leonardo Gil",
+      "club": "Huracan",
+      "valor": 0.9
+    },
+    {
+      "player": "Francisco Gonzalez Metilli",
+      "club": "Belgrano",
+      "valor": 0.9
+    },
+    {
+      "player": "Facundo Jainikoski",
+      "club": "Argentinos Juniors",
+      "valor": 0.89
+    }
+  ],
+  "golesYAsistencias": [
+    {
+      "player": "Agustin Modica",
+      "club": "Gimnasia de Mendoza",
+      "valor": 6
+    },
+    {
+      "player": "Junior Marabel",
+      "club": "Sarmiento Junin",
+      "valor": 4
+    },
+    {
+      "player": "Santiago Ascacibar",
+      "club": "Boca Juniors",
+      "valor": 4
+    },
+    {
+      "player": "Yoshan Valois",
+      "club": "Lanus",
+      "valor": 4
+    },
+    {
+      "player": "Santiago Montiel",
+      "club": "Independiente",
+      "valor": 4
+    },
+    {
+      "player": "Matias Fernandez",
+      "club": "Independiente Rivadavia",
+      "valor": 4
+    },
+    {
+      "player": "Alex Arce",
+      "club": "Independiente Rivadavia",
+      "valor": 3
+    },
+    {
+      "player": "Jordy Caicedo",
+      "club": "Huracan",
+      "valor": 3
+    },
+    {
+      "player": "Antony Alonso",
+      "club": "Deportivo Riestra",
+      "valor": 3
+    },
+    {
+      "player": "Hernan Lopez Munoz",
+      "club": "Argentinos Juniors",
+      "valor": 3
+    },
+    {
+      "player": "Rick",
+      "club": "Talleres de Cordoba",
+      "valor": 3
+    },
+    {
+      "player": "Alexis Steimbach",
+      "club": "Gimnasia La Plata",
+      "valor": 3
+    },
+    {
+      "player": "Facundo Guch",
+      "club": "Newells Old Boys",
+      "valor": 3
+    },
+    {
+      "player": "Tomas Molina",
+      "club": "Argentinos Juniors",
+      "valor": 3
+    },
+    {
+      "player": "Agustin Colazo",
+      "club": "Gimnasia La Plata",
+      "valor": 2
+    },
+    {
+      "player": "David Barbona",
+      "club": "Defensa y Justicia",
+      "valor": 2
+    },
+    {
+      "player": "Diego Valdes",
+      "club": "Velez Sarsfield",
+      "valor": 2
+    },
+    {
+      "player": "Ignacio Russo",
+      "club": "Tigre",
+      "valor": 2
+    }
+  ],
+  "golesYAsistenciasEsperadas_xGxA": [
+    {
+      "player": "Alex Luna",
+      "club": "Instituto",
+      "valor": 4.02
+    },
+    {
+      "player": "David Barbona",
+      "club": "Defensa y Justicia",
+      "valor": 3.52
+    },
+    {
+      "player": "Facundo Lencioni",
+      "club": "Gimnasia de Mendoza",
+      "valor": 3.08
+    },
+    {
+      "player": "Junior Marabel",
+      "club": "Sarmiento Junin",
+      "valor": 3.02
+    },
+    {
+      "player": "Agustin Modica",
+      "club": "Gimnasia de Mendoza",
+      "valor": 3.01
+    },
+    {
+      "player": "Diego Sosa",
+      "club": "Instituto",
+      "valor": 3.0
+    },
+    {
+      "player": "Miguel Merentiel",
+      "club": "Boca Juniors",
+      "valor": 2.8
+    },
+    {
+      "player": "Matias Tissera",
+      "club": "Instituto",
+      "valor": 2.57
+    },
+    {
+      "player": "Jaminton Campaz",
+      "club": "Rosario Central",
+      "valor": 2.48
+    },
+    {
+      "player": "Hernan Lopez Munoz",
+      "club": "Argentinos Juniors",
+      "valor": 2.37
+    },
+    {
+      "player": "Milton Celiz",
+      "club": "Deportivo Riestra",
+      "valor": 2.31
+    },
+    {
+      "player": "Matias Fernandez",
+      "club": "Independiente Rivadavia",
+      "valor": 2.29
+    },
+    {
+      "player": "Lucas Passerini",
+      "club": "Belgrano",
+      "valor": 2.25
+    },
+    {
+      "player": "Rick",
+      "club": "Talleres de Cordoba",
+      "valor": 2.12
+    },
+    {
+      "player": "Leandro Fernandez",
+      "club": "Defensa y Justicia",
+      "valor": 2.1
+    },
+    {
+      "player": "Antony Alonso",
+      "club": "Deportivo Riestra",
+      "valor": 2.07
+    },
+    {
+      "player": "Agustin Auzmendi",
+      "club": "Gimnasia La Plata",
+      "valor": 2.04
+    },
+    {
+      "player": "Michael Santos",
+      "club": "Central Cordoba SdE",
+      "valor": 1.85
+    },
+    {
+      "player": "Tiziano Perrotta",
+      "club": "Defensa y Justicia",
+      "valor": 1.84
+    },
+    {
+      "player": "Gaston Veron",
+      "club": "Argentinos Juniors",
+      "valor": 1.8
+    }
+  ],
+  "rating365": [
+    {
+      "player": "Santiago Montiel",
+      "club": "Independiente",
+      "valor": 7.9
+    },
+    {
+      "player": "Clever Ferreira",
+      "club": "Atletico Tucuman",
+      "valor": 7.7
+    },
+    {
+      "player": "Agustin Modica",
+      "club": "Gimnasia de Mendoza",
+      "valor": 7.6
+    },
+    {
+      "player": "David Barbona",
+      "club": "Defensa y Justicia",
+      "valor": 7.6
+    },
+    {
+      "player": "Francisco Alvarez",
+      "club": "Argentinos Juniors",
+      "valor": 7.6
+    },
+    {
+      "player": "Leonardo Gil",
+      "club": "Huracan",
+      "valor": 7.6
+    },
+    {
+      "player": "Santiago Ascacibar",
+      "club": "Boca Juniors",
+      "valor": 7.6
+    },
+    {
+      "player": "Facundo Mansilla",
+      "club": "Central Cordoba SdE",
+      "valor": 7.6
+    },
+    {
+      "player": "Julian Mavilla",
+      "club": "Sarmiento Junin",
+      "valor": 7.6
+    },
+    {
+      "player": "Tomas Palacios",
+      "club": "Estudiantes de La Plata",
+      "valor": 7.6
+    },
+    {
+      "player": "Alan Sosa",
+      "club": "Aldosivi",
+      "valor": 7.5
+    },
+    {
+      "player": "Bruno Cabrera",
+      "club": "Newells Old Boys",
+      "valor": 7.5
+    },
+    {
+      "player": "Manuel Lanzini",
+      "club": "Velez Sarsfield",
+      "valor": 7.5
+    },
+    {
+      "player": "Rick",
+      "club": "Talleres de Cordoba",
+      "valor": 7.5
+    },
+    {
+      "player": "Gonzalo Martinez",
+      "club": "Tigre",
+      "valor": 7.5
+    },
+    {
+      "player": "Alan Barrionuevo",
+      "club": "Tigre",
+      "valor": 7.4
+    },
+    {
+      "player": "Dylan Aquino",
+      "club": "Lanus",
+      "valor": 7.4
+    },
+    {
+      "player": "Lisandro Lopez",
+      "club": "Belgrano",
+      "valor": 7.4
+    },
+    {
+      "player": "Luciano Vallejo",
+      "club": "Atletico Tucuman",
+      "valor": 7.4
+    },
+    {
+      "player": "Gaston Avila",
+      "club": "Rosario Central",
+      "valor": 7.4
+    }
+  ],
+  "penaltisConvertidos": [
+    {
+      "player": "Agustin Modica",
+      "club": "Gimnasia de Mendoza",
+      "valor": "2/2"
+    },
+    {
+      "player": "Alex Arce",
+      "club": "Independiente Rivadavia",
+      "valor": "1/1"
+    },
+    {
+      "player": "Angel Correa",
+      "club": "River Plate",
+      "valor": "1/1"
+    },
+    {
+      "player": "Bruno Sepulveda",
+      "club": "Banfield",
+      "valor": "1/1"
+    },
+    {
+      "player": "Cristian Tarragona",
+      "club": "Union de Santa Fe",
+      "valor": "1/1"
+    },
+    {
+      "player": "Junior Marabel",
+      "club": "Sarmiento Junin",
+      "valor": "1/1"
+    },
+    {
+      "player": "Matias Coccaro",
+      "club": "Newells Old Boys",
+      "valor": "1/1"
+    },
+    {
+      "player": "Milton Celiz",
+      "club": "Deportivo Riestra",
+      "valor": "1/1"
+    },
+    {
+      "player": "Alex Luna",
+      "club": "Instituto",
+      "valor": "0/1"
+    },
+    {
+      "player": "Alfio Oviedo",
+      "club": "Tigre",
+      "valor": "0/1"
+    },
+    {
+      "player": "David Barbona",
+      "club": "Defensa y Justicia",
+      "valor": "0/1"
+    },
+    {
+      "player": "Facundo Lencioni",
+      "club": "Gimnasia de Mendoza",
+      "valor": "0/1"
+    },
+    {
+      "player": "Guido Carrillo",
+      "club": "Estudiantes de La Plata",
+      "valor": "0/1"
+    },
+    {
+      "player": "Marcelo Torres",
+      "club": "Gimnasia La Plata",
+      "valor": "0/1"
+    },
+    {
+      "player": "Matias Fernandez",
+      "club": "Independiente Rivadavia",
+      "valor": "0/1"
+    }
+  ],
+  "barridasGanadasPorPartido": [
+    {
+      "player": "Walter Mazzantti",
+      "club": "Newells Old Boys",
+      "valor": 1.0
+    },
+    {
+      "player": "Agustin Cardozo",
+      "club": "Lanus",
+      "valor": 0.8
+    },
+    {
+      "player": "Lisandro Lopez",
+      "club": "Belgrano",
+      "valor": 0.8
+    },
+    {
+      "player": "Nicolas Tripichio",
+      "club": "San Lorenzo",
+      "valor": 0.8
+    },
+    {
+      "player": "Santiago Ascacibar",
+      "club": "Boca Juniors",
+      "valor": 0.8
+    },
+    {
+      "player": "Alan Lescano",
+      "club": "Argentinos Juniors",
+      "valor": 0.8
+    },
+    {
+      "player": "Augusto Max",
+      "club": "Gimnasia La Plata",
+      "valor": 0.8
+    },
+    {
+      "player": "Eric Meza",
+      "club": "Estudiantes de La Plata",
+      "valor": 0.8
+    },
+    {
+      "player": "Federico Laurelli",
+      "club": "Aldosivi",
+      "valor": 0.8
+    },
+    {
+      "player": "Gaston Avila",
+      "club": "Rosario Central",
+      "valor": 0.8
+    },
+    {
+      "player": "Jabes Saralegui",
+      "club": "Tigre",
+      "valor": 0.8
+    },
+    {
+      "player": "Marco Iacobellis",
+      "club": "Central Cordoba SdE",
+      "valor": 0.8
+    },
+    {
+      "player": "Tiziano Perrotta",
+      "club": "Defensa y Justicia",
+      "valor": 0.8
+    },
+    {
+      "player": "Alex Luna",
+      "club": "Instituto",
+      "valor": 0.6
+    },
+    {
+      "player": "Alexis Maldonado",
+      "club": "Belgrano",
+      "valor": 0.6
+    },
+    {
+      "player": "Allan Wlk",
+      "club": "Lanus",
+      "valor": 0.6
+    },
+    {
+      "player": "Bruno Pitton",
+      "club": "Union de Santa Fe",
+      "valor": 0.6
+    },
+    {
+      "player": "Clever Ferreira",
+      "club": "Atletico Tucuman",
+      "valor": 0.6
+    },
+    {
+      "player": "Damian Fernandez",
+      "club": "Defensa y Justicia",
+      "valor": 0.6
+    },
+    {
+      "player": "Facundo Guch",
+      "club": "Newells Old Boys",
+      "valor": 0.6
+    }
+  ],
+  "intercepcionesPorPartido": [
+    {
+      "player": "Francisco Alvarez",
+      "club": "Argentinos Juniors",
+      "valor": 3.2
+    },
+    {
+      "player": "Francisco Romero",
+      "club": "Estudiantes RC",
+      "valor": 3.2
+    },
+    {
+      "player": "Alan Sosa",
+      "club": "Aldosivi",
+      "valor": 2.8
+    },
+    {
+      "player": "Facundo Mansilla",
+      "club": "Central Cordoba SdE",
+      "valor": 2.8
+    },
+    {
+      "player": "Gonzalo Maffini",
+      "club": "Estudiantes RC",
+      "valor": 2.8
+    },
+    {
+      "player": "Kevin Jappert",
+      "club": "Barracas Central",
+      "valor": 2.6
+    },
+    {
+      "player": "Matias Recalde",
+      "club": "Gimnasia de Mendoza",
+      "valor": 2.4
+    },
+    {
+      "player": "Alejandro Maciel",
+      "club": "Central Cordoba SdE",
+      "valor": 2.2
+    },
+    {
+      "player": "Luca Regiardo",
+      "club": "Newells Old Boys",
+      "valor": 2.2
+    },
+    {
+      "player": "Lucas Martinez Quarta",
+      "club": "River Plate",
+      "valor": 2.2
+    },
+    {
+      "player": "Nicolas Tripichio",
+      "club": "San Lorenzo",
+      "valor": 2.2
+    },
+    {
+      "player": "Adrian Sanchez",
+      "club": "Belgrano",
+      "valor": 2.2
+    },
+    {
+      "player": "Alejo Cordoba",
+      "club": "San Lorenzo",
+      "valor": 2.2
+    },
+    {
+      "player": "Alejo Osella",
+      "club": "Independiente Rivadavia",
+      "valor": 2.2
+    },
+    {
+      "player": "Juan Fedorco",
+      "club": "Independiente",
+      "valor": 2.2
+    },
+    {
+      "player": "Maximiliano Villa",
+      "club": "Atletico Tucuman",
+      "valor": 2.2
+    },
+    {
+      "player": "Tomas Silva",
+      "club": "Platense",
+      "valor": 2.2
+    },
+    {
+      "player": "Fernando Alarcon",
+      "club": "Instituto",
+      "valor": 2.0
+    },
+    {
+      "player": "Alexis Maldonado",
+      "club": "Belgrano",
+      "valor": 1.8
+    },
+    {
+      "player": "Ezequiel Munoz",
+      "club": "Gimnasia de Mendoza",
+      "valor": 1.8
+    }
+  ],
+  "tarjetasRojas": [
+    {
+      "player": "Roman Riquelme",
+      "club": "Talleres de Cordoba",
+      "valor": 2
+    },
+    {
+      "player": "Diego Porcel",
+      "club": "Argentinos Juniors",
+      "valor": 1
+    },
+    {
+      "player": "Jordy Caicedo",
+      "club": "Huracan",
+      "valor": 1
+    },
+    {
+      "player": "Adrian Sanchez",
+      "club": "Belgrano",
+      "valor": 1
+    },
+    {
+      "player": "Alexis Steimbach",
+      "club": "Gimnasia La Plata",
+      "valor": 1
+    },
+    {
+      "player": "Emanuel Coronel",
+      "club": "Rosario Central",
+      "valor": 1
+    },
+    {
+      "player": "Franco Vazquez",
+      "club": "Belgrano",
+      "valor": 1
+    },
+    {
+      "player": "German Conti",
+      "club": "Gimnasia La Plata",
+      "valor": 1
+    },
+    {
+      "player": "Gonzalo Requena",
+      "club": "Tigre",
+      "valor": 1
+    },
+    {
+      "player": "Ignacio Galvan",
+      "club": "Atletico Tucuman",
+      "valor": 1
+    },
+    {
+      "player": "Jeronimo Russo",
+      "club": "Newells Old Boys",
+      "valor": 1
+    },
+    {
+      "player": "Orlando Gill",
+      "club": "San Lorenzo",
+      "valor": 1
+    },
+    {
+      "player": "Adrian Martinez",
+      "club": "Racing Club",
+      "valor": 1
+    },
+    {
+      "player": "Juan Franco",
+      "club": "Gimnasia de Mendoza",
+      "valor": 1
+    },
+    {
+      "player": "Leandro Lescano",
+      "club": "Huracan",
+      "valor": 1
+    }
+  ],
+  "tarjetasAmarillas": [
+    {
+      "player": "Matias Pellegrini",
+      "club": "Velez Sarsfield",
+      "valor": 4
+    },
+    {
+      "player": "Carlos Quintana",
+      "club": "Deportivo Riestra",
+      "valor": 3
+    },
+    {
+      "player": "Federico Fattori",
+      "club": "Talleres de Cordoba",
+      "valor": 3
+    },
+    {
+      "player": "Fernando Alarcon",
+      "club": "Instituto",
+      "valor": 3
+    },
+    {
+      "player": "Guido Mainero",
+      "club": "Platense",
+      "valor": 3
+    },
+    {
+      "player": "Ivan Villalba",
+      "club": "Independiente Rivadavia",
+      "valor": 3
+    },
+    {
+      "player": "Jonatan Galvan",
+      "club": "Instituto",
+      "valor": 3
+    },
+    {
+      "player": "Leonel Vega",
+      "club": "Atletico Tucuman",
+      "valor": 3
+    },
+    {
+      "player": "Luca Regiardo",
+      "club": "Newells Old Boys",
+      "valor": 3
+    },
+    {
+      "player": "Matias Kranevitter",
+      "club": "Racing Club",
+      "valor": 3
+    },
+    {
+      "player": "Nicolas Watson",
+      "club": "Deportivo Riestra",
+      "valor": 3
+    },
+    {
+      "player": "Santiago Moyano",
+      "club": "Central Cordoba SdE",
+      "valor": 3
+    },
+    {
+      "player": "Diego Porcel",
+      "club": "Argentinos Juniors",
+      "valor": 2
+    },
+    {
+      "player": "Jordy Caicedo",
+      "club": "Huracan",
+      "valor": 2
+    },
+    {
+      "player": "Alan Lescano",
+      "club": "Argentinos Juniors",
+      "valor": 2
+    },
+    {
+      "player": "Augusto Max",
+      "club": "Gimnasia La Plata",
+      "valor": 2
+    },
+    {
+      "player": "Ayrton Costa",
+      "club": "Boca Juniors",
+      "valor": 2
+    },
+    {
+      "player": "Ayrton Portillo",
+      "club": "Defensa y Justicia",
+      "valor": 2
+    },
+    {
+      "player": "Carlos Izquierdoz",
+      "club": "Lanus",
+      "valor": 2
+    },
+    {
+      "player": "Cesar Perez",
+      "club": "Defensa y Justicia",
+      "valor": 2
+    }
+  ],
+  "porteriasACero": [
+    {
+      "player": "Luis Ingolotti",
+      "club": "Atletico Tucuman",
+      "valor": 4
+    },
+    {
+      "player": "Thiago Cardozo",
+      "club": "Belgrano",
+      "valor": 3
+    },
+    {
+      "player": "Hernan Galindez",
+      "club": "Huracan",
+      "valor": 3
+    },
+    {
+      "player": "Marcelo Mino",
+      "club": "Barracas Central",
+      "valor": 3
+    },
+    {
+      "player": "Marcos Ledesma",
+      "club": "Instituto",
+      "valor": 3
+    },
+    {
+      "player": "Fernando Muslera",
+      "club": "Estudiantes de La Plata",
+      "valor": 2
+    },
+    {
+      "player": "Conan Ledesma",
+      "club": "Rosario Central",
+      "valor": 2
+    },
+    {
+      "player": "Felipe Zenobio",
+      "club": "Tigre",
+      "valor": 2
+    },
+    {
+      "player": "Brayan Cortes",
+      "club": "Argentinos Juniors",
+      "valor": 2
+    },
+    {
+      "player": "Cesar Rigamonti",
+      "club": "Gimnasia de Mendoza",
+      "valor": 2
+    },
+    {
+      "player": "Ignacio Arce",
+      "club": "Deportivo Riestra",
+      "valor": 2
+    },
+    {
+      "player": "Josue Reinatti",
+      "club": "Newells Old Boys",
+      "valor": 2
+    },
+    {
+      "player": "Lucas Bruera",
+      "club": "Estudiantes RC",
+      "valor": 2
+    },
+    {
+      "player": "Nahuel Losada",
+      "club": "Lanus",
+      "valor": 2
+    },
+    {
+      "player": "Nelson Insfran",
+      "club": "Gimnasia La Plata",
+      "valor": 2
+    },
+    {
+      "player": "Rodrigo Rey",
+      "club": "Independiente",
+      "valor": 2
+    },
+    {
+      "player": "Tomas Marchiori",
+      "club": "Velez Sarsfield",
+      "valor": 2
+    },
+    {
+      "player": "Axel Werner",
+      "club": "Rosario Central",
+      "valor": 1
+    },
+    {
+      "player": "Gino Santilli",
+      "club": "Banfield",
+      "valor": 1
+    },
+    {
+      "player": "Lautaro Morales",
+      "club": "Tigre",
+      "valor": 1
+    }
+  ],
+  "golesRecibidosPorPartido": [
+    {
+      "player": "Thiago Cardozo",
+      "club": "Belgrano",
+      "valor": 0.2
+    },
+    {
+      "player": "Luis Ingolotti",
+      "club": "Atletico Tucuman",
+      "valor": 0.4
+    },
+    {
+      "player": "Marcos Ledesma",
+      "club": "Instituto",
+      "valor": 0.4
+    },
+    {
+      "player": "Felipe Zenobio",
+      "club": "Tigre",
+      "valor": 0.5
+    },
+    {
+      "player": "Cesar Rigamonti",
+      "club": "Gimnasia de Mendoza",
+      "valor": 0.6
+    },
+    {
+      "player": "Marcelo Mino",
+      "club": "Barracas Central",
+      "valor": 0.6
+    },
+    {
+      "player": "Rodrigo Rey",
+      "club": "Independiente",
+      "valor": 0.6
+    },
+    {
+      "player": "Tomas Marchiori",
+      "club": "Velez Sarsfield",
+      "valor": 0.6
+    },
+    {
+      "player": "Hernan Galindez",
+      "club": "Huracan",
+      "valor": 0.8
+    },
+    {
+      "player": "Santiago Beltran",
+      "club": "River Plate",
+      "valor": 0.8
+    },
+    {
+      "player": "Conan Ledesma",
+      "club": "Rosario Central",
+      "valor": 0.8
+    },
+    {
+      "player": "Brayan Cortes",
+      "club": "Argentinos Juniors",
+      "valor": 1.0
+    },
+    {
+      "player": "Ignacio Arce",
+      "club": "Deportivo Riestra",
+      "valor": 1.0
+    },
+    {
+      "player": "Josue Reinatti",
+      "club": "Newells Old Boys",
+      "valor": 1.0
+    },
+    {
+      "player": "Nicolas Bolcato",
+      "club": "Independiente Rivadavia",
+      "valor": 1.0
+    },
+    {
+      "player": "Orlando Gill",
+      "club": "San Lorenzo",
+      "valor": 1.0
+    },
+    {
+      "player": "Lucas Bruera",
+      "club": "Estudiantes RC",
+      "valor": 1.2
+    },
+    {
+      "player": "Nahuel Losada",
+      "club": "Lanus",
+      "valor": 1.2
+    },
+    {
+      "player": "Facundo Sanguinetti",
+      "club": "Banfield",
+      "valor": 1.2
+    },
+    {
+      "player": "Alvaro Montero",
+      "club": "Boca Juniors",
+      "valor": 1.4
+    }
+  ],
+  "atajadasPorPartido": [
+    {
+      "player": "Orlando Gill",
+      "club": "San Lorenzo",
+      "valor": 5.0
+    },
+    {
+      "player": "Tomas Marchiori",
+      "club": "Velez Sarsfield",
+      "valor": 4.8
+    },
+    {
+      "player": "Ezequiel Unsain",
+      "club": "Talleres de Cordoba",
+      "valor": 4.6
+    },
+    {
+      "player": "Cesar Rigamonti",
+      "club": "Gimnasia de Mendoza",
+      "valor": 4.2
+    },
+    {
+      "player": "Thiago Cardozo",
+      "club": "Belgrano",
+      "valor": 4.0
+    },
+    {
+      "player": "Matias Mansilla",
+      "club": "Union de Santa Fe",
+      "valor": 3.8
+    },
+    {
+      "player": "Nahuel Losada",
+      "club": "Lanus",
+      "valor": 3.8
+    },
+    {
+      "player": "Facundo Sanguinetti",
+      "club": "Banfield",
+      "valor": 3.8
+    },
+    {
+      "player": "Juan Pablo Cozzani",
+      "club": "Platense",
+      "valor": 3.6
+    },
+    {
+      "player": "Matias Borgogno",
+      "club": "Defensa y Justicia",
+      "valor": 3.6
+    },
+    {
+      "player": "Nelson Insfran",
+      "club": "Gimnasia La Plata",
+      "valor": 3.6
+    },
+    {
+      "player": "Conan Ledesma",
+      "club": "Rosario Central",
+      "valor": 3.5
+    },
+    {
+      "player": "Josue Reinatti",
+      "club": "Newells Old Boys",
+      "valor": 3.4
+    },
+    {
+      "player": "Lucas Bruera",
+      "club": "Estudiantes RC",
+      "valor": 3.0
+    },
+    {
+      "player": "Marcelo Mino",
+      "club": "Barracas Central",
+      "valor": 3.0
+    },
+    {
+      "player": "Felipe Zenobio",
+      "club": "Tigre",
+      "valor": 3.0
+    },
+    {
+      "player": "Alvaro Montero",
+      "club": "Boca Juniors",
+      "valor": 2.8
+    },
+    {
+      "player": "Facundo Cambeses",
+      "club": "Racing Club",
+      "valor": 2.8
+    },
+    {
+      "player": "Hernan Galindez",
+      "club": "Huracan",
+      "valor": 2.8
+    },
+    {
+      "player": "Nicolas Bolcato",
+      "club": "Independiente Rivadavia",
+      "valor": 2.5
+    }
+  ],
+  "penaltisParados": [
+    {
+      "player": "Ezequiel Unsain",
+      "club": "Talleres de Cordoba",
+      "valor": "1/1"
+    },
+    {
+      "player": "Facundo Cambeses",
+      "club": "Racing Club",
+      "valor": "1/1"
+    },
+    {
+      "player": "Rodrigo Rey",
+      "club": "Independiente",
+      "valor": "1/1"
+    },
+    {
+      "player": "Thiago Cardozo",
+      "club": "Belgrano",
+      "valor": "1/1"
+    },
+    {
+      "player": "Thyago Ayala",
+      "club": "Sarmiento Junin",
+      "valor": "1/1"
+    },
+    {
+      "player": "Cesar Rigamonti",
+      "club": "Gimnasia de Mendoza",
+      "valor": "1/2"
+    },
+    {
+      "player": "Fernando Muslera",
+      "club": "Estudiantes de La Plata",
+      "valor": "1/2"
+    }
+  ]
+}

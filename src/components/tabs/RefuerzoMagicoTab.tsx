@@ -50,6 +50,7 @@ function statRows(c: RMResult): { label: string; value: string }[] {
       { label: "Goles concedidos", value: n(c.goalsConceded) },
       { label: "Atajadas (por partido)", value: n(c.savesPerGame365) },
       { label: "Goles recibidos (por partido)", value: n(c.goalsConcededPerGame365) },
+      { label: "Penales atajados", value: n(c.penaltisParados365) },
     ],
     DEF: [
       { label: "Vallas invictas", value: n(c.cleanSheets) },
@@ -87,7 +88,9 @@ function statRows(c: RMResult): { label: string; value: string }[] {
       { label: "Ocasiones creadas", value: n(c.bigChancesCreated) },
       { label: "xG", value: n(c.xg365) },
       { label: "xA", value: n(c.xa365) },
+      { label: "xG+xA combinado", value: n(c.xgXaCombined365) },
       { label: "Rating 365", value: n(c.rating365) },
+      { label: "Penales convertidos", value: n(c.penaltisConvertidos365) },
     ],
   };
   // Puntos Gran DT: dato estadístico más del jugador (no explica el

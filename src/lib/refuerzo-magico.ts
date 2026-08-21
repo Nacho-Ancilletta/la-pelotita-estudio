@@ -155,11 +155,14 @@ export interface RMCandidate {
   // fallback silencioso cuando fichajes.com/el JSON no tenían el dato.
   xg365: number | null;
   xa365: number | null;
+  xgXaCombined365: number | null;
   rating365: number | null;
   duelsWonPerGame365: number | null;
   interceptionsPerGame365: number | null;
   savesPerGame365: number | null;
   goalsConcededPerGame365: number | null;
+  penaltisConvertidos365: number | null;
+  penaltisParados365: number | null;
 }
 export interface FitResult { score: number; }
 export type RMResult = RMCandidate & { fit: FitResult };
@@ -258,8 +261,9 @@ function buildPromiedosPool(raw: any, teamNameById: Map<string, { name: string; 
         goalsConceded: null, duelsWon: null, tacklesWon: null, interceptions: null,
         keyPasses: null, dribblesCompleted: null, shotsOnTarget: null, bigChancesCreated: null,
         age: null, height: null, teamLogo: null, grandTPoints: null,
-        xg365: null, xa365: null, rating365: null, duelsWonPerGame365: null,
+        xg365: null, xa365: null, xgXaCombined365: null, rating365: null, duelsWonPerGame365: null,
         interceptionsPerGame365: null, savesPerGame365: null, goalsConcededPerGame365: null,
+        penaltisConvertidos365: null, penaltisParados365: null,
       };
       pool.set(id, c);
     }
@@ -379,10 +383,10 @@ function enrichWith365(c: RMCandidate, pool365: Scores365PlayerStats[]): RMCandi
   const m = findScores365Match(c.name, pool365);
   if (!m) return c;
   const byPosition: Partial<RMCandidate> =
-    c.position === "ARQ" ? { savesPerGame365: m.savesPerGame365, goalsConcededPerGame365: m.goalsConcededPerGame365 }
+    c.position === "ARQ" ? { savesPerGame365: m.savesPerGame365, goalsConcededPerGame365: m.goalsConcededPerGame365, penaltisParados365: m.penaltisParados }
     : c.position === "DEF" ? { rating365: m.rating365, duelsWonPerGame365: m.duelsWonPerGame365, interceptionsPerGame365: m.interceptionsPerGame365 }
     : c.position === "VOL" ? { xg365: m.xg, xa365: m.xa, rating365: m.rating365, duelsWonPerGame365: m.duelsWonPerGame365 }
-    : { xg365: m.xg, xa365: m.xa, rating365: m.rating365 }; // DEL
+    : { xg365: m.xg, xa365: m.xa, xgXaCombined365: m.xgXaCombined, rating365: m.rating365, penaltisConvertidos365: m.penaltisConvertidos }; // DEL
   return {
     ...c,
     ...byPosition,
@@ -396,7 +400,7 @@ function enrichWith365(c: RMCandidate, pool365: Scores365PlayerStats[]): RMCandi
 // minutos, tarjetas, equipo/foto vía ficha individual) ─────────────────
 
 async function getGoalkeeperPool(): Promise<RMCandidate[]> {
-  const key = "pelotita_rm_pool_arq_v7"; // v7: se agregó 365scores (xg365/rating365/etc.)
+  const key = "pelotita_rm_pool_arq_v8"; // v8: 365scores pasó a leer JSON estático + penaltisParados365
   const cached = cacheGet<RMCandidate[]>(key);
   if (cached) return cached;
 
@@ -430,8 +434,9 @@ async function getGoalkeeperPool(): Promise<RMCandidate[]> {
       duelsWon: null, tacklesWon: null, interceptions: null, keyPasses: null,
       dribblesCompleted: null, shotsOnTarget: null, bigChancesCreated: null,
       age: null, height: null, teamLogo: null, grandTPoints: null, // se completan después
-      xg365: null, xa365: null, rating365: null, duelsWonPerGame365: null,
+      xg365: null, xa365: null, xgXaCombined365: null, rating365: null, duelsWonPerGame365: null,
       interceptionsPerGame365: null, savesPerGame365: null, goalsConcededPerGame365: null,
+      penaltisConvertidos365: null, penaltisParados365: null,
     }, pool365));
   }
   cacheSet(key, pool, POOL_TTL_MS);
@@ -441,9 +446,9 @@ async function getGoalkeeperPool(): Promise<RMCandidate[]> {
 export async function getCandidatePool(position: RMPosition): Promise<RMCandidate[]> {
   if (position === "ARQ") return getGoalkeeperPool();
 
-  // v6: se agregó 365scores (xg365/rating365/etc.) — bump para no
-  // servir el pool viejo (sin esos campos) ya cacheado 24hs.
-  const key = `pelotita_rm_pool_v6_${LEAGUE_SLUG}`;
+  // v7: 365scores pasó a leer JSON estático + penaltisConvertidos365/
+  // xgXaCombined365 — bump para no servir el pool viejo ya cacheado 24hs.
+  const key = `pelotita_rm_pool_v7_${LEAGUE_SLUG}`;
   const cached = cacheGet<RMCandidate[]>(key);
   let allOutfield: RMCandidate[];
   if (cached) {

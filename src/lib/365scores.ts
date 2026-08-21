@@ -1,116 +1,128 @@
 // 365scores.com — cuarta fuente, se suma a Promiedos/ESPN/fichajes.com
-// sin reemplazar ninguna (ver src/app/api/365scores/route.ts para el
-// detalle de la investigación). Un solo request trae las 16 categorías
-// de golpe para toda la Liga Profesional Argentina — no hace falta loop
-// con delays entre pedidos como en fichajes.com.
+// sin reemplazar ninguna. YA NO SE SCRAPEA EN VIVO (el proxy
+// src/app/api/365scores/route.ts se borró, ver commit) — Ignacio pasa
+// capturas manuales a src/data/365scores-data-2026.json, que se lee
+// directo. Import estático de TS (`resolveJsonModule`): editar el JSON y
+// redeployar alcanza, no hay que tocar código. Mismo motivo que
+// src/data/refuerzo-magico-data-2026.json.
 //
-// OJO — unidades mezcladas dentro de la misma fuente, confirmado a mano
-// contra la respuesta real: "Goles esperados"/"Asistencias esperadas"/
-// "Puntajes 365"/tarjetas/"Valla invicta" son TOTALES de temporada
-// (números enteros o con la escala de un total real), pero "Barridas
-// ganadas", "Intercepciones", "Goles recibidos" y "Salvadas" son
-// PROMEDIOS POR PARTIDO (ej. Goles recibidos líder = "0.2" — un total no
-// puede ser decimal). fichajes.com, en cambio, SIEMPRE trae totales de
-// temporada (columna "Total" de su tabla). Por eso los campos de 365scores
-// que son promedios NO se mezclan con los campos ya existentes de
-// fichajes.com (duelsWon/interceptions/saves/goalsConceded, todos
-// totales) — se guardan aparte con sufijo "PerGame365" y se muestran en
-// una fila propia, aclarando "(por partido)". Solo tarjetas/vallas
-// invictas (mismas unidades, totales de temporada en ambas fuentes) se
-// usan como fallback silencioso de los campos ya existentes.
+// El archivo trae 16 categorías (`meta.nota_limite`: top ~20 de cada
+// una, límite real de la fuente, no de la UI — ya confirmado a mano
+// contra la API real antes de este cambio). Cada categoría es
+// `{player, club, valor}[]`.
+//
+// OJO — unidades mezcladas dentro del mismo archivo (`meta.
+// nota_unidades_CRITICA`, confirmado a mano): "Goles esperados"/
+// "Asistencias esperadas"/"Puntajes 365"/tarjetas/"Porterías a cero"
+// son TOTALES/promedios de temporada, pero "Barridas ganadas
+// por partido"/"Intercepciones por partido"/"Goles recibidos por
+// partido"/"Atajadas por partido" son PROMEDIOS POR PARTIDO (valores
+// bajos tipo 0.2-5, no acumulados). fichajes.com, en cambio, SIEMPRE
+// trae totales de temporada. Por eso los campos "por partido" de esta
+// fuente NO se mezclan con duelsWon/interceptions/saves/goalsConceded
+// (esos son totales de fichajes.com) — se guardan aparte con sufijo
+// "PerGame365" y se muestran en fila propia, aclarando "(por partido)".
+// Solo tarjetas/porterías a cero (misma unidad — totales — en ambas
+// fuentes) se usan como fallback silencioso de los campos existentes.
+//
+// penaltisConvertidos/penaltisParados vienen como string "2/2" (convertidos
+// o atajados / intentados) — se toma solo el numerador (lo convertido/
+// atajado), que es lo que el nombre del campo indica.
 export interface Scores365PlayerStats {
   name: string;
-  nameForURL: string;
-  xg: number | null;              // Goles esperados (temporada)
-  xa: number | null;              // Asistencias esperadas (temporada)
-  rating365: number | null;       // Puntajes 365 (promedio de rendimiento)
+  xg: number | null;                      // Goles esperados (temporada)
+  xa: number | null;                      // Asistencias esperadas (temporada)
+  xgXaCombined: number | null;            // Goles+asistencias esperados combinado (temporada)
+  rating365: number | null;               // Puntajes 365 (promedio de rendimiento)
+  penaltisConvertidos: number | null;     // Penales convertidos (temporada)
+  penaltisParados: number | null;         // Penales atajados (temporada, arquero)
   duelsWonPerGame365: number | null;      // Barridas ganadas POR PARTIDO
   interceptionsPerGame365: number | null; // Intercepciones POR PARTIDO
-  savesPerGame365: number | null;         // Salvadas POR PARTIDO (arquero)
+  savesPerGame365: number | null;         // Atajadas POR PARTIDO (arquero)
   goalsConcededPerGame365: number | null; // Goles recibidos POR PARTIDO (arquero)
-  yellowCards: number | null;     // Tarjetas Amarillas (temporada — mismo total que fichajes.com)
-  redCards: number | null;        // Tarjetas Rojas (temporada)
-  cleanSheets: number | null;     // Valla invicta (temporada, arquero)
+  yellowCards: number | null;             // Tarjetas Amarillas (temporada — mismo total que fichajes.com)
+  redCards: number | null;                // Tarjetas Rojas (temporada)
+  cleanSheets: number | null;             // Porterías a cero (temporada, arquero)
 }
 
-// id de cada categoría en stats.athletesStats[], confirmado a mano contra
-// la respuesta real de web/stats/ (ago 2026) — no hay endpoint que liste
-// los ids con nombre, se mapearon leyendo el campo "name" de cada uno.
-const CATEGORY_FIELD: Record<number, keyof Scores365PlayerStats> = {
-  2: "xg",
-  4: "xa",
-  7: "rating365",
-  9: "duelsWonPerGame365",
-  10: "interceptionsPerGame365",
-  11: "redCards",
-  12: "yellowCards",
-  13: "cleanSheets",
-  14: "goalsConcededPerGame365",
-  15: "savesPerGame365",
-};
-
-function cacheGet<T>(key: string): T | null {
-  try {
-    const raw = localStorage.getItem(key);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw);
-    if (parsed && typeof parsed === "object" && "data" in parsed && "ts" in parsed) {
-      const { data, ts, ttlMs } = parsed as { data: T; ts: number; ttlMs?: number };
-      if (ttlMs != null && Date.now() - ts > ttlMs) return null;
-      return data;
-    }
-    return parsed as T;
-  } catch { return null; }
+interface RawRow { player: string; club: string; valor: number | string; }
+interface Score365DataFile {
+  golesEsperados_xG: RawRow[];
+  asistenciasEsperadas_xA: RawRow[];
+  golesYAsistenciasEsperadas_xGxA: RawRow[];
+  rating365: RawRow[];
+  penaltisConvertidos: RawRow[];
+  penaltisParados: RawRow[];
+  barridasGanadasPorPartido: RawRow[];
+  intercepcionesPorPartido: RawRow[];
+  tarjetasRojas: RawRow[];
+  tarjetasAmarillas: RawRow[];
+  porteriasACero: RawRow[];
+  golesRecibidosPorPartido: RawRow[];
+  atajadasPorPartido: RawRow[];
 }
-function cacheSet(key: string, d: unknown, ttlMs?: number) {
-  localStorage.setItem(key, JSON.stringify({ data: d, ts: Date.now(), ttlMs }));
+
+import SCORES_365_RAW from "@/data/365scores-data-2026.json";
+const SCORES_365_DATA = SCORES_365_RAW as unknown as Score365DataFile;
+
+function penaltyCount(valor: number | string): number | null {
+  if (typeof valor === "number") return valor;
+  const m = String(valor).match(/^(\d+)\/\d+$/);
+  return m ? parseInt(m[1], 10) : null;
 }
-const STATS_TTL_MS = 24 * 60 * 60 * 1000;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-interface Score365Row { entity: { name: string; nameForURL: string }; stats: any[]; }
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-interface Score365Category { id: number; rows: any[]; }
+let cached: Map<string, Scores365PlayerStats> | null = null;
 
+// Sin fetch, sin caché en localStorage — el dato ya es estático (el
+// propio archivo se actualiza a mano y se redeploya, no hace falta TTL,
+// pedido explícito). Se memoiza en memoria nomás para no re-parsear en
+// cada llamado dentro de la misma sesión de navegador.
 export async function getScores365Data(): Promise<Map<string, Scores365PlayerStats>> {
-  const key = "pelotita_365scores_data_v1";
-  const cached = cacheGet<Record<string, Scores365PlayerStats>>(key);
-  if (cached) return new Map(Object.entries(cached));
+  if (cached) return cached;
 
-  const byId = new Map<string, Scores365PlayerStats>();
-  function ensure(name: string, nameForURL: string): Scores365PlayerStats {
-    let p = byId.get(nameForURL);
+  const byName = new Map<string, Scores365PlayerStats>();
+  function ensure(name: string): Scores365PlayerStats {
+    let p = byName.get(name);
     if (!p) {
       p = {
-        name, nameForURL, xg: null, xa: null, rating365: null,
+        name, xg: null, xa: null, xgXaCombined: null, rating365: null,
+        penaltisConvertidos: null, penaltisParados: null,
         duelsWonPerGame365: null, interceptionsPerGame365: null,
         savesPerGame365: null, goalsConcededPerGame365: null,
         yellowCards: null, redCards: null, cleanSheets: null,
       };
-      byId.set(nameForURL, p);
+      byName.set(name, p);
     }
     return p;
   }
 
-  try {
-    const res = await fetch(`/api/365scores`);
-    if (!res.ok) { cacheSet(key, {}, STATS_TTL_MS); return byId; }
-    const data = await res.json();
-    const categories: Score365Category[] = data?.stats?.athletesStats ?? [];
-    for (const cat of categories) {
-      const field = CATEGORY_FIELD[cat.id];
-      if (!field) continue; // categoría que no usamos (Goles/Asistencias/combinados/penales — ya cubiertos por Promiedos/fichajes)
-      for (const row of cat.rows as Score365Row[]) {
-        const p = ensure(row.entity.name, row.entity.nameForURL);
-        const raw = row.stats?.[0]?.value; // stats[0] es siempre el valor primario de la categoría, confirmado a mano
-        const value = raw != null ? parseFloat(String(raw).replace(",", ".")) : NaN;
-        if (Number.isFinite(value)) (p[field] as number | null) = value;
-      }
+  const map: [keyof Score365DataFile, keyof Scores365PlayerStats][] = [
+    ["golesEsperados_xG", "xg"],
+    ["asistenciasEsperadas_xA", "xa"],
+    ["golesYAsistenciasEsperadas_xGxA", "xgXaCombined"],
+    ["rating365", "rating365"],
+    ["barridasGanadasPorPartido", "duelsWonPerGame365"],
+    ["intercepcionesPorPartido", "interceptionsPerGame365"],
+    ["tarjetasRojas", "redCards"],
+    ["tarjetasAmarillas", "yellowCards"],
+    ["porteriasACero", "cleanSheets"],
+    ["golesRecibidosPorPartido", "goalsConcededPerGame365"],
+    ["atajadasPorPartido", "savesPerGame365"],
+  ];
+  for (const [srcKey, field] of map) {
+    for (const row of SCORES_365_DATA[srcKey] ?? []) {
+      const p = ensure(row.player);
+      const value = typeof row.valor === "number" ? row.valor : parseFloat(String(row.valor));
+      if (Number.isFinite(value)) (p[field] as number | null) = value;
     }
-  } catch {
-    // sin datos — cachea vacío igual (24hs) para no reintentar en cada búsqueda
+  }
+  for (const row of SCORES_365_DATA.penaltisConvertidos ?? []) {
+    ensure(row.player).penaltisConvertidos = penaltyCount(row.valor);
+  }
+  for (const row of SCORES_365_DATA.penaltisParados ?? []) {
+    ensure(row.player).penaltisParados = penaltyCount(row.valor);
   }
 
-  cacheSet(key, Object.fromEntries(byId), STATS_TTL_MS);
-  return byId;
+  cached = byName;
+  return byName;
 }
