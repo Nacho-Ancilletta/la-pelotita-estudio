@@ -3,100 +3,96 @@
 import { useEffect, useState } from "react";
 import { getTeams, recommend, type RMTeam, type RMResult, type RMPosition } from "@/lib/refuerzo-magico";
 
-// Cascada de foto (Paso 5): foto real de jugador (fichajes.com, única
-// fuente con headshots reales — Promiedos/ESPN no exponen foto por
-// jugador, confirmado a mano) → escudo del club (ESPN) → ícono genérico.
-// Cada nivel cae al siguiente solo si falla la carga o no hay URL.
-function PlayerPhoto({ src, logoSrc, alt }: { src: string | null; logoSrc: string | null; alt: string }) {
-  const [photoFailed, setPhotoFailed] = useState(false);
-  const [logoFailed, setLogoFailed] = useState(false);
-  const showPhoto = !!src && !photoFailed;
-  const showLogo = !showPhoto && !!logoSrc && !logoFailed;
+// Escudo del club — ÚNICO elemento visual del círculo (pedido explícito:
+// se sacaron las fotos de cara de jugador, fuente poco confiable — ver
+// nota del bug al inicio de lib/refuerzo-magico.ts). Sin cascada a foto
+// de jugador ni a ícono de persona: si no hay escudo (cruce de nombre
+// contra ESPN no matcheó), cae directo a un ícono decorativo genérico —
+// nunca un espacio roto, pero nunca una cara tampoco.
+function ClubShield({ logoSrc, alt }: { logoSrc: string | null; alt: string }) {
+  const [failed, setFailed] = useState(false);
+  const showLogo = !!logoSrc && !failed;
   return (
     <div className="w-20 h-20 rounded-full border-2 border-orange/40 bg-bg-deep overflow-hidden flex items-center justify-center shrink-0">
-      {showPhoto ? (
+      {showLogo ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={src ?? undefined} alt={alt} className="w-full h-full object-cover" onError={() => setPhotoFailed(true)} />
-      ) : showLogo ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={logoSrc ?? undefined} alt={alt} className="w-3/4 h-3/4 object-contain" onError={() => setLogoFailed(true)} />
+        <img src={logoSrc ?? undefined} alt={alt} className="w-3/4 h-3/4 object-contain" onError={() => setFailed(true)} />
       ) : (
-        <span className="text-3xl text-cream/20">👤</span>
+        <span className="text-3xl text-cream/20">🛡️</span>
       )}
     </div>
   );
 }
 
-// null = fichajes.com no tiene ese dato para este jugador puntual (solo
-// lista el top ~20-24 de la liga por estadística, no a todos) — se
-// muestra "—", nunca un 0 inventado.
-function n(v: number | null): string { return v == null ? "—" : String(v); }
-function cards(y: number | null, r: number | null): string {
-  return y == null && r == null ? "—" : `${n(y)} / ${n(r)}`;
+// Cero campos vacíos: si no hay dato real, la fila entera desaparece —
+// nada de "—" ni de etiqueta sin valor. row()/cardsRow() devuelven un
+// array vacío cuando no hay dato, para poder spread-earlos directo en
+// la lista y que no dejen rastro.
+function row(label: string, v: number | null): { label: string; value: string }[] {
+  return v == null ? [] : [{ label, value: String(v) }];
 }
-function heightStr(v: number | null): string { return v == null ? "—" : `${v.toFixed(2).replace(".", ",")} m`; }
-function ageStr(v: number | null): string { return v == null ? "—" : `${v} años`; }
+function cardsRow(y: number | null, r: number | null): { label: string; value: string }[] {
+  if (y == null && r == null) return [];
+  return [{ label: "Amarillas / Rojas", value: `${y ?? "—"} / ${r ?? "—"}` }];
+}
 
 function statRows(c: RMResult): { label: string; value: string }[] {
-  const common = [
-    { label: "Minutos", value: n(c.minutes) },
-    { label: "Partidos", value: n(c.matches) },
-  ];
+  const common = [...row("Minutos", c.minutes), ...row("Partidos", c.matches)];
   const byPosition: Record<RMPosition, { label: string; value: string }[]> = {
     ARQ: [
-      { label: "Vallas invictas", value: n(c.cleanSheets) },
+      ...row("Vallas invictas", c.cleanSheets),
       ...common,
-      { label: "Paradas", value: n(c.saves) },
-      { label: "Goles concedidos", value: n(c.goalsConceded) },
-      { label: "Atajadas (por partido)", value: n(c.savesPerGame365) },
-      { label: "Goles recibidos (por partido)", value: n(c.goalsConcededPerGame365) },
-      { label: "Penales atajados", value: n(c.penaltisParados365) },
+      ...row("Paradas", c.saves),
+      ...row("Goles concedidos", c.goalsConceded),
+      ...row("Atajadas (por partido)", c.savesPerGame365),
+      ...row("Goles recibidos (por partido)", c.goalsConcededPerGame365),
+      ...row("Penales atajados", c.penaltisParados365),
     ],
     DEF: [
-      { label: "Vallas invictas", value: n(c.cleanSheets) },
+      ...row("Vallas invictas", c.cleanSheets),
       ...common,
       { label: "Asistencias", value: String(c.assists) },
       { label: "Goles", value: String(c.goals) },
-      { label: "Amarillas / Rojas", value: cards(c.yellowCards, c.redCards) },
-      { label: "Duelos ganados", value: n(c.duelsWon) },
-      { label: "Entradas ganadas", value: n(c.tacklesWon) },
-      { label: "Intercepciones", value: n(c.interceptions) },
-      { label: "Rating 365", value: n(c.rating365) },
-      { label: "Duelos ganados (por partido)", value: n(c.duelsWonPerGame365) },
-      { label: "Intercepciones (por partido)", value: n(c.interceptionsPerGame365) },
+      ...cardsRow(c.yellowCards, c.redCards),
+      ...row("Duelos ganados", c.duelsWon),
+      ...row("Entradas ganadas", c.tacklesWon),
+      ...row("Intercepciones", c.interceptions),
+      ...row("Rating 365", c.rating365),
+      ...row("Duelos ganados (por partido)", c.duelsWonPerGame365),
+      ...row("Intercepciones (por partido)", c.interceptionsPerGame365),
     ],
     VOL: [
       ...common,
       { label: "Asistencias", value: String(c.assists) },
       { label: "Goles", value: String(c.goals) },
-      { label: "Amarillas / Rojas", value: cards(c.yellowCards, c.redCards) },
-      { label: "Pases clave", value: n(c.keyPasses) },
-      { label: "Regates completados", value: n(c.dribblesCompleted) },
-      { label: "Duelos ganados", value: n(c.duelsWon) },
-      { label: "xG", value: n(c.xg365) },
-      { label: "xA", value: n(c.xa365) },
-      { label: "Rating 365", value: n(c.rating365) },
-      { label: "Duelos ganados (por partido)", value: n(c.duelsWonPerGame365) },
+      ...cardsRow(c.yellowCards, c.redCards),
+      ...row("Pases clave", c.keyPasses),
+      ...row("Regates completados", c.dribblesCompleted),
+      ...row("Duelos ganados", c.duelsWon),
+      ...row("xG", c.xg365),
+      ...row("xA", c.xa365),
+      ...row("Rating 365", c.rating365),
+      ...row("Duelos ganados (por partido)", c.duelsWonPerGame365),
     ],
     DEL: [
       ...common,
       { label: "Asistencias", value: String(c.assists) },
       { label: "Goles", value: String(c.goals) },
-      { label: "Amarillas / Rojas", value: cards(c.yellowCards, c.redCards) },
-      { label: "Tiros a puerta", value: n(c.shotsOnTarget) },
-      { label: "Regates completados", value: n(c.dribblesCompleted) },
-      { label: "Ocasiones creadas", value: n(c.bigChancesCreated) },
-      { label: "xG", value: n(c.xg365) },
-      { label: "xA", value: n(c.xa365) },
-      { label: "xG+xA combinado", value: n(c.xgXaCombined365) },
-      { label: "Rating 365", value: n(c.rating365) },
-      { label: "Penales convertidos", value: n(c.penaltisConvertidos365) },
+      ...cardsRow(c.yellowCards, c.redCards),
+      ...row("Tiros a puerta", c.shotsOnTarget),
+      ...row("Regates completados", c.dribblesCompleted),
+      ...row("Ocasiones creadas", c.bigChancesCreated),
+      ...row("xG", c.xg365),
+      ...row("xA", c.xa365),
+      ...row("xG+xA combinado", c.xgXaCombined365),
+      ...row("Rating 365", c.rating365),
+      ...row("Penales convertidos", c.penaltisConvertidos365),
     ],
   };
   // Puntos Gran DT: dato estadístico más del jugador (no explica el
-  // algoritmo, antes se usaba solo puertas adentro para filtrar/
-  // desempatar) — se agrega al final de la ficha en las 4 posiciones.
-  return [...byPosition[c.position], { label: "Puntos Gran DT", value: n(c.grandTPoints) }];
+  // algoritmo, ya no filtra — ver nota del bug — solo suma bonus de
+  // forma) — se agrega al final de la ficha en las 4 posiciones.
+  return [...byPosition[c.position], ...row("Puntos Gran DT", c.grandTPoints)];
 }
 
 function CandidateCard({ candidate, isOpen, onToggle }: { candidate: RMResult; isOpen: boolean; onToggle: () => void }) {
@@ -104,7 +100,7 @@ function CandidateCard({ candidate, isOpen, onToggle }: { candidate: RMResult; i
   return (
     <div className="rounded-lg border border-bg-card bg-bg-card/10 overflow-hidden">
       <button onClick={onToggle} className="w-full flex flex-col items-center gap-2 p-4 text-center hover:bg-bg-card/20 transition-colors">
-        <PlayerPhoto src={candidate.photo} logoSrc={candidate.teamLogo} alt={candidate.name} />
+        <ClubShield logoSrc={candidate.teamLogo} alt={candidate.teamName} />
         <div className="font-mono text-cream text-xs font-bold leading-tight">{candidate.name}</div>
         <div className="font-mono text-cream/40 text-[10px]">{candidate.teamName}</div>
         <div className={["font-mono text-lg font-bold tabular-nums", scoreColor].join(" ")}>{candidate.fit.score}<span className="text-[10px] text-cream/30">/100 fit</span></div>
@@ -113,14 +109,18 @@ function CandidateCard({ candidate, isOpen, onToggle }: { candidate: RMResult; i
 
       {isOpen && (
         <div className="px-4 pb-4 border-t border-bg-card/60 pt-3 space-y-1">
-          <div className="flex items-center justify-between font-mono text-[10px] pb-1 mb-1 border-b border-bg-card/40">
-            <span className="text-cream/40">Edad</span>
-            <span className="text-warm-white font-bold">{ageStr(candidate.age)}</span>
-          </div>
-          <div className="flex items-center justify-between font-mono text-[10px] pb-1 mb-1 border-b border-bg-card/40">
-            <span className="text-cream/40">Altura</span>
-            <span className="text-warm-white font-bold">{heightStr(candidate.height)}</span>
-          </div>
+          {candidate.age != null && (
+            <div className="flex items-center justify-between font-mono text-[10px] pb-1 mb-1 border-b border-bg-card/40">
+              <span className="text-cream/40">Edad</span>
+              <span className="text-warm-white font-bold">{candidate.age} años</span>
+            </div>
+          )}
+          {candidate.height != null && (
+            <div className="flex items-center justify-between font-mono text-[10px] pb-1 mb-1 border-b border-bg-card/40">
+              <span className="text-cream/40">Altura</span>
+              <span className="text-warm-white font-bold">{candidate.height.toFixed(2).replace(".", ",")} m</span>
+            </div>
+          )}
           {statRows(candidate).map((r) => (
             <div key={r.label} className="flex items-center justify-between font-mono text-[10px]">
               <span className="text-cream/40">{r.label}</span>

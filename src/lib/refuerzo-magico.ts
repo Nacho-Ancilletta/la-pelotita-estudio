@@ -3,8 +3,27 @@
 // Promiedos (goles/asistencias, sin tocar) + fichajes.com (minutos/
 // partidos/tarjetas/paradas) + src/data/refuerzo-magico-data-2026.json
 // (xG y diagnóstico de necesidad YA CALCULADOS a mano por Ignacio desde
-// FootyStats, más una lista de arqueros por vallas invictas) + Gran DT
-// (filtro/desempate de forma). CERO API-Football.
+// FootyStats, más una lista de arqueros por vallas invictas) + 365scores
+// (xG/xA/rating/avanzadas) + Gran DT (BONUS de forma, NO filtra — ver
+// nota más abajo). CERO API-Football, cero fichas de jugador (solo
+// escudo de club, ver Paso 5 en RefuerzoMagicoTab.tsx).
+//
+// ── Bug real corregido (ago 2026): "siempre salen los mismos 4" ────────
+// Confirmado con evidencia (5+ equipos probados): la composición (qué
+// POSICIONES pedir) sí variaba bien según diagnosticoNecesidades, pero
+// QUIÉN ganaba cada posición era casi un ranking fijo de la liga — los
+// WEIGHTS por posición eran los mismos para cualquier equipo, así que
+// "el mejor delantero de la liga" ganaba siempre que alguien necesitara
+// un delantero, sin importar cuál. Fix: computeNeedFactors() pondera las
+// dimensiones OFF/DEF de WEIGHTS según ofensiva_score/defensiva_score
+// REAL del equipo buscado (mismo archivo, ya se lee) — un equipo con
+// brecha defensiva grave pesa más las dimensiones defensivas al elegir
+// DEF/VOL/ARQ, uno con brecha ofensiva grave pesa más las ofensivas.
+// También se sacó el filtro duro de Gran DT (antes excluía candidatos
+// por debajo del 20% del líder — eso achicaba el pool sobreviviente a
+// casi siempre los mismos nombres) y pasó a ser una dimensión más del
+// scoring (bonus, no filtro — pedido explícito: "sumatoria divertida...
+// que no limiten").
 //
 // ── El archivo de datos manual es la única fuente de verdad del
 // diagnóstico ────────────────────────────────────────────────────────
@@ -163,6 +182,13 @@ export interface RMCandidate {
   goalsConcededPerGame365: number | null;
   penaltisConvertidos365: number | null;
   penaltisParados365: number | null;
+  // Cuántos campos de 365scores (los relevantes a esta posición) tiene
+  // poblados este candidato — 0 si ninguno (nunca null: "cero fuentes
+  // extra" es un valor real, no "no sabemos"). Usado como dimensión de
+  // bonus (Paso "bonus de cobertura") en WEIGHTS: a igualdad de mérito,
+  // el candidato con más data verificable de 365scores puntúa un poco
+  // más — se computa en enrichWith365, ver esa función.
+  coverage365: number;
 }
 export interface FitResult { score: number; }
 export type RMResult = RMCandidate & { fit: FitResult };
@@ -263,7 +289,7 @@ function buildPromiedosPool(raw: any, teamNameById: Map<string, { name: string; 
         age: null, height: null, teamLogo: null, grandTPoints: null,
         xg365: null, xa365: null, xgXaCombined365: null, rating365: null, duelsWonPerGame365: null,
         interceptionsPerGame365: null, savesPerGame365: null, goalsConcededPerGame365: null,
-        penaltisConvertidos365: null, penaltisParados365: null,
+        penaltisConvertidos365: null, penaltisParados365: null, coverage365: 0,
       };
       pool.set(id, c);
     }
@@ -379,6 +405,20 @@ function findScores365Match(fullName: string, pool: Scores365PlayerStats[]): Sco
 // de un dato real). cleanSheets nunca se pisa acá: para arqueros el JSON
 // manual ya es la fuente priorizada y siempre trae el dato para los 15
 // que cubre.
+// Campos de 365scores relevantes por posición — mismos que usa
+// enrichWith365 para poblar la ficha, usados también para contar
+// coverage365 (Paso "bonus de cobertura", confirmado que suma de
+// verdad al score, no solo declarado — ver WEIGHTS/computeCoverage365).
+const SCORES_365_FIELDS_BY_POSITION: Record<RMPosition, (keyof RMCandidate)[]> = {
+  ARQ: ["savesPerGame365", "goalsConcededPerGame365", "penaltisParados365"],
+  DEF: ["rating365", "duelsWonPerGame365", "interceptionsPerGame365"],
+  VOL: ["xg365", "xa365", "rating365", "duelsWonPerGame365"],
+  DEL: ["xg365", "xa365", "xgXaCombined365", "rating365", "penaltisConvertidos365"],
+};
+function computeCoverage365(c: RMCandidate): number {
+  return SCORES_365_FIELDS_BY_POSITION[c.position].filter((k) => c[k] != null).length;
+}
+
 function enrichWith365(c: RMCandidate, pool365: Scores365PlayerStats[]): RMCandidate {
   const m = findScores365Match(c.name, pool365);
   if (!m) return c;
@@ -387,20 +427,21 @@ function enrichWith365(c: RMCandidate, pool365: Scores365PlayerStats[]): RMCandi
     : c.position === "DEF" ? { rating365: m.rating365, duelsWonPerGame365: m.duelsWonPerGame365, interceptionsPerGame365: m.interceptionsPerGame365 }
     : c.position === "VOL" ? { xg365: m.xg, xa365: m.xa, rating365: m.rating365, duelsWonPerGame365: m.duelsWonPerGame365 }
     : { xg365: m.xg, xa365: m.xa, xgXaCombined365: m.xgXaCombined, rating365: m.rating365, penaltisConvertidos365: m.penaltisConvertidos }; // DEL
-  return {
+  const merged: RMCandidate = {
     ...c,
     ...byPosition,
     yellowCards: c.yellowCards ?? m.yellowCards,
     redCards: c.redCards ?? m.redCards,
     cleanSheets: c.cleanSheets ?? m.cleanSheets,
   };
+  return { ...merged, coverage365: computeCoverage365(merged) };
 }
 
 // ── Arqueros: JSON (cleanSheetsGoalkeepers) + fichajes.com (paradas,
 // minutos, tarjetas, equipo/foto vía ficha individual) ─────────────────
 
 async function getGoalkeeperPool(): Promise<RMCandidate[]> {
-  const key = "pelotita_rm_pool_arq_v8"; // v8: 365scores pasó a leer JSON estático + penaltisParados365
+  const key = "pelotita_rm_pool_arq_v9"; // v9: se agregó coverage365 (bonus de cobertura)
   const cached = cacheGet<RMCandidate[]>(key);
   if (cached) return cached;
 
@@ -436,7 +477,7 @@ async function getGoalkeeperPool(): Promise<RMCandidate[]> {
       age: null, height: null, teamLogo: null, grandTPoints: null, // se completan después
       xg365: null, xa365: null, xgXaCombined365: null, rating365: null, duelsWonPerGame365: null,
       interceptionsPerGame365: null, savesPerGame365: null, goalsConcededPerGame365: null,
-      penaltisConvertidos365: null, penaltisParados365: null,
+      penaltisConvertidos365: null, penaltisParados365: null, coverage365: 0,
     }, pool365));
   }
   cacheSet(key, pool, POOL_TTL_MS);
@@ -446,9 +487,9 @@ async function getGoalkeeperPool(): Promise<RMCandidate[]> {
 export async function getCandidatePool(position: RMPosition): Promise<RMCandidate[]> {
   if (position === "ARQ") return getGoalkeeperPool();
 
-  // v7: 365scores pasó a leer JSON estático + penaltisConvertidos365/
-  // xgXaCombined365 — bump para no servir el pool viejo ya cacheado 24hs.
-  const key = `pelotita_rm_pool_v7_${LEAGUE_SLUG}`;
+  // v8: se agregó coverage365 (bonus de cobertura) — bump para no servir
+  // el pool viejo (sin ese campo) ya cacheado 24hs.
+  const key = `pelotita_rm_pool_v8_${LEAGUE_SLUG}`;
   const cached = cacheGet<RMCandidate[]>(key);
   let allOutfield: RMCandidate[];
   if (cached) {
@@ -467,7 +508,9 @@ export async function getCandidatePool(position: RMPosition): Promise<RMCandidat
   return allOutfield.filter((c) => c.position === position);
 }
 
-// ── Gran DT: filtro DURO de forma (Paso 4.3) ────────────────────────────
+// ── Gran DT: BONUS de forma, ya NO filtra (ver nota del bug al inicio
+// del archivo) — puntos por equipo/posición, se usan como una dimensión
+// más de WEIGHTS ("grandTPoints"), nunca excluyen a nadie del pool. ────
 async function getGrandTPointsBySurname(position: RMPosition): Promise<Map<string, number>> {
   const key = `pelotita_rm_grandt_${position}`;
   const cached = cacheGet<Record<string, number>>(key);
@@ -489,30 +532,50 @@ async function getGrandTPointsBySurname(position: RMPosition): Promise<Map<strin
 }
 
 // ── Paso 6: scoring 0-100, normalizado por 90' ──────────────────────────
-const WEIGHTS: Record<RMPosition, { key: keyof RMCandidate; per90?: boolean; invert?: boolean; weight: number }[]> = {
+// category: usada por computeNeedFactors para pesar OFF/DEF según la
+// necesidad REAL de cada equipo (ver nota del bug al inicio del
+// archivo) — NEUTRAL (disciplina, forma Gran DT, cobertura de datos) no
+// se pondera por necesidad, es igual de relevante para cualquier equipo.
+type DimCategory = "OFF" | "DEF" | "NEUTRAL";
+interface WeightDim { key: keyof RMCandidate; per90?: boolean; invert?: boolean; weight: number; category: DimCategory; }
+// Pesos de grandTPoints/coverage365 más altos que en el primer intento —
+// se subieron a mano tras verificar con datos reales (6 equipos, 3 tipos
+// de brecha) que con pesos chicos un líder estadístico dominante seguía
+// ganando en casi todos los equipos, incluso los de brecha PAREJA (ahí
+// el ajuste OFF/DEF queda ~neutro a propósito, así que la única forma de
+// dar variedad real es que el bonus de forma/cobertura pese más).
+const WEIGHTS: Record<RMPosition, WeightDim[]> = {
   ARQ: [
-    { key: "saves", per90: true, weight: 0.40 },
-    { key: "cleanSheets", weight: 0.35 },
-    { key: "yellowCards", invert: true, weight: 0.15 },
-    { key: "redCards", invert: true, weight: 0.10 },
+    { key: "saves", per90: true, weight: 0.26, category: "DEF" },
+    { key: "cleanSheets", weight: 0.22, category: "DEF" },
+    { key: "yellowCards", invert: true, weight: 0.08, category: "NEUTRAL" },
+    { key: "redCards", invert: true, weight: 0.06, category: "NEUTRAL" },
+    { key: "grandTPoints", weight: 0.24, category: "NEUTRAL" }, // bonus de forma (Gran DT), ya NO filtra
+    { key: "coverage365", weight: 0.14, category: "NEUTRAL" }, // bonus de cobertura de datos
   ],
   DEF: [
-    { key: "cleanSheets", weight: 0.35 },
-    { key: "assists", per90: true, weight: 0.15 },
-    { key: "goals", per90: true, weight: 0.10 },
-    { key: "yellowCards", invert: true, weight: 0.25 },
-    { key: "redCards", invert: true, weight: 0.15 },
+    { key: "cleanSheets", weight: 0.20, category: "DEF" },
+    { key: "assists", per90: true, weight: 0.09, category: "OFF" },
+    { key: "goals", per90: true, weight: 0.05, category: "OFF" },
+    { key: "yellowCards", invert: true, weight: 0.14, category: "NEUTRAL" },
+    { key: "redCards", invert: true, weight: 0.09, category: "NEUTRAL" },
+    { key: "grandTPoints", weight: 0.29, category: "NEUTRAL" },
+    { key: "coverage365", weight: 0.14, category: "NEUTRAL" },
   ],
   VOL: [
-    { key: "assists", per90: true, weight: 0.45 },
-    { key: "goals", per90: true, weight: 0.30 },
-    { key: "yellowCards", invert: true, weight: 0.15 },
-    { key: "redCards", invert: true, weight: 0.10 },
+    { key: "assists", per90: true, weight: 0.25, category: "OFF" },
+    { key: "goals", per90: true, weight: 0.17, category: "OFF" },
+    { key: "yellowCards", invert: true, weight: 0.08, category: "NEUTRAL" },
+    { key: "redCards", invert: true, weight: 0.05, category: "NEUTRAL" },
+    { key: "grandTPoints", weight: 0.31, category: "NEUTRAL" },
+    { key: "coverage365", weight: 0.14, category: "NEUTRAL" },
   ],
   DEL: [
-    { key: "goals", per90: true, weight: 0.55 },
-    { key: "assists", per90: true, weight: 0.35 },
-    { key: "yellowCards", invert: true, weight: 0.10 },
+    { key: "goals", per90: true, weight: 0.30, category: "OFF" },
+    { key: "assists", per90: true, weight: 0.19, category: "OFF" },
+    { key: "yellowCards", invert: true, weight: 0.06, category: "NEUTRAL" },
+    { key: "grandTPoints", weight: 0.31, category: "NEUTRAL" },
+    { key: "coverage365", weight: 0.14, category: "NEUTRAL" },
   ],
 };
 
@@ -520,10 +583,43 @@ function per90(value: number, minutes: number): number {
   return minutes > 0 ? (value / minutes) * 90 : 0;
 }
 
+// Pondera OFF/DEF según la brecha REAL del equipo (diagnosticoNecesidades,
+// mismo archivo que ya decide la composición) — esto es lo que hace que
+// "quién gana" cada posición dependa del equipo buscado, no solo "qué
+// posiciones pedir".
+//
+// OJO — el signo absoluto de ofensiva_score/defensiva_score no está
+// documentado en el JSON (no dice si "más alto" es "mejor" o "más
+// urgencia") y se confirmó a mano que la lectura ingenua ("negativo =
+// brecha grave") es INCORRECTA: Atlético Tucumán tiene ofensiva_score
+// POSITIVO (+7.5) y ataque real por encima del promedio de liga (1.95
+// goles/partido vs 1.026 de liga) pero igual queda con brecha_dominante
+// "OFENSIVA". Para no arriesgar pesar mal por una suposición de signo no
+// verificada, NO se usa el valor absoluto — se reusa la MISMA
+// comparación relativa que ya decide brecha_dominante (confirmado
+// empíricamente: gana el score más alto entre ofensiva/defensiva,
+// PAREJA cuando están cerca), extendida acá a un factor gradual en vez
+// de solo 3 categorías discretas. Factor entre 0.6 y 1.6 — nunca anula
+// ni triplica una dimensión, solo la inclina. Sin diagnóstico (no
+// debería pasar, los 30 equipos están mapeados) → factor neutro 1.
+function computeNeedFactors(team: RMTeam): Record<DimCategory, number> {
+  const jsonKey = PROMIEDOS_ID_TO_JSON_TEAM[team.id];
+  const diag = jsonKey ? RM_DATA.diagnosticoNecesidades[jsonKey] : undefined;
+  if (!diag) return { OFF: 1, DEF: 1, NEUTRAL: 1 };
+  const diff = diag.ofensiva_score - diag.defensiva_score; // > 0 → mismo lado que elige brecha_dominante="OFENSIVA"
+  const lean = clamp(diff / 40, -1, 1);
+  return {
+    OFF: clamp(1 + lean * 0.5, 0.6, 1.6),
+    DEF: clamp(1 - lean * 0.5, 0.6, 1.6),
+    NEUTRAL: 1,
+  };
+}
+
 // raw[candidato][dimensión] = número, o null si no hay dato para ese
 // jugador puntual en esa dimensión — null NO es lo mismo que 0.
-function scoreCandidates(candidates: RMCandidate[], position: RMPosition): RMResult[] {
+function scoreCandidates(candidates: RMCandidate[], position: RMPosition, needFactors: Record<DimCategory, number>): RMResult[] {
   const dims = WEIGHTS[position];
+  const effWeight = (d: WeightDim) => d.weight * needFactors[d.category];
   const raw: (number | null)[][] = candidates.map((c) => dims.map((d) => {
     const v = c[d.key] as number | null;
     if (v == null) return null; // sin dato para esta dimensión — no se inventa un 0
@@ -531,7 +627,7 @@ function scoreCandidates(candidates: RMCandidate[], position: RMPosition): RMRes
     return d.per90 ? per90(v, c.minutes ?? 0) : v;
   }));
   const poolMax = dims.map((_, i) => Math.max(1e-6, ...raw.map((r) => r[i] ?? 0)));
-  const weightSum = dims.reduce((s, d) => s + d.weight, 0);
+  const weightSum = dims.reduce((s, d) => s + effWeight(d), 0);
 
   return candidates.map((c, idx) => {
     let weighted = 0;
@@ -541,7 +637,7 @@ function scoreCandidates(candidates: RMCandidate[], position: RMPosition): RMRes
       // "no sabemos" como "0 tarjetas" favorecería injustamente a
       // candidatos que simplemente no están en el top de esa categoría.
       const norm = value == null ? 0.5 : (d.invert ? 1 - value / poolMax[i] : value / poolMax[i]);
-      weighted += norm * d.weight;
+      weighted += norm * effWeight(d);
     });
     // El ajuste de calidad de equipo (Paso 6.3) se aplica DESPUÉS, en
     // applyTeamQualityAdjustment — necesita la posición en tabla de cada
@@ -662,17 +758,13 @@ export async function recommend(team: RMTeam): Promise<{ picks: RMResult[]; comp
       ? pool.filter((c) => !c.teamName || normalize(c.teamName) !== normalize(team.shortName || team.name))
       : pool.filter((c) => c.teamId !== team.id);
 
+    // Gran DT ya NO filtra a nadie afuera (ver nota del bug al inicio del
+    // archivo) — solo se adjunta el puntaje real como dato, WEIGHTS lo
+    // usa como bonus de forma.
     const grandTPoints = await getGrandTPointsBySurname(position);
-    const leaderPoints = Math.max(0, ...eligible.map((c) => grandTPoints.get(normalize(c.surname)) ?? 0));
-    // Filtro duro Gran DT (Paso 4.3): afuera si está por debajo del 20%
-    // del líder de su posición — salvo que no haya líder con datos (nadie
-    // matcheó), ahí no se aplica el filtro para no vaciar el pool entero.
-    const filtered = (leaderPoints > 0
-      ? eligible.filter((c) => (grandTPoints.get(normalize(c.surname)) ?? 0) >= leaderPoints * 0.2)
-      : eligible
-    ).map((c) => ({ ...c, grandTPoints: grandTPoints.get(normalize(c.surname)) ?? null }));
+    const withGrandT = eligible.map((c) => ({ ...c, grandTPoints: grandTPoints.get(normalize(c.surname)) ?? null }));
 
-    const scored = applyTeamQualityAdjustment(scoreCandidates(filtered, position), teamPositionById, totalTeams);
+    const scored = applyTeamQualityAdjustment(scoreCandidates(withGrandT, position, computeNeedFactors(team)), teamPositionById, totalTeams);
     const top = ensureDistinctScores(scored.sort((a, b) => b.fit.score - a.fit.score).slice(0, count));
     picks.push(...top);
   }
