@@ -36,6 +36,7 @@
 import { getTablaPosiciones, PROMIEDOS_LEAGUES, getSquad, type PromiedosStandingGroup, type PromiedosSquadPlayer } from "@/lib/promiedos";
 import { getGrandTRanking, getLatestGrandTSheet, type GrandTPosition } from "@/lib/grandt";
 import { getFichajesData, getPlayerProfile, photoUrlFromSlug, type FichajesPlayerData } from "@/lib/fichajes";
+import { getScores365Data, type Scores365PlayerStats } from "@/lib/365scores";
 import { getStandings, espnTeamLogoUrl } from "@/lib/espn";
 import RM_DATA_RAW from "@/data/refuerzo-magico-data-2026.json";
 
@@ -143,6 +144,22 @@ export interface RMCandidate {
   // dato más de la ficha (pedido explícito: no es "explicar el
   // algoritmo", es un dato estadístico del jugador como cualquier otro).
   grandTPoints: number | null;
+  // 365scores (ago 2026) — cuarta fuente, se suma sin reemplazar
+  // ninguna. xg/xa/rating365 son totales/promedios de temporada, sin
+  // equivalente previo. Los "PerGame365" son promedios POR PARTIDO —
+  // NO se mezclan con duelsWon/interceptions/saves/goalsConceded (esos
+  // son totales de fichajes.com, unidad distinta, ver nota en
+  // lib/365scores.ts) — se muestran en fila aparte. yellowCards/
+  // redCards/cleanSheets de esta fuente SÍ son la misma unidad
+  // (totales) que las ya existentes, así que solo se usan como
+  // fallback silencioso cuando fichajes.com/el JSON no tenían el dato.
+  xg365: number | null;
+  xa365: number | null;
+  rating365: number | null;
+  duelsWonPerGame365: number | null;
+  interceptionsPerGame365: number | null;
+  savesPerGame365: number | null;
+  goalsConcededPerGame365: number | null;
 }
 export interface FitResult { score: number; }
 export type RMResult = RMCandidate & { fit: FitResult };
@@ -241,6 +258,8 @@ function buildPromiedosPool(raw: any, teamNameById: Map<string, { name: string; 
         goalsConceded: null, duelsWon: null, tacklesWon: null, interceptions: null,
         keyPasses: null, dribblesCompleted: null, shotsOnTarget: null, bigChancesCreated: null,
         age: null, height: null, teamLogo: null, grandTPoints: null,
+        xg365: null, xa365: null, rating365: null, duelsWonPerGame365: null,
+        interceptionsPerGame365: null, savesPerGame365: null, goalsConcededPerGame365: null,
       };
       pool.set(id, c);
     }
@@ -344,16 +363,46 @@ function enrichWithFichajes(c: RMCandidate, fichajesPool: FichajesPlayerData[]):
   };
 }
 
+function findScores365Match(fullName: string, pool: Scores365PlayerStats[]): Scores365PlayerStats | undefined {
+  return bestTokenMatch(fullName, pool, (p) => tokenizeForMatch(p.name));
+}
+
+// Enriquece con 365scores (cuarta fuente, ago 2026) — se suma sin
+// reemplazar. Campos nuevos (xg365/xa365/rating365/los "PerGame365") van
+// siempre que haya match, según posición. yellowCards/redCards SOLO se
+// llenan si fichajes.com no los trajo ya (misma unidad — total de
+// temporada — así que es un fallback seguro, no un reemplazo silencioso
+// de un dato real). cleanSheets nunca se pisa acá: para arqueros el JSON
+// manual ya es la fuente priorizada y siempre trae el dato para los 15
+// que cubre.
+function enrichWith365(c: RMCandidate, pool365: Scores365PlayerStats[]): RMCandidate {
+  const m = findScores365Match(c.name, pool365);
+  if (!m) return c;
+  const byPosition: Partial<RMCandidate> =
+    c.position === "ARQ" ? { savesPerGame365: m.savesPerGame365, goalsConcededPerGame365: m.goalsConcededPerGame365 }
+    : c.position === "DEF" ? { rating365: m.rating365, duelsWonPerGame365: m.duelsWonPerGame365, interceptionsPerGame365: m.interceptionsPerGame365 }
+    : c.position === "VOL" ? { xg365: m.xg, xa365: m.xa, rating365: m.rating365, duelsWonPerGame365: m.duelsWonPerGame365 }
+    : { xg365: m.xg, xa365: m.xa, rating365: m.rating365 }; // DEL
+  return {
+    ...c,
+    ...byPosition,
+    yellowCards: c.yellowCards ?? m.yellowCards,
+    redCards: c.redCards ?? m.redCards,
+    cleanSheets: c.cleanSheets ?? m.cleanSheets,
+  };
+}
+
 // ── Arqueros: JSON (cleanSheetsGoalkeepers) + fichajes.com (paradas,
 // minutos, tarjetas, equipo/foto vía ficha individual) ─────────────────
 
 async function getGoalkeeperPool(): Promise<RMCandidate[]> {
-  const key = "pelotita_rm_pool_arq_v6"; // v6: se agregó grandTPoints (visible en la ficha)
+  const key = "pelotita_rm_pool_arq_v7"; // v7: se agregó 365scores (xg365/rating365/etc.)
   const cached = cacheGet<RMCandidate[]>(key);
   if (cached) return cached;
 
-  const fichajesData = await getFichajesData();
+  const [fichajesData, scores365Data] = await Promise.all([getFichajesData(), getScores365Data()]);
   const fichajesPool = [...fichajesData.values()];
+  const pool365 = [...scores365Data.values()];
   const keepers = RM_DATA.playerStats.cleanSheetsGoalkeepers;
 
   const pool: RMCandidate[] = [];
@@ -362,7 +411,7 @@ async function getGoalkeeperPool(): Promise<RMCandidate[]> {
     const match = findFichajesMatch(gk.player, fichajesPool);
     if (i > 0) await delay(280); // 250-300ms entre pedidos, criterio conservador (mismo que ESPN)
     const profile = match ? await getPlayerProfile(match.slug) : { team: null, photo: null };
-    pool.push({
+    pool.push(enrichWith365({
       id: match?.slug ?? normalize(gk.player),
       name: gk.player,
       surname: gk.player.split(/\s+/).slice(-1)[0] ?? gk.player,
@@ -381,7 +430,9 @@ async function getGoalkeeperPool(): Promise<RMCandidate[]> {
       duelsWon: null, tacklesWon: null, interceptions: null, keyPasses: null,
       dribblesCompleted: null, shotsOnTarget: null, bigChancesCreated: null,
       age: null, height: null, teamLogo: null, grandTPoints: null, // se completan después
-    });
+      xg365: null, xa365: null, rating365: null, duelsWonPerGame365: null,
+      interceptionsPerGame365: null, savesPerGame365: null, goalsConcededPerGame365: null,
+    }, pool365));
   }
   cacheSet(key, pool, POOL_TTL_MS);
   return pool;
@@ -390,17 +441,22 @@ async function getGoalkeeperPool(): Promise<RMCandidate[]> {
 export async function getCandidatePool(position: RMPosition): Promise<RMCandidate[]> {
   if (position === "ARQ") return getGoalkeeperPool();
 
-  // v5: se agregó grandTPoints (visible en la ficha) — bump para no
-  // servir el pool viejo (sin ese campo) ya cacheado 24hs.
-  const key = `pelotita_rm_pool_v5_${LEAGUE_SLUG}`;
+  // v6: se agregó 365scores (xg365/rating365/etc.) — bump para no
+  // servir el pool viejo (sin esos campos) ya cacheado 24hs.
+  const key = `pelotita_rm_pool_v6_${LEAGUE_SLUG}`;
   const cached = cacheGet<RMCandidate[]>(key);
   let allOutfield: RMCandidate[];
   if (cached) {
     allOutfield = cached;
   } else {
-    const [raw, groups, fichajes] = await Promise.all([fetchRawLeagueData(), getTablaPosiciones(LEAGUE_SLUG), getFichajesData()]);
+    const [raw, groups, fichajes, scores365] = await Promise.all([
+      fetchRawLeagueData(), getTablaPosiciones(LEAGUE_SLUG), getFichajesData(), getScores365Data(),
+    ]);
     const fichajesPool = [...fichajes.values()];
-    allOutfield = buildPromiedosPool(raw, flattenTeams(groups)).map((c) => enrichWithFichajes(c, fichajesPool));
+    const pool365 = [...scores365.values()];
+    allOutfield = buildPromiedosPool(raw, flattenTeams(groups))
+      .map((c) => enrichWithFichajes(c, fichajesPool))
+      .map((c) => enrichWith365(c, pool365));
     cacheSet(key, allOutfield, POOL_TTL_MS);
   }
   return allOutfield.filter((c) => c.position === position);

@@ -48,6 +48,8 @@ function statRows(c: RMResult): { label: string; value: string }[] {
       ...common,
       { label: "Paradas", value: n(c.saves) },
       { label: "Goles concedidos", value: n(c.goalsConceded) },
+      { label: "Atajadas (por partido)", value: n(c.savesPerGame365) },
+      { label: "Goles recibidos (por partido)", value: n(c.goalsConcededPerGame365) },
     ],
     DEF: [
       { label: "Vallas invictas", value: n(c.cleanSheets) },
@@ -58,6 +60,9 @@ function statRows(c: RMResult): { label: string; value: string }[] {
       { label: "Duelos ganados", value: n(c.duelsWon) },
       { label: "Entradas ganadas", value: n(c.tacklesWon) },
       { label: "Intercepciones", value: n(c.interceptions) },
+      { label: "Rating 365", value: n(c.rating365) },
+      { label: "Duelos ganados (por partido)", value: n(c.duelsWonPerGame365) },
+      { label: "Intercepciones (por partido)", value: n(c.interceptionsPerGame365) },
     ],
     VOL: [
       ...common,
@@ -67,6 +72,10 @@ function statRows(c: RMResult): { label: string; value: string }[] {
       { label: "Pases clave", value: n(c.keyPasses) },
       { label: "Regates completados", value: n(c.dribblesCompleted) },
       { label: "Duelos ganados", value: n(c.duelsWon) },
+      { label: "xG", value: n(c.xg365) },
+      { label: "xA", value: n(c.xa365) },
+      { label: "Rating 365", value: n(c.rating365) },
+      { label: "Duelos ganados (por partido)", value: n(c.duelsWonPerGame365) },
     ],
     DEL: [
       ...common,
@@ -76,6 +85,9 @@ function statRows(c: RMResult): { label: string; value: string }[] {
       { label: "Tiros a puerta", value: n(c.shotsOnTarget) },
       { label: "Regates completados", value: n(c.dribblesCompleted) },
       { label: "Ocasiones creadas", value: n(c.bigChancesCreated) },
+      { label: "xG", value: n(c.xg365) },
+      { label: "xA", value: n(c.xa365) },
+      { label: "Rating 365", value: n(c.rating365) },
     ],
   };
   // Puntos Gran DT: dato estadístico más del jugador (no explica el
