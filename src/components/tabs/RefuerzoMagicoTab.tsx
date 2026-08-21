@@ -78,7 +78,10 @@ function statRows(c: RMResult): { label: string; value: string }[] {
       { label: "Ocasiones creadas", value: n(c.bigChancesCreated) },
     ],
   };
-  return byPosition[c.position];
+  // Puntos Gran DT: dato estadístico más del jugador (no explica el
+  // algoritmo, antes se usaba solo puertas adentro para filtrar/
+  // desempatar) — se agrega al final de la ficha en las 4 posiciones.
+  return [...byPosition[c.position], { label: "Puntos Gran DT", value: n(c.grandTPoints) }];
 }
 
 function CandidateCard({ candidate, isOpen, onToggle }: { candidate: RMResult; isOpen: boolean; onToggle: () => void }) {

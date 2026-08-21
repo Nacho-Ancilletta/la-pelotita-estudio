@@ -138,6 +138,11 @@ export interface RMCandidate {
   // tiene una real para ese jugador puntual (ver PlayerPhoto en
   // RefuerzoMagicoTab.tsx). Se completa junto con age/height.
   teamLogo: string | null;
+  // Puntaje acumulado Gran DT (Paso 4.3) — antes se usaba solo para
+  // filtrar/desempatar puertas adentro, ahora también se muestra como
+  // dato más de la ficha (pedido explícito: no es "explicar el
+  // algoritmo", es un dato estadístico del jugador como cualquier otro).
+  grandTPoints: number | null;
 }
 export interface FitResult { score: number; }
 export type RMResult = RMCandidate & { fit: FitResult };
@@ -235,7 +240,7 @@ function buildPromiedosPool(raw: any, teamNameById: Map<string, { name: string; 
         yellowCards: null, redCards: null, saves: null, cleanSheets: null,
         goalsConceded: null, duelsWon: null, tacklesWon: null, interceptions: null,
         keyPasses: null, dribblesCompleted: null, shotsOnTarget: null, bigChancesCreated: null,
-        age: null, height: null, teamLogo: null,
+        age: null, height: null, teamLogo: null, grandTPoints: null,
       };
       pool.set(id, c);
     }
@@ -343,7 +348,7 @@ function enrichWithFichajes(c: RMCandidate, fichajesPool: FichajesPlayerData[]):
 // minutos, tarjetas, equipo/foto vía ficha individual) ─────────────────
 
 async function getGoalkeeperPool(): Promise<RMCandidate[]> {
-  const key = "pelotita_rm_pool_arq_v5"; // v5: se agregó teamLogo (fallback de foto)
+  const key = "pelotita_rm_pool_arq_v6"; // v6: se agregó grandTPoints (visible en la ficha)
   const cached = cacheGet<RMCandidate[]>(key);
   if (cached) return cached;
 
@@ -375,7 +380,7 @@ async function getGoalkeeperPool(): Promise<RMCandidate[]> {
       goalsConceded: match?.goalsConceded ?? null,
       duelsWon: null, tacklesWon: null, interceptions: null, keyPasses: null,
       dribblesCompleted: null, shotsOnTarget: null, bigChancesCreated: null,
-      age: null, height: null, teamLogo: null, // se completan después, ver enrichWithBio en recommend()
+      age: null, height: null, teamLogo: null, grandTPoints: null, // se completan después
     });
   }
   cacheSet(key, pool, POOL_TTL_MS);
@@ -385,9 +390,9 @@ async function getGoalkeeperPool(): Promise<RMCandidate[]> {
 export async function getCandidatePool(position: RMPosition): Promise<RMCandidate[]> {
   if (position === "ARQ") return getGoalkeeperPool();
 
-  // v4: se agregó teamLogo (fallback de foto) — bump para no servir el
-  // pool viejo (sin ese campo) ya cacheado 24hs.
-  const key = `pelotita_rm_pool_v4_${LEAGUE_SLUG}`;
+  // v5: se agregó grandTPoints (visible en la ficha) — bump para no
+  // servir el pool viejo (sin ese campo) ya cacheado 24hs.
+  const key = `pelotita_rm_pool_v5_${LEAGUE_SLUG}`;
   const cached = cacheGet<RMCandidate[]>(key);
   let allOutfield: RMCandidate[];
   if (cached) {
@@ -601,9 +606,10 @@ export async function recommend(team: RMTeam): Promise<{ picks: RMResult[]; comp
     // Filtro duro Gran DT (Paso 4.3): afuera si está por debajo del 20%
     // del líder de su posición — salvo que no haya líder con datos (nadie
     // matcheó), ahí no se aplica el filtro para no vaciar el pool entero.
-    const filtered = leaderPoints > 0
+    const filtered = (leaderPoints > 0
       ? eligible.filter((c) => (grandTPoints.get(normalize(c.surname)) ?? 0) >= leaderPoints * 0.2)
-      : eligible;
+      : eligible
+    ).map((c) => ({ ...c, grandTPoints: grandTPoints.get(normalize(c.surname)) ?? null }));
 
     const scored = applyTeamQualityAdjustment(scoreCandidates(filtered, position), teamPositionById, totalTeams);
     const top = ensureDistinctScores(scored.sort((a, b) => b.fit.score - a.fit.score).slice(0, count));
