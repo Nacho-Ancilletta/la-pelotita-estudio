@@ -33,9 +33,10 @@
 // paradas/minutos/partidos/tarjetas vía cruce por nombre (mismo
 // criterio best-effort de todo cruce entre fuentes de este proyecto).
 
-import { getTablaPosiciones, PROMIEDOS_LEAGUES, type PromiedosStandingGroup } from "@/lib/promiedos";
+import { getTablaPosiciones, PROMIEDOS_LEAGUES, getSquad, type PromiedosStandingGroup, type PromiedosSquadPlayer } from "@/lib/promiedos";
 import { getGrandTRanking, getLatestGrandTSheet, type GrandTPosition } from "@/lib/grandt";
-import { getFichajesData, getPlayerProfile, bySurname, photoUrlFromSlug, type FichajesPlayerData } from "@/lib/fichajes";
+import { getFichajesData, getPlayerProfile, photoUrlFromSlug, type FichajesPlayerData } from "@/lib/fichajes";
+import { getStandings, espnTeamLogoUrl } from "@/lib/espn";
 import RM_DATA_RAW from "@/data/refuerzo-magico-data-2026.json";
 
 interface RMDiagnostico {
@@ -95,7 +96,7 @@ const PROMIEDOS_POSITION_TO_BUCKET: Record<string, RMPosition> = {
   "Arqueros": "ARQ", "Defensores": "DEF", "Mediocampistas": "VOL", "Delanteros": "DEL",
 };
 
-export interface RMTeam { id: string; name: string; shortName: string; }
+export interface RMTeam { id: string; name: string; shortName: string; urlName: string; }
 
 export interface RMCandidate {
   id: string;
@@ -107,16 +108,36 @@ export interface RMCandidate {
   photo: string | null;
   goals: number;
   assists: number;
-  // number|null: fichajes.com solo lista el top ~20-24 de la liga en cada
+  // number|null: fichajes.com solo lista el top ~20-44 de la liga en cada
   // una de estas estadísticas (menos minutos, que sí cubre ~140 — ver
   // nota en lib/fichajes.ts) — null = el jugador no está entre esos
-  // ~20-24, no significa que valga 0.
+  // ~20-44, no significa que valga 0.
   minutes: number | null;
   matches: number | null;
   yellowCards: number | null;
   redCards: number | null;
   saves: number | null;
   cleanSheets: number | null;
+  // Avanzadas por posición (ago 2026, fichajes.com) — solo se muestran en
+  // la ficha de la posición a la que corresponden (ver statRows() en
+  // RefuerzoMagicoTab.tsx), pero se guardan todas en el mismo candidato.
+  goalsConceded: number | null;      // ARQ
+  duelsWon: number | null;           // DEF/VOL
+  tacklesWon: number | null;         // DEF
+  interceptions: number | null;      // DEF
+  keyPasses: number | null;          // VOL
+  dribblesCompleted: number | null;  // VOL/DEL
+  shotsOnTarget: number | null;      // DEL
+  bigChancesCreated: number | null;  // DEL
+  // Biográficos (ago 2026, plantel Promiedos) — cruce por nombre
+  // best-effort, se completan recién sobre los 4 candidatos finales
+  // (ver enrichWithBio), no sobre todo el pool.
+  age: number | null;
+  height: number | null; // metros
+  // Escudo del club (ESPN) — fallback de foto cuando fichajes.com no
+  // tiene una real para ese jugador puntual (ver PlayerPhoto en
+  // RefuerzoMagicoTab.tsx). Se completa junto con age/height.
+  teamLogo: string | null;
 }
 export interface FitResult { score: number; }
 export type RMResult = RMCandidate & { fit: FitResult };
@@ -150,13 +171,15 @@ const MIN_MINUTES_FOR_CLEAN_SHEETS = 900; // Paso 4.4
 
 // ── Equipos (Promiedos, tabla anual) ────────────────────────────────────
 export async function getTeams(): Promise<RMTeam[]> {
-  const key = "pelotita_rm_teams_v1";
+  // v2: se agregó urlName (necesario para el plantel/edad/altura) —
+  // bump para no servir equipos cacheados sin ese campo.
+  const key = "pelotita_rm_teams_v2";
   const cached = cacheGet<RMTeam[]>(key);
   if (cached) return cached;
   const groups = await getTablaPosiciones(LEAGUE_SLUG);
   const byId = new Map<string, RMTeam>();
   for (const g of groups) for (const t of g.tables) for (const r of t.rows) {
-    byId.set(r.team.id, { id: r.team.id, name: r.team.name, shortName: r.team.shortName });
+    byId.set(r.team.id, { id: r.team.id, name: r.team.name, shortName: r.team.shortName, urlName: r.team.urlName });
   }
   const teams = [...byId.values()].sort((a, b) => a.name.localeCompare(b.name));
   cacheSet(key, teams, POOL_TTL_MS);
@@ -210,6 +233,9 @@ function buildPromiedosPool(raw: any, teamNameById: Map<string, { name: string; 
         teamId, teamName: teamNameById.get(teamId)?.shortName ?? teamNameById.get(teamId)?.name ?? "",
         position: bucket, photo: null, goals: 0, assists: 0, minutes: null, matches: null,
         yellowCards: null, redCards: null, saves: null, cleanSheets: null,
+        goalsConceded: null, duelsWon: null, tacklesWon: null, interceptions: null,
+        keyPasses: null, dribblesCompleted: null, shotsOnTarget: null, bigChancesCreated: null,
+        age: null, height: null, teamLogo: null,
       };
       pool.set(id, c);
     }
@@ -229,45 +255,95 @@ function buildPromiedosPool(raw: any, teamNameById: Map<string, { name: string; 
   return [...pool.values()];
 }
 
+// ── Cruce por nombre entre Promiedos/JSON (nombre completo) y
+// fichajes.com (slug de la URL) ─────────────────────────────────────────
+// BUG encontrado y corregido (ago 2026): la versión anterior cruzaba solo
+// por APELLIDO (Promiedos `sname`) contra el último segmento del slug —
+// con apellidos comunes o compuestos esto colisiona fuerte: "Michael
+// Santos" terminaba emparejado con "Mateo Mendía Dos Santos" (comparten
+// "santos" nomás), "Bruno Cabrera" con "Maximo Cabrera", "Eric Meza" con
+// "Sebastián Tomás Meza" — todos casos reales confirmados a mano. El
+// cruce ahora exige que compartan el apellido Y AL MENOS otro token
+// (nombre de pila u otro apellido) cuando el slug tiene más de una
+// palabra — con un solo apellido compartido y nada más, se descarta en
+// vez de adivinar. Esto significa que MENOS candidatos van a tener match
+// que antes, pero los que sí matchean son los correctos — mejor "—"
+// honesto que un dato de otro jugador.
+function tokenizeForMatch(s: string): string[] {
+  // Se limpia toda puntuación (paréntesis, puntos, etc.) antes de separar
+  // en tokens — encontrado con "Sarmiento (Junín)" (ESPN) vs "Sarmiento
+  // Junín" (Promiedos): sin este replace, el token quedaba "(junin)" con
+  // paréntesis y nunca igualaba a "junin", matcheo fallaba en falso.
+  return normalize(s).replace(/[^a-z0-9\s-]/g, "").split(/[\s-]+/).filter((t) => t.length > 2);
+}
+// Matcher genérico por solapamiento de tokens — reusado para cruzar
+// Promiedos↔fichajes.com (por slug), Promiedos↔plantel (por nombre) y
+// Promiedos↔ESPN (por nombre de equipo). Mismo criterio en los tres
+// casos: exige 2 tokens compartidos — salvo que el lado MÁS CORTO de la
+// comparación (el nombre buscado o el ítem candidato, el que tenga menos
+// tokens) sea de una sola palabra, ahí un solo token compartido alcanza.
+// Esto es lo que permite que "Instituto" (Promiedos) matchee contra
+// "Club Atlético Instituto" (ESPN, 3 tokens) sin exigirle un segundo
+// token que Promiedos no tiene, sin debilitar la protección contra
+// colisiones de apellidos (ahí AMBOS lados son nombres completos de
+// varias palabras, así que el mínimo de los dos sigue siendo 2). A
+// igual cantidad de tokens compartidos, se prefiere el ítem con menos
+// tokens (más específico). Sin match → undefined, nunca se adivina.
+function bestTokenMatch<T>(fullName: string, items: T[], tokensOf: (item: T) => string[]): T | undefined {
+  const target = new Set(tokenizeForMatch(fullName));
+  let best: T | undefined, bestShared = 0, bestLen = Infinity;
+  for (const item of items) {
+    const itemTokens = tokensOf(item);
+    if (itemTokens.length === 0) continue;
+    const shared = itemTokens.filter((t) => target.has(t)).length;
+    const minRequired = Math.min(target.size, itemTokens.length) <= 1 ? 1 : 2;
+    if (shared < minRequired) continue;
+    if (shared > bestShared || (shared === bestShared && itemTokens.length < bestLen)) {
+      bestShared = shared; bestLen = itemTokens.length; best = item;
+    }
+  }
+  return best;
+}
+function findFichajesMatch(fullName: string, pool: FichajesPlayerData[]): FichajesPlayerData | undefined {
+  return bestTokenMatch(fullName, pool, (p) => tokenizeForMatch(p.slug));
+}
+function findSquadMatch(fullName: string, squad: PromiedosSquadPlayer[]): PromiedosSquadPlayer | undefined {
+  return bestTokenMatch(fullName, squad, (p) => tokenizeForMatch(p.name));
+}
+function findTeamMatch(teamName: string, teams: RMTeam[]): RMTeam | undefined {
+  return bestTokenMatch(teamName, teams, (t) => tokenizeForMatch(`${t.name} ${t.shortName}`));
+}
+
 // Enriquece un candidato de campo con datos de fichajes.com (minutos,
-// partidos, tarjetas) — cruce por apellido, best-effort (ver nota en
-// lib/fichajes.ts). Vallas invictas de Defensor queda siempre sin dato:
-// ninguna fuente integrada atribuye clean sheets a un defensor puntual
-// (ni fichajes.com ni el JSON — "cleanSheetsGoalkeepers" es, como el
-// nombre indica, solo de arqueros).
-function enrichWithFichajes(c: RMCandidate, bySname: Map<string, FichajesPlayerData>): RMCandidate {
-  const fd = bySname.get(normalize(c.surname));
+// partidos, tarjetas). Vallas invictas de Defensor queda siempre sin
+// dato: ninguna fuente integrada atribuye clean sheets a un defensor
+// puntual (ni fichajes.com ni el JSON — "cleanSheetsGoalkeepers" es,
+// como el nombre indica, solo de arqueros).
+// Avanzadas por posición — cada posición solo toma los campos de
+// fichajes.com que le corresponden (ver WEIGHTS/statRows), el resto
+// queda en null aunque fd los traiga (no aplican a esta posición).
+function enrichWithFichajes(c: RMCandidate, fichajesPool: FichajesPlayerData[]): RMCandidate {
+  const fd = findFichajesMatch(c.name, fichajesPool);
   if (!fd) return c;
+  const advanced: Partial<RMCandidate> =
+    c.position === "DEF" ? { duelsWon: fd.duelsWon, tacklesWon: fd.tacklesWon, interceptions: fd.interceptions }
+    : c.position === "VOL" ? { keyPasses: fd.keyPasses, dribblesCompleted: fd.dribblesCompleted, duelsWon: fd.duelsWon }
+    : c.position === "DEL" ? { shotsOnTarget: fd.shotsOnTarget, dribblesCompleted: fd.dribblesCompleted, bigChancesCreated: fd.bigChancesCreated }
+    : {};
   return {
     ...c,
     minutes: fd.minutes, matches: fd.matches,
     yellowCards: fd.yellowCards, redCards: fd.redCards,
     photo: photoUrlFromSlug(fd.slug),
+    ...advanced,
   };
 }
 
 // ── Arqueros: JSON (cleanSheetsGoalkeepers) + fichajes.com (paradas,
 // minutos, tarjetas, equipo/foto vía ficha individual) ─────────────────
-function tokenizeForMatch(s: string): string[] {
-  return normalize(s).split(/[\s-]+/).filter((t) => t.length > 2);
-}
-// Cruce por nombre completo (JSON) contra slug (fichajes.com) — mismo
-// criterio best-effort de token-overlap que se usó para validar el mapeo
-// de equipos, acá corrido en tiempo real sobre ~15 arqueros.
-function findFichajesMatch(fullName: string, pool: FichajesPlayerData[]): FichajesPlayerData | undefined {
-  const target = new Set(tokenizeForMatch(fullName));
-  let best: FichajesPlayerData | undefined, bestScore = 0;
-  for (const p of pool) {
-    const slugTokens = tokenizeForMatch(p.slug);
-    const shared = slugTokens.filter((t) => target.has(t)).length;
-    const score = shared / Math.max(1, slugTokens.length);
-    if (score > bestScore) { bestScore = score; best = p; }
-  }
-  return bestScore >= 0.5 ? best : undefined;
-}
 
 async function getGoalkeeperPool(): Promise<RMCandidate[]> {
-  const key = "pelotita_rm_pool_arq_v2";
+  const key = "pelotita_rm_pool_arq_v5"; // v5: se agregó teamLogo (fallback de foto)
   const cached = cacheGet<RMCandidate[]>(key);
   if (cached) return cached;
 
@@ -296,6 +372,10 @@ async function getGoalkeeperPool(): Promise<RMCandidate[]> {
       redCards: match?.redCards ?? null,
       saves: match?.saves ?? null,
       cleanSheets: gk.cs, // JSON siempre gana acá
+      goalsConceded: match?.goalsConceded ?? null,
+      duelsWon: null, tacklesWon: null, interceptions: null, keyPasses: null,
+      dribblesCompleted: null, shotsOnTarget: null, bigChancesCreated: null,
+      age: null, height: null, teamLogo: null, // se completan después, ver enrichWithBio en recommend()
     });
   }
   cacheSet(key, pool, POOL_TTL_MS);
@@ -305,15 +385,17 @@ async function getGoalkeeperPool(): Promise<RMCandidate[]> {
 export async function getCandidatePool(position: RMPosition): Promise<RMCandidate[]> {
   if (position === "ARQ") return getGoalkeeperPool();
 
-  const key = `pelotita_rm_pool_v1_${LEAGUE_SLUG}`;
+  // v4: se agregó teamLogo (fallback de foto) — bump para no servir el
+  // pool viejo (sin ese campo) ya cacheado 24hs.
+  const key = `pelotita_rm_pool_v4_${LEAGUE_SLUG}`;
   const cached = cacheGet<RMCandidate[]>(key);
   let allOutfield: RMCandidate[];
   if (cached) {
     allOutfield = cached;
   } else {
     const [raw, groups, fichajes] = await Promise.all([fetchRawLeagueData(), getTablaPosiciones(LEAGUE_SLUG), getFichajesData()]);
-    const bySname = bySurname(fichajes);
-    allOutfield = buildPromiedosPool(raw, flattenTeams(groups)).map((c) => enrichWithFichajes(c, bySname));
+    const fichajesPool = [...fichajes.values()];
+    allOutfield = buildPromiedosPool(raw, flattenTeams(groups)).map((c) => enrichWithFichajes(c, fichajesPool));
     cacheSet(key, allOutfield, POOL_TTL_MS);
   }
   return allOutfield.filter((c) => c.position === position);
@@ -413,6 +495,87 @@ function applyTeamQualityAdjustment(results: RMResult[], teamPositionById: Map<s
   });
 }
 
+// Escudo del club vía ESPN (fallback de foto, Paso 5) — se resuelve UNA
+// sola vez por llamada a recommend() contra la tabla de posiciones de
+// ESPN (mismo endpoint que ya usa TacticoTab, misma quirk de temporada:
+// la liga argentina en ESPN identifica la temporada en curso con el año
+// calendario ANTERIOR — confirmado ya en TacticoTab.tsx, se reusa el
+// mismo criterio acá). Cruce por nombre con el mismo matcher por tokens
+// que el resto de la app — si no matchea, sin escudo, cae directo al
+// ícono genérico (nunca un espacio roto).
+async function getEspnTeamLogos(): Promise<{ name: string; logo: string }[]> {
+  const key = "pelotita_rm_espn_teams_v1";
+  const cached = cacheGet<{ name: string; logo: string }[]>(key);
+  if (cached) return cached;
+  try {
+    const season = new Date().getFullYear() - 1;
+    const rows = await getStandings("arg.1", season);
+    const list = rows.map((r) => ({ name: r.team.name, logo: espnTeamLogoUrl(r.team.id) }));
+    cacheSet(key, list, POOL_TTL_MS);
+    return list;
+  } catch {
+    return [];
+  }
+}
+
+// ── Edad/altura/escudo (Paso final) — se completan SOLO sobre los 4
+// candidatos finales (no sobre todo el pool, sería decenas de pedidos de
+// plantel innecesarios). Para candidatos con teamId (DEF/VOL/DEL) se
+// resuelve el equipo Promiedos directo por id; arqueros no tienen teamId
+// confiable (ver nota más arriba) así que se busca el equipo por nombre
+// (profile.team de fichajes.com) con el mismo matcher por tokens — si no
+// matchea, age/height/teamLogo quedan en null, nunca inventados. Plantel
+// cacheado 30 días por equipo (getSquad), se pide como máximo una vez
+// por equipo distinto entre los 4 candidatos (dedupeado acá), con 250ms
+// de delay entre pedidos nuevos — mismo criterio conservador que el
+// resto de la app.
+async function enrichWithBio(candidates: RMResult[], teams: RMTeam[]): Promise<RMResult[]> {
+  const squadByTeamId = new Map<string, PromiedosSquadPlayer[]>();
+  const espnTeams = await getEspnTeamLogos();
+  const out: RMResult[] = [];
+  for (const c of candidates) {
+    const team = c.teamId
+      ? teams.find((t) => t.id === c.teamId)
+      : findTeamMatch(c.teamName, teams);
+
+    const espnMatch = team ? bestTokenMatch(team.name, espnTeams, (t) => tokenizeForMatch(t.name)) : undefined;
+    const teamLogo = espnMatch?.logo ?? null;
+
+    if (!team || !team.urlName) { out.push({ ...c, teamLogo }); continue; }
+
+    let squad = squadByTeamId.get(team.id);
+    if (!squad) {
+      if (squadByTeamId.size > 0) await delay(250);
+      try { squad = await getSquad(team.urlName, team.id); } catch { squad = []; }
+      squadByTeamId.set(team.id, squad);
+    }
+    const match = findSquadMatch(c.name, squad);
+    out.push(match ? { ...c, age: match.age, height: match.height, teamLogo } : { ...c, teamLogo });
+  }
+  return out;
+}
+
+// Con datos tan dispersos (fichajes.com solo cubre el top ~20-44 de la
+// liga por categoría, ver nota en lib/fichajes.ts), dos candidatos de la
+// misma posición pueden terminar con el mismo score REDONDEADO aunque
+// sus stats de base no sean idénticas (la diferencia real cae dentro del
+// margen que se pierde al redondear a entero) — no es un bug de scoring,
+// es un artefacto de redondeo sobre datos escasos. La UI pide puntajes
+// visiblemente distintos entre los 4 candidatos, así que sobre el orden
+// YA decidido (por el score sin redondear, antes de este paso) se fuerza
+// una escalera estrictamente descendente restando 1 punto al que empata
+// o invierte el orden — nunca se inventa una diferencia en los datos,
+// solo se ajusta el número mostrado.
+function ensureDistinctScores(sorted: RMResult[]): RMResult[] {
+  const out = [...sorted];
+  for (let i = 1; i < out.length; i++) {
+    if (out[i].fit.score >= out[i - 1].fit.score) {
+      out[i] = { ...out[i], fit: { score: Math.max(0, out[i - 1].fit.score - 1) } };
+    }
+  }
+  return out;
+}
+
 export async function recommend(team: RMTeam): Promise<{ picks: RMResult[]; composition: RMPosition[] }> {
   const groups = await getTablaPosiciones(LEAGUE_SLUG);
   const composition = getComposition(team);
@@ -443,9 +606,11 @@ export async function recommend(team: RMTeam): Promise<{ picks: RMResult[]; comp
       : eligible;
 
     const scored = applyTeamQualityAdjustment(scoreCandidates(filtered, position), teamPositionById, totalTeams);
-    const top = scored.sort((a, b) => b.fit.score - a.fit.score).slice(0, count);
+    const top = ensureDistinctScores(scored.sort((a, b) => b.fit.score - a.fit.score).slice(0, count));
     picks.push(...top);
   }
 
-  return { picks, composition };
+  const teams = await getTeams();
+  const enriched = await enrichWithBio(picks, teams);
+  return { picks: enriched, composition };
 }

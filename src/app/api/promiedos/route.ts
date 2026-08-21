@@ -11,6 +11,8 @@ import { NextRequest, NextResponse } from "next/server";
 // - endpoint=games: la API real que usa el sitio para cambiar de fecha en
 //   el selector de partidos. Devuelve JSON directo, sin scraping.
 //   https://api.promiedos.com.ar/league/games/{leagueId}/{filterKey}
+// - endpoint=team: la página /team/{urlName}/{id} — mismo patrón SSR que
+//   endpoint=data, trae pageProps.data.squad (plantel con edad/altura).
 
 const SLUG_RE = /^[a-z0-9\-]+$/;
 const ID_RE   = /^[a-z0-9]+$/;
@@ -43,6 +45,30 @@ export async function GET(request: NextRequest) {
       const pageProps = nextData?.props?.pageProps;
       if (!pageProps || pageProps.error || !pageProps.data) {
         return NextResponse.json({ error: "Liga no encontrada en Promiedos" }, { status: 404 });
+      }
+      return NextResponse.json(pageProps.data);
+    } catch {
+      return NextResponse.json({ error: "Promiedos fetch failed" }, { status: 502 });
+    }
+  }
+
+  if (endpoint === "team") {
+    const slug = searchParams.get("slug");
+    const id   = searchParams.get("id");
+    if (!slug || !SLUG_RE.test(slug)) return NextResponse.json({ error: "Missing or invalid slug" }, { status: 400 });
+    if (!id || !ID_RE.test(id)) return NextResponse.json({ error: "Missing or invalid id" }, { status: 400 });
+
+    try {
+      const res = await fetch(`https://www.promiedos.com.ar/team/${slug}/${id}`, {
+        headers: { "User-Agent": "curl/8.5.0" },
+        next: { revalidate: 3600 },
+      });
+      if (!res.ok) return NextResponse.json({ error: `Promiedos ${res.status}` }, { status: res.status });
+      const html = await res.text();
+      const nextData = extractNextData(html) as { props?: { pageProps?: { data?: unknown; error?: boolean } } } | null;
+      const pageProps = nextData?.props?.pageProps;
+      if (!pageProps || pageProps.error || !pageProps.data) {
+        return NextResponse.json({ error: "Equipo no encontrado en Promiedos" }, { status: 404 });
       }
       return NextResponse.json(pageProps.data);
     } catch {

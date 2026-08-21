@@ -37,6 +37,19 @@ const CATEGORY_SLUGS = {
   yellowCards: "tarjetas-amarillas",
   redCardsDirect: "tarjetas-rojas-directas",
   redCardsDouble: "tarjetas-rojas-por-dos-amarillas",
+  // Avanzadas por posición (ago 2026) — se piden todas siempre (un solo
+  // pool combinado cacheado 24hs, igual que las de arriba) aunque cada
+  // ficha solo muestre las que le corresponden a su posición (ver
+  // statRows() en RefuerzoMagicoTab.tsx). Mismas ~20-44 filas de
+  // cobertura por categoría que las anteriores — confirmado a mano.
+  goalsConceded: "goles-concedidos",           // ARQ
+  duelsWon: "duelos-ganados",                  // DEF/VOL
+  tacklesWon: "entradas-ganadas",              // DEF
+  interceptions: "intercepciones",             // DEF
+  keyPasses: "pases-clave",                    // VOL
+  dribblesCompleted: "regates-completados",    // VOL/DEL
+  shotsOnTarget: "tiros-a-puerta",             // DEL
+  bigChancesCreated: "ocasiones-claras-creadas", // DEL
 } as const;
 
 // Cada categoría (excepto minutos-disputados, ~140 filas) solo lista el
@@ -55,13 +68,17 @@ export interface FichajesPlayerData {
   saves: number | null;
   yellowCards: number | null;
   redCards: number | null;
+  goalsConceded: number | null;
+  duelsWon: number | null;
+  tacklesWon: number | null;
+  interceptions: number | null;
+  keyPasses: number | null;
+  dribblesCompleted: number | null;
+  shotsOnTarget: number | null;
+  bigChancesCreated: number | null;
 }
 
 export interface FichajesProfile { team: string | null; photo: string | null; }
-
-function normalize(s: string): string {
-  return s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
-}
 
 // ── Caché — mismo patrón {data,ts,ttlMs} que el resto de la app ─────────
 function cacheGet<T>(key: string): T | null {
@@ -118,10 +135,12 @@ function parseCategoryTable(html: string): CategoryRow[] {
   return rows;
 }
 
-// ── Pool combinado de las 7 categorías, keyeado por slug (único real de
+// ── Pool combinado de las 14 categorías, keyeado por slug (único real de
 // esta fuente, a diferencia del apellido que puede repetirse) ──────────
 export async function getFichajesData(): Promise<Map<string, FichajesPlayerData>> {
-  const key = "pelotita_fichajes_data_v1";
+  // v2: se agregaron 8 categorías avanzadas por posición — bump para que
+  // el pool ya cacheado (24hs) no se sirva sin ellas.
+  const key = "pelotita_fichajes_data_v2";
   const cached = cacheGet<Record<string, FichajesPlayerData>>(key);
   if (cached) return new Map(Object.entries(cached));
 
@@ -129,7 +148,11 @@ export async function getFichajesData(): Promise<Map<string, FichajesPlayerData>
   function ensure(slug: string, name: string): FichajesPlayerData {
     let p = byId.get(slug);
     if (!p) {
-      p = { name, slug, minutes: null, matches: null, saves: null, yellowCards: null, redCards: null };
+      p = {
+        name, slug, minutes: null, matches: null, saves: null, yellowCards: null, redCards: null,
+        goalsConceded: null, duelsWon: null, tacklesWon: null, interceptions: null,
+        keyPasses: null, dribblesCompleted: null, shotsOnTarget: null, bigChancesCreated: null,
+      };
       byId.set(slug, p);
     }
     return p;
@@ -149,31 +172,19 @@ export async function getFichajesData(): Promise<Map<string, FichajesPlayerData>
       else if (field === "yellowCards") p.yellowCards = r.total;
       else if (field === "redCardsDirect") p.redCards = (p.redCards ?? 0) + r.total;   // directas + por doble amarilla se suman
       else if (field === "redCardsDouble") p.redCards = (p.redCards ?? 0) + r.total;   // en un solo total de "rojas" (pedido no las separa en la ficha)
+      else if (field === "goalsConceded") p.goalsConceded = r.total;
+      else if (field === "duelsWon") p.duelsWon = r.total;
+      else if (field === "tacklesWon") p.tacklesWon = r.total;
+      else if (field === "interceptions") p.interceptions = r.total;
+      else if (field === "keyPasses") p.keyPasses = r.total;
+      else if (field === "dribblesCompleted") p.dribblesCompleted = r.total;
+      else if (field === "shotsOnTarget") p.shotsOnTarget = r.total;
+      else if (field === "bigChancesCreated") p.bigChancesCreated = r.total;
     }
   }
 
   cacheSet(key, Object.fromEntries(byId), STATS_TTL_MS);
   return byId;
-}
-
-// Cruce por apellido contra Promiedos (que da `sname`) — fichajes.com no
-// tiene un ID de jugador compartido con Promiedos, así que el cruce es
-// best-effort por apellido normalizado: se toma el último segmento del
-// slug de la URL (ej. "lautaro-angel-ezequiel-montenegro" → "montenegro"),
-// que es más confiable que parsear el nombre corto que se muestra
-// ("L. Montenegro") porque el slug siempre trae el nombre completo. Con
-// apellidos dobles el último segmento puede no ser el apellido real
-// completo (ej. "Lopez Muñoz" → toma solo "muñoz") — mismo tipo de
-// limitación best-effort que ya existe en el cruce Gran DT↔Promiedos de
-// este proyecto, no 100% infalible pero suficiente para un dato de
-// contexto, no crítico.
-export function bySurname(data: Map<string, FichajesPlayerData>): Map<string, FichajesPlayerData> {
-  const map = new Map<string, FichajesPlayerData>();
-  for (const p of data.values()) {
-    const surname = normalize(p.slug.split("-").slice(-1)[0] ?? p.name);
-    if (!map.has(surname)) map.set(surname, p); // primer match gana si hay colisión de apellido
-  }
-  return map;
 }
 
 // Construcción directa de la URL de foto a partir del slug — no hace

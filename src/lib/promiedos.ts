@@ -64,7 +64,7 @@ export const PROMIEDOS_LEAGUES: Record<PromiedosLeagueSlug, { urlName: string; i
   "uefa.euro":              { urlName: "euro",                       id: "gdbg", name: "Eurocopa" },
 };
 
-export interface PromiedosTeam { id: string; name: string; shortName: string; }
+export interface PromiedosTeam { id: string; name: string; shortName: string; urlName: string; }
 
 export interface PromiedosStandingRow {
   position: number;
@@ -123,6 +123,7 @@ function cacheSet(key: string, data: unknown, ttlMs: number) {
 const STANDINGS_TTL_MS = 5 * 60 * 1000;        // cambia seguido durante la fecha en vivo
 const PLAYER_STATS_TTL_MS = 24 * 60 * 60 * 1000; // goleadores/asistencias se actualizan ~1 vez por fecha
 const GAMES_TTL_MS = 5 * 60 * 1000;
+const SQUAD_TTL_MS = 30 * 24 * 60 * 60 * 1000; // edad/altura de un jugador casi no cambia
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function valuesMap(values: any[] | undefined): Record<string, unknown> {
@@ -148,6 +149,7 @@ function parseStandingGroups(tablesGroups: any[] | undefined): PromiedosStanding
             id: r.entity?.object?.id ?? "",
             name: r.entity?.object?.name ?? "",
             shortName: r.entity?.object?.short_name ?? "",
+            urlName: r.entity?.object?.url_name ?? "",
           },
           points: parseInt(String(v.Points ?? "0"), 10) || 0,
           played: parseInt(String(v.GamePlayed ?? "0"), 10) || 0,
@@ -247,4 +249,51 @@ export async function getFixtureLiga(league: PromiedosLeagueSlug, filterKey = "l
   }));
   cacheSet(key, games, GAMES_TTL_MS);
   return games;
+}
+
+// ── Plantel por equipo — /team/{urlName}/{id} (investigado a mano, ago
+// 2026: página Next.js SSR igual que /league/{slug}/{id}, mismo
+// __NEXT_DATA__, pageProps.data.squad.groups[] con un grupo "Dirección"
+// (cuerpo técnico, entity.object.is_staff:true — se excluye acá) y un
+// grupo por posición ("Arqueros"/"Defensores"/etc). Cada fila trae
+// entity.object.{name,sname,age,height,birthdate}. height viene como
+// string en metros ("1.90") o "" si no está cargado — se descarta ahí
+// también, nunca se estima. ──────────────────────────────────────────
+export interface PromiedosSquadPlayer {
+  name: string;
+  surname: string;
+  age: number | null;
+  height: number | null; // metros
+  birthdate: string | null;
+}
+
+export async function getSquad(teamUrlName: string, teamId: string): Promise<PromiedosSquadPlayer[]> {
+  const key = `pelotita_promiedos_squad_${teamId}`;
+  const cached = cacheGet<PromiedosSquadPlayer[]>(key);
+  if (cached) return cached;
+
+  const res = await fetch(`/api/promiedos?endpoint=team&slug=${teamUrlName}&id=${teamId}`);
+  if (!res.ok) throw new Error(`Promiedos ${res.status}`);
+  const data = await res.json();
+
+  const players: PromiedosSquadPlayer[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const groups: any[] = data.squad?.groups ?? [];
+  for (const g of groups) {
+    for (const row of g.rows ?? []) {
+      const obj = row.entity?.object;
+      if (!obj || obj.is_staff) continue; // cuerpo técnico, no jugadores
+      const ageNum = parseInt(String(obj.age ?? ""), 10);
+      const heightNum = parseFloat(String(obj.height ?? "").replace(",", "."));
+      players.push({
+        name: obj.name ?? "",
+        surname: obj.sname ?? obj.name ?? "",
+        age: Number.isFinite(ageNum) && ageNum > 0 ? ageNum : null,
+        height: Number.isFinite(heightNum) && heightNum > 0 ? heightNum : null,
+        birthdate: obj.birthdate || null,
+      });
+    }
+  }
+  cacheSet(key, players, SQUAD_TTL_MS);
+  return players;
 }

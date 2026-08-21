@@ -3,16 +3,25 @@
 import { useEffect, useState } from "react";
 import { getTeams, recommend, type RMTeam, type RMResult, type RMPosition } from "@/lib/refuerzo-magico";
 
-function PlayerPhoto({ src, alt }: { src: string | null; alt: string }) {
-  const [failed, setFailed] = useState(false);
-  const showFallback = !src || failed;
+// Cascada de foto (Paso 5): foto real de jugador (fichajes.com, única
+// fuente con headshots reales — Promiedos/ESPN no exponen foto por
+// jugador, confirmado a mano) → escudo del club (ESPN) → ícono genérico.
+// Cada nivel cae al siguiente solo si falla la carga o no hay URL.
+function PlayerPhoto({ src, logoSrc, alt }: { src: string | null; logoSrc: string | null; alt: string }) {
+  const [photoFailed, setPhotoFailed] = useState(false);
+  const [logoFailed, setLogoFailed] = useState(false);
+  const showPhoto = !!src && !photoFailed;
+  const showLogo = !showPhoto && !!logoSrc && !logoFailed;
   return (
     <div className="w-20 h-20 rounded-full border-2 border-orange/40 bg-bg-deep overflow-hidden flex items-center justify-center shrink-0">
-      {showFallback ? (
-        <span className="text-3xl text-cream/20">👤</span>
-      ) : (
+      {showPhoto ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={src} alt={alt} className="w-full h-full object-cover" onError={() => setFailed(true)} />
+        <img src={src ?? undefined} alt={alt} className="w-full h-full object-cover" onError={() => setPhotoFailed(true)} />
+      ) : showLogo ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={logoSrc ?? undefined} alt={alt} className="w-3/4 h-3/4 object-contain" onError={() => setLogoFailed(true)} />
+      ) : (
+        <span className="text-3xl text-cream/20">👤</span>
       )}
     </div>
   );
@@ -25,6 +34,8 @@ function n(v: number | null): string { return v == null ? "—" : String(v); }
 function cards(y: number | null, r: number | null): string {
   return y == null && r == null ? "—" : `${n(y)} / ${n(r)}`;
 }
+function heightStr(v: number | null): string { return v == null ? "—" : `${v.toFixed(2).replace(".", ",")} m`; }
+function ageStr(v: number | null): string { return v == null ? "—" : `${v} años`; }
 
 function statRows(c: RMResult): { label: string; value: string }[] {
   const common = [
@@ -36,6 +47,7 @@ function statRows(c: RMResult): { label: string; value: string }[] {
       { label: "Vallas invictas", value: n(c.cleanSheets) },
       ...common,
       { label: "Paradas", value: n(c.saves) },
+      { label: "Goles concedidos", value: n(c.goalsConceded) },
     ],
     DEF: [
       { label: "Vallas invictas", value: n(c.cleanSheets) },
@@ -43,18 +55,27 @@ function statRows(c: RMResult): { label: string; value: string }[] {
       { label: "Asistencias", value: String(c.assists) },
       { label: "Goles", value: String(c.goals) },
       { label: "Amarillas / Rojas", value: cards(c.yellowCards, c.redCards) },
+      { label: "Duelos ganados", value: n(c.duelsWon) },
+      { label: "Entradas ganadas", value: n(c.tacklesWon) },
+      { label: "Intercepciones", value: n(c.interceptions) },
     ],
     VOL: [
       ...common,
       { label: "Asistencias", value: String(c.assists) },
       { label: "Goles", value: String(c.goals) },
       { label: "Amarillas / Rojas", value: cards(c.yellowCards, c.redCards) },
+      { label: "Pases clave", value: n(c.keyPasses) },
+      { label: "Regates completados", value: n(c.dribblesCompleted) },
+      { label: "Duelos ganados", value: n(c.duelsWon) },
     ],
     DEL: [
       ...common,
       { label: "Asistencias", value: String(c.assists) },
       { label: "Goles", value: String(c.goals) },
       { label: "Amarillas / Rojas", value: cards(c.yellowCards, c.redCards) },
+      { label: "Tiros a puerta", value: n(c.shotsOnTarget) },
+      { label: "Regates completados", value: n(c.dribblesCompleted) },
+      { label: "Ocasiones creadas", value: n(c.bigChancesCreated) },
     ],
   };
   return byPosition[c.position];
@@ -65,7 +86,7 @@ function CandidateCard({ candidate, isOpen, onToggle }: { candidate: RMResult; i
   return (
     <div className="rounded-lg border border-bg-card bg-bg-card/10 overflow-hidden">
       <button onClick={onToggle} className="w-full flex flex-col items-center gap-2 p-4 text-center hover:bg-bg-card/20 transition-colors">
-        <PlayerPhoto src={candidate.photo} alt={candidate.name} />
+        <PlayerPhoto src={candidate.photo} logoSrc={candidate.teamLogo} alt={candidate.name} />
         <div className="font-mono text-cream text-xs font-bold leading-tight">{candidate.name}</div>
         <div className="font-mono text-cream/40 text-[10px]">{candidate.teamName}</div>
         <div className={["font-mono text-lg font-bold tabular-nums", scoreColor].join(" ")}>{candidate.fit.score}<span className="text-[10px] text-cream/30">/100 fit</span></div>
@@ -74,6 +95,14 @@ function CandidateCard({ candidate, isOpen, onToggle }: { candidate: RMResult; i
 
       {isOpen && (
         <div className="px-4 pb-4 border-t border-bg-card/60 pt-3 space-y-1">
+          <div className="flex items-center justify-between font-mono text-[10px] pb-1 mb-1 border-b border-bg-card/40">
+            <span className="text-cream/40">Edad</span>
+            <span className="text-warm-white font-bold">{ageStr(candidate.age)}</span>
+          </div>
+          <div className="flex items-center justify-between font-mono text-[10px] pb-1 mb-1 border-b border-bg-card/40">
+            <span className="text-cream/40">Altura</span>
+            <span className="text-warm-white font-bold">{heightStr(candidate.height)}</span>
+          </div>
           {statRows(candidate).map((r) => (
             <div key={r.label} className="flex items-center justify-between font-mono text-[10px]">
               <span className="text-cream/40">{r.label}</span>
