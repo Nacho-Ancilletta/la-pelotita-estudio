@@ -110,19 +110,25 @@ function expectedTotalGoals(homeScored: GoalsRow, homeConceded: GoalsRow, awaySc
   return round1(homeExpected + awayExpected);
 }
 
+// Fallback de AEM (y contexto en todos los partidos) — ventaja_local.general
+// cubre los 30 equipos sin excepción (a diferencia de ambos_marcan_AEM, que
+// solo cubre 18/30), así que ppp_local/ppp_visitante nunca faltan.
+export interface PppComparison { homePpp: number; awayPpp: number; }
+
 export interface MatchAnalysis {
   // Cada mercado es independiente — ambos_marcan_AEM del JSON solo cubre
   // 18/30 equipos (cobertura despareja de la fuente, confirmado: River,
   // Argentinos, Central Córdoba, Instituto y otros faltan), mientras que
   // mas_de_2_5_goles sí cubre los 30. Si el mercado no tiene cobertura para
-  // alguno de los 2 equipos queda en null y la UI muestra "—" solo en ESE
-  // mercado — el otro se sigue mostrando normal, nunca se oculta la
-  // tarjeta entera por un dato parcial (mismo criterio que Refuerzo Mágico).
+  // alguno de los 2 equipos queda en null y la UI muestra el fallback de PPP
+  // (ver pppComparison) en vez de un "sin dato" — el otro mercado se sigue
+  // mostrando normal, nunca se oculta la tarjeta entera por un dato parcial.
   over25: MarketSignal | null;
   aem: MarketSignal | null;
   expectedTotalGoals: number | null;
   formTensionNotes: string[];
   ventajaLocalNote: string | null;
+  pppComparison: PppComparison | null;
 }
 
 function computeMarketSignal(
@@ -157,8 +163,12 @@ export function analyzeMatch(homeJsonTeam: string, awayJsonTeam: string, homeDis
   const awayConceded = CONCEDED_BY_TEAM.get(awayJsonTeam);
 
   const homeVentaja = VENTAJA_LOCAL_BY_TEAM.get(homeJsonTeam);
+  const awayVentaja = VENTAJA_LOCAL_BY_TEAM.get(awayJsonTeam);
   const homeFormLocal = FORM_LOCAL_BY_TEAM.get(homeJsonTeam);
   const awayFormVisitante = FORM_VISITANTE_BY_TEAM.get(awayJsonTeam);
+  const pppComparison = homeVentaja && awayVentaja
+    ? { homePpp: round1(homeVentaja.ppp_local), awayPpp: round1(awayVentaja.ppp_visitante) }
+    : null;
 
   // Paso 3: el ajuste de goles esperados solo aplica al mercado de goles
   // (Más/Menos 2.5) — no tiene sentido semántico nudgear AEM con esto.
@@ -181,7 +191,7 @@ export function analyzeMatch(homeJsonTeam: string, awayJsonTeam: string, homeDis
     ? `localía casi no le pesa a ${homeDisplayName} (+${homeVentaja.ventaja_local_pct}%)`
     : null;
 
-  return { over25: over25Result?.signal ?? null, aem: aemResult?.signal ?? null, expectedTotalGoals: expGoals, formTensionNotes, ventajaLocalNote };
+  return { over25: over25Result?.signal ?? null, aem: aemResult?.signal ?? null, expectedTotalGoals: expGoals, formTensionNotes, ventajaLocalNote, pppComparison };
 }
 
 // ── Escudos vía ESPN — mismo patrón que getEspnTeamLogos en

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   getCombinadaFechaMatches, getSelectedMatchIds, saveSelectedMatchIds,
-  type ComboMatch, type ComboTeam, type MarketLean, type MarketSignal,
+  type ComboMatch, type ComboTeam, type MarketLean, type MarketSignal, type PppComparison,
 } from "@/lib/combinada-fecha";
 
 // "DD-MM-YYYY HH:mm" (formato propio de Promiedos, ver lib/promiedos.ts) →
@@ -64,6 +64,31 @@ function MarketBlock({ title, market, signal }: { title: string; market: "over25
   );
 }
 
+// ── Fallback de AEM (y contexto en todos los partidos): PPP local del local
+// vs PPP visitante del visitante. Cubre los 30 equipos sin excepción (a
+// diferencia de AEM, que solo cubre 18/30) — ver ventaja_local en el JSON.
+function pppVerdict(homePpp: number, awayPpp: number, homeShort: string, awayShort: string): { label: string; clear: boolean } {
+  const diff = homePpp - awayPpp;
+  if (diff >= 0.4) return { label: `${homeShort} rinde más en su condición`, clear: true };
+  if (diff <= -0.4) return { label: `${awayShort} rinde más en su condición`, clear: true };
+  return { label: "Parejo / sin tendencia clara", clear: false };
+}
+
+function PppComparisonBlock({ ppp, homeShort, awayShort }: { ppp: PppComparison; homeShort: string; awayShort: string }) {
+  const verdict = pppVerdict(ppp.homePpp, ppp.awayPpp, homeShort, awayShort);
+  return (
+    <div className="rounded border border-bg-card bg-bg-deep/40 p-2.5 flex-1 min-w-0">
+      <div className="font-mono text-[9px] text-cream/40 tracking-widest mb-1.5">RENDIMIENTO LOCAL VS VISITANTE</div>
+      <div className={["inline-block font-mono text-[10px] font-bold rounded px-1.5 py-0.5 border", leanBadgeClasses(verdict.clear ? "favorable" : "parejo")].join(" ")}>
+        {verdict.label}
+      </div>
+      <div className="mt-1.5 font-mono text-[9px] text-cream/30 tabular-nums leading-relaxed">
+        PPP {homeShort} (local) {ppp.homePpp} · PPP {awayShort} (visitante) {ppp.awayPpp}
+      </div>
+    </div>
+  );
+}
+
 // ── Un equipo dentro de la tarjeta (escudo + nombre) ───────────────────────
 
 function TeamBlock({ team }: { team: ComboTeam }) {
@@ -118,11 +143,25 @@ function MatchCard({ match, selected, onToggle }: { match: ComboMatch; selected:
           <>
             <div className="flex gap-2">
               <MarketBlock title="MÁS/MENOS 2.5 GOLES" market="over25" signal={match.analysis.over25} />
-              <MarketBlock title="AMBOS MARCAN (AEM)" market="aem" signal={match.analysis.aem} />
+              {match.analysis.aem ? (
+                <MarketBlock title="AMBOS MARCAN (AEM)" market="aem" signal={match.analysis.aem} />
+              ) : match.analysis.pppComparison ? (
+                // AEM no cubre este partido (18/30 equipos) — se reemplaza por
+                // PPP local vs visitante, que sí cubre los 30 (ventaja_local).
+                <PppComparisonBlock ppp={match.analysis.pppComparison} homeShort={match.homeTeam.shortName || match.homeTeam.name} awayShort={match.awayTeam.shortName || match.awayTeam.name} />
+              ) : null}
             </div>
             <div className="mt-2.5 font-mono text-[9px] text-cream/30 leading-relaxed space-y-0.5">
               {match.analysis.expectedTotalGoals != null && (
                 <div>goles esperados del partido: <span className="text-cream/50 tabular-nums">{match.analysis.expectedTotalGoals}</span></div>
+              )}
+              {/* Cuando AEM sí está disponible, el PPP no ocupa un bloque propio
+                  — igual se muestra como contexto en todos los partidos, acá compacto. */}
+              {match.analysis.aem && match.analysis.pppComparison && (
+                <div>
+                  rendimiento en su condición: {match.homeTeam.shortName || match.homeTeam.name} <span className="text-cream/50 tabular-nums">{match.analysis.pppComparison.homePpp}</span> ppp (local)
+                  {" · "}{match.awayTeam.shortName || match.awayTeam.name} <span className="text-cream/50 tabular-nums">{match.analysis.pppComparison.awayPpp}</span> ppp (visitante)
+                </div>
               )}
               {match.analysis.ventajaLocalNote && <div>{match.analysis.ventajaLocalNote}</div>}
               {match.analysis.formTensionNotes.map((n, i) => <div key={i}>{n}</div>)}
