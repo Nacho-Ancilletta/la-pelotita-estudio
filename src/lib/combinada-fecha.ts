@@ -113,7 +113,19 @@ function expectedTotalGoals(homeScored: GoalsRow, homeConceded: GoalsRow, awaySc
 // Fallback de AEM (y contexto en todos los partidos) — ventaja_local.general
 // cubre los 30 equipos sin excepción (a diferencia de ambos_marcan_AEM, que
 // solo cubre 18/30), así que ppp_local/ppp_visitante nunca faltan.
-export interface PppComparison { homePpp: number; awayPpp: number; }
+// Cada equipo se compara CONTRA SÍ MISMO (ppp_local vs ppp_visitante propio),
+// no contra el rival — comparar entre los dos equipos del partido no dice
+// nada de si CADA UNO rinde mejor de local o de visitante (bug real: el
+// texto original decía "X rinde más en su condición" sin aclarar cuál).
+export interface TeamPppSelf { local: number; visitante: number; }
+export interface PppComparison { home: TeamPppSelf; away: TeamPppSelf; }
+export type PppCondition = "local" | "visitante" | "parejo";
+const PPP_CONDITION_THRESHOLD = 0.15;
+export function pppSelfCondition(self: TeamPppSelf): PppCondition {
+  const diff = self.local - self.visitante;
+  if (Math.abs(diff) < PPP_CONDITION_THRESHOLD) return "parejo";
+  return diff > 0 ? "local" : "visitante";
+}
 
 export interface MatchAnalysis {
   // Cada mercado es independiente — ambos_marcan_AEM del JSON solo cubre
@@ -167,7 +179,10 @@ export function analyzeMatch(homeJsonTeam: string, awayJsonTeam: string, homeDis
   const homeFormLocal = FORM_LOCAL_BY_TEAM.get(homeJsonTeam);
   const awayFormVisitante = FORM_VISITANTE_BY_TEAM.get(awayJsonTeam);
   const pppComparison = homeVentaja && awayVentaja
-    ? { homePpp: round1(homeVentaja.ppp_local), awayPpp: round1(awayVentaja.ppp_visitante) }
+    ? {
+        home: { local: round1(homeVentaja.ppp_local), visitante: round1(homeVentaja.ppp_visitante) },
+        away: { local: round1(awayVentaja.ppp_local), visitante: round1(awayVentaja.ppp_visitante) },
+      }
     : null;
 
   // Paso 3: el ajuste de goles esperados solo aplica al mercado de goles
@@ -280,15 +295,90 @@ export async function getCombinadaFechaMatches(): Promise<ComboMatch[]> {
   });
 }
 
-// ── Selección manual del usuario (Paso "recomendador manual") — persistida
-// en localStorage sin TTL, es una preferencia de UI, no un dato de fuente. ──
-const SELECTION_KEY = "pelotita_combinada_selection_v1";
-export function getSelectedMatchIds(): Set<string> {
-  try {
-    const raw = localStorage.getItem(SELECTION_KEY);
-    return raw ? new Set(JSON.parse(raw) as string[]) : new Set();
-  } catch { return new Set(); }
+// ── "Mi combinada" — selección manual por MERCADO (no por partido entero):
+// el usuario clickea un mercado puntual (Más/Menos 2.5, AEM, o una de las 2
+// lecturas de RENDIMIENTO LOCAL VS VISITANTE) dentro de una tarjeta y eso
+// queda guardado como un "pick". Persistido en localStorage sin TTL — "el
+// usuario pierde la lista si limpia localStorage" es aceptado, no hay
+// backend propio (pedido explícito).
+//
+// Se guarda un SNAPSHOT del texto mostrado al momento de elegir (equipos,
+// hora, label del mercado) en vez de solo un id — así "Mi combinada" no
+// depende de que el JSON de datos (que Ignacio actualiza a mano) siga
+// vigente más adelante y muestre un texto distinto al que el usuario vio
+// cuando eligió. El RESULTADO (goles reales) sí se re-consulta en vivo cada
+// vez que se entra al tab, cruzando por matchId contra getCombinadaFechaMatches().
+export type PickKind =
+  | { type: "over25"; predictedSide: "over" | "under" }
+  | { type: "aem"; predictedSide: "si" | "no" }
+  // RENDIMIENTO LOCAL VS VISITANTE no es un mercado binario real (ppp_local/
+  // visitante es un promedio histórico, no algo que un partido puntual
+  // "resuelva") — se evalúa lo más honesto posible: ¿el equipo marcado sumó
+  // puntos en ESTE partido? (gana o empata = cumplió, pierde = no cumplió),
+  // coherente con que PPP son justamente puntos por partido. Nunca se
+  // inventa un "acierto" que no salga directo del resultado real.
+  | { type: "ppp"; team: "home" | "away" };
+
+export interface SelectedPick {
+  id: string; // `${matchId}:${slot}` — clave única, ver slot en el tab
+  matchId: string;
+  homeTeam: string;
+  awayTeam: string;
+  startTime: string;
+  marketTitle: string; // "MÁS/MENOS 2.5 GOLES" | "AMBOS MARCAN (AEM)" | "RENDIMIENTO LOCAL VS VISITANTE"
+  marketLabel: string; // texto del badge al momento de elegir, ej. "Menos de 2.5: probable"
+  kind: PickKind;
 }
-export function saveSelectedMatchIds(ids: Set<string>) {
-  try { localStorage.setItem(SELECTION_KEY, JSON.stringify([...ids])); } catch { /* localStorage lleno o deshabilitado */ }
+
+export type PickResult = "pendiente" | "cumplio" | "no_cumplio";
+
+export function evaluatePick(kind: PickKind, homeScore: number | null, awayScore: number | null): PickResult {
+  if (homeScore == null || awayScore == null) return "pendiente";
+  if (kind.type === "over25") {
+    const actual = homeScore + awayScore > 2.5 ? "over" : "under";
+    return actual === kind.predictedSide ? "cumplio" : "no_cumplio";
+  }
+  if (kind.type === "aem") {
+    const actual = homeScore > 0 && awayScore > 0 ? "si" : "no";
+    return actual === kind.predictedSide ? "cumplio" : "no_cumplio";
+  }
+  const teamScore = kind.team === "home" ? homeScore : awayScore;
+  const oppScore = kind.team === "home" ? awayScore : homeScore;
+  return teamScore >= oppScore ? "cumplio" : "no_cumplio";
+}
+
+const PICKS_KEY = "pelotita_combinada_picks_v1";
+export function getSelectedPicks(): SelectedPick[] {
+  try {
+    const raw = localStorage.getItem(PICKS_KEY);
+    return raw ? (JSON.parse(raw) as SelectedPick[]) : [];
+  } catch { return []; }
+}
+export function saveSelectedPicks(picks: SelectedPick[]) {
+  try { localStorage.setItem(PICKS_KEY, JSON.stringify(picks)); } catch { /* localStorage lleno o deshabilitado */ }
+}
+
+// getFixtureLiga("latest") es una VENTANA de jornada, no un archivo
+// histórico — confirmado en vivo (ago 2026): unos días después de cargar
+// "Mi combinada", la jornada siguiente empieza a jugarse y "latest" pasa a
+// devolver esa jornada nueva, sacando de la lista los partidos de la
+// jornada anterior aunque ya hayan terminado. Sin este caché, un pick de un
+// partido que salió de esa ventana volvía a mostrar "pendiente" con el
+// resultado real ya perdido. Se persiste el resultado la primera vez que un
+// partido con pick aparece jugado en `matches` — un resultado final no
+// cambia, así que una vez guardado nunca hace falta re-consultarlo.
+export interface KnownResult { homeScore: number; awayScore: number; }
+const RESULTS_KEY = "pelotita_combinada_results_v1";
+export function getKnownResults(): Record<string, KnownResult> {
+  try {
+    const raw = localStorage.getItem(RESULTS_KEY);
+    return raw ? (JSON.parse(raw) as Record<string, KnownResult>) : {};
+  } catch { return {}; }
+}
+export function saveKnownResult(matchId: string, homeScore: number, awayScore: number) {
+  try {
+    const all = getKnownResults();
+    all[matchId] = { homeScore, awayScore };
+    localStorage.setItem(RESULTS_KEY, JSON.stringify(all));
+  } catch { /* localStorage lleno o deshabilitado */ }
 }
