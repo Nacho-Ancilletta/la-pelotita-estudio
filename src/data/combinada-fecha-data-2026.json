@@ -1,0 +1,3398 @@
+{
+  "meta": {
+    "fuente": "footystats.org/argentina/primera-division (varias tablas)",
+    "temporada": "2026, capturado 21/8/2026",
+    "proposito": "Datos base para el panel LA COMBINADA DE LA FECHA - medir dificultad de fixture y sugerir combinadas/triples",
+    "nota": "Los PJ (partidos jugados) pueden variar levemente entre tablas segun el momento exacto de captura de cada una (algunas se sacaron con 1-2 fechas de diferencia).",
+    "nota_forma_reciente": "forma_reciente_ultimos_6_local/visitante son las ultimas 6 fechas jugadas de LOCAL o de VISITANTE respectivamente (no las ultimas 6 fechas del campeonato) - son las mas utiles para medir estado de forma real de cara a un partido especifico.",
+    "nota_ui_pendiente": "El usuario pidio agregar al panel: un 'recomendador' manual y la posibilidad de marcar/seleccionar partidos (multi-seleccion) que queden resaltados visualmente. Incluir esto en el prompt final junto con el resto del diseno ya acordado (sin cuotas, muestra todos los partidos, mercados Mas/Menos 2.5 y AEM)."
+  },
+  "mas_de_2_5_goles": [
+    {
+      "equipo": "CS Independiente Rivadavia",
+      "pj": 22,
+      "cant": 12,
+      "pct": 55,
+      "local_pct": 75,
+      "visitante_pct": 30
+    },
+    {
+      "equipo": "CA Union de Santa Fe",
+      "pj": 24,
+      "cant": 13,
+      "pct": 54,
+      "local_pct": 40,
+      "visitante_pct": 64
+    },
+    {
+      "equipo": "CA Sarmiento",
+      "pj": 21,
+      "cant": 11,
+      "pct": 52,
+      "local_pct": 45,
+      "visitante_pct": 60
+    },
+    {
+      "equipo": "CA Rosario Central",
+      "pj": 24,
+      "cant": 12,
+      "pct": 50,
+      "local_pct": 58,
+      "visitante_pct": 42
+    },
+    {
+      "equipo": "Gimnasia y Esgrima La Plata",
+      "pj": 23,
+      "cant": 11,
+      "pct": 48,
+      "local_pct": 50,
+      "visitante_pct": 46
+    },
+    {
+      "equipo": "CA Talleres de Cordoba",
+      "pj": 22,
+      "cant": 10,
+      "pct": 45,
+      "local_pct": 50,
+      "visitante_pct": 42
+    },
+    {
+      "equipo": "CSD Defensa y Justicia",
+      "pj": 21,
+      "cant": 9,
+      "pct": 43,
+      "local_pct": 36,
+      "visitante_pct": 50
+    },
+    {
+      "equipo": "Racing Club de Avellaneda",
+      "pj": 23,
+      "cant": 10,
+      "pct": 43,
+      "local_pct": 40,
+      "visitante_pct": 46
+    },
+    {
+      "equipo": "CA Tucuman",
+      "pj": 21,
+      "cant": 9,
+      "pct": 43,
+      "local_pct": 30,
+      "visitante_pct": 55
+    },
+    {
+      "equipo": "CA Lanus",
+      "pj": 22,
+      "cant": 9,
+      "pct": 41,
+      "local_pct": 36,
+      "visitante_pct": 45
+    },
+    {
+      "equipo": "CA Banfield",
+      "pj": 21,
+      "cant": 8,
+      "pct": 38,
+      "local_pct": 40,
+      "visitante_pct": 36
+    },
+    {
+      "equipo": "Newells Old Boys",
+      "pj": 21,
+      "cant": 8,
+      "pct": 38,
+      "local_pct": 18,
+      "visitante_pct": 60
+    },
+    {
+      "equipo": "CA Independiente",
+      "pj": 22,
+      "cant": 8,
+      "pct": 36,
+      "local_pct": 30,
+      "visitante_pct": 42
+    },
+    {
+      "equipo": "CA Boca Juniors",
+      "pj": 22,
+      "cant": 8,
+      "pct": 36,
+      "local_pct": 9,
+      "visitante_pct": 64
+    },
+    {
+      "equipo": "CA Huracan",
+      "pj": 23,
+      "cant": 8,
+      "pct": 35,
+      "local_pct": 50,
+      "visitante_pct": 23
+    },
+    {
+      "equipo": "Argentinos Juniors",
+      "pj": 24,
+      "cant": 8,
+      "pct": 33,
+      "local_pct": 29,
+      "visitante_pct": 40
+    },
+    {
+      "equipo": "Atletico Gimnasia y Esgrima de Mendoza",
+      "pj": 21,
+      "cant": 7,
+      "pct": 33,
+      "local_pct": 36,
+      "visitante_pct": 30
+    },
+    {
+      "equipo": "CA Belgrano de Cordoba",
+      "pj": 25,
+      "cant": 8,
+      "pct": 32,
+      "local_pct": 33,
+      "visitante_pct": 31
+    },
+    {
+      "equipo": "Instituto AC Cordoba",
+      "pj": 21,
+      "cant": 6,
+      "pct": 29,
+      "local_pct": 50,
+      "visitante_pct": 9
+    },
+    {
+      "equipo": "CA Platense",
+      "pj": 21,
+      "cant": 6,
+      "pct": 29,
+      "local_pct": 27,
+      "visitante_pct": 30
+    },
+    {
+      "equipo": "CA Barracas Central",
+      "pj": 21,
+      "cant": 6,
+      "pct": 29,
+      "local_pct": 40,
+      "visitante_pct": 18
+    },
+    {
+      "equipo": "AA Estudiantes de Rio Cuarto",
+      "pj": 21,
+      "cant": 6,
+      "pct": 29,
+      "local_pct": 18,
+      "visitante_pct": 40
+    },
+    {
+      "equipo": "CA River Plate",
+      "pj": 25,
+      "cant": 7,
+      "pct": 28,
+      "local_pct": 40,
+      "visitante_pct": 10
+    },
+    {
+      "equipo": "Estudiantes de La Plata",
+      "pj": 22,
+      "cant": 6,
+      "pct": 27,
+      "local_pct": 42,
+      "visitante_pct": 10
+    },
+    {
+      "equipo": "CA Tigre",
+      "pj": 21,
+      "cant": 5,
+      "pct": 24,
+      "local_pct": 20,
+      "visitante_pct": 27
+    },
+    {
+      "equipo": "CA Central Cordoba de Santiago del Estero",
+      "pj": 21,
+      "cant": 5,
+      "pct": 24,
+      "local_pct": 27,
+      "visitante_pct": 20
+    },
+    {
+      "equipo": "CA Aldosivi",
+      "pj": 22,
+      "cant": 5,
+      "pct": 23,
+      "local_pct": 18,
+      "visitante_pct": 27
+    },
+    {
+      "equipo": "Club Atletico Velez Sarsfield",
+      "pj": 22,
+      "cant": 5,
+      "pct": 23,
+      "local_pct": 25,
+      "visitante_pct": 20
+    },
+    {
+      "equipo": "CA San Lorenzo de Almagro",
+      "pj": 22,
+      "cant": 4,
+      "pct": 18,
+      "local_pct": 27,
+      "visitante_pct": 9
+    },
+    {
+      "equipo": "CD Riestra",
+      "pj": 21,
+      "cant": 2,
+      "pct": 10,
+      "local_pct": 9,
+      "visitante_pct": 10
+    }
+  ],
+  "menos_de_X_goles": [
+    {
+      "equipo": "CD Riestra",
+      "pj": 21,
+      "menos2_5": 90,
+      "menos0_5": 24,
+      "menos1_5": 52,
+      "menos3_5": 100,
+      "menos4_5": 100,
+      "menos5_5": 100
+    },
+    {
+      "equipo": "CA San Lorenzo de Almagro",
+      "pj": 22,
+      "menos2_5": 82,
+      "menos0_5": 18,
+      "menos1_5": 59,
+      "menos3_5": 86,
+      "menos4_5": 91,
+      "menos5_5": 95
+    },
+    {
+      "equipo": "CA Aldosivi",
+      "pj": 22,
+      "menos2_5": 77,
+      "menos0_5": 23,
+      "menos1_5": 41,
+      "menos3_5": 86,
+      "menos4_5": 100,
+      "menos5_5": 100
+    },
+    {
+      "equipo": "Club Atletico Velez Sarsfield",
+      "pj": 22,
+      "menos2_5": 77,
+      "menos0_5": 9,
+      "menos1_5": 45,
+      "menos3_5": 86,
+      "menos4_5": 95,
+      "menos5_5": 100
+    },
+    {
+      "equipo": "CA Tigre",
+      "pj": 21,
+      "menos2_5": 76,
+      "menos0_5": 19,
+      "menos1_5": 43,
+      "menos3_5": 81,
+      "menos4_5": 95,
+      "menos5_5": 100
+    },
+    {
+      "equipo": "CA Central Cordoba de Santiago del Estero",
+      "pj": 21,
+      "menos2_5": 76,
+      "menos0_5": 14,
+      "menos1_5": 52,
+      "menos3_5": 86,
+      "menos4_5": 90,
+      "menos5_5": 95
+    },
+    {
+      "equipo": "Estudiantes de La Plata",
+      "pj": 22,
+      "menos2_5": 73,
+      "menos0_5": 14,
+      "menos1_5": 50,
+      "menos3_5": 91,
+      "menos4_5": 95,
+      "menos5_5": 100
+    },
+    {
+      "equipo": "CA River Plate",
+      "pj": 25,
+      "menos2_5": 72,
+      "menos0_5": 4,
+      "menos1_5": 44,
+      "menos3_5": 80,
+      "menos4_5": 92,
+      "menos5_5": 100
+    },
+    {
+      "equipo": "Instituto AC Cordoba",
+      "pj": 21,
+      "menos2_5": 71,
+      "menos0_5": 0,
+      "menos1_5": 38,
+      "menos3_5": 95,
+      "menos4_5": 100,
+      "menos5_5": 100
+    },
+    {
+      "equipo": "CA Platense",
+      "pj": 21,
+      "menos2_5": 71,
+      "menos0_5": 24,
+      "menos1_5": 48,
+      "menos3_5": 86,
+      "menos4_5": 95,
+      "menos5_5": 95
+    },
+    {
+      "equipo": "CA Barracas Central",
+      "pj": 21,
+      "menos2_5": 71,
+      "menos0_5": 14,
+      "menos1_5": 43,
+      "menos3_5": 100,
+      "menos4_5": 100,
+      "menos5_5": 100
+    },
+    {
+      "equipo": "AA Estudiantes de Rio Cuarto",
+      "pj": 21,
+      "menos2_5": 71,
+      "menos0_5": 14,
+      "menos1_5": 43,
+      "menos3_5": 95,
+      "menos4_5": 100,
+      "menos5_5": 100
+    },
+    {
+      "equipo": "CA Belgrano de Cordoba",
+      "pj": 25,
+      "menos2_5": 68,
+      "menos0_5": 16,
+      "menos1_5": 44,
+      "menos3_5": 84,
+      "menos4_5": 96,
+      "menos5_5": 100
+    },
+    {
+      "equipo": "Argentinos Juniors",
+      "pj": 24,
+      "menos2_5": 67,
+      "menos0_5": 12,
+      "menos1_5": 37,
+      "menos3_5": 87,
+      "menos4_5": 92,
+      "menos5_5": 100
+    },
+    {
+      "equipo": "Atletico Gimnasia y Esgrima de Mendoza",
+      "pj": 21,
+      "menos2_5": 67,
+      "menos0_5": 5,
+      "menos1_5": 48,
+      "menos3_5": 81,
+      "menos4_5": 90,
+      "menos5_5": 95
+    },
+    {
+      "equipo": "CA Huracan",
+      "pj": 23,
+      "menos2_5": 65,
+      "menos0_5": 22,
+      "menos1_5": 39,
+      "menos3_5": 87,
+      "menos4_5": 96,
+      "menos5_5": 100
+    },
+    {
+      "equipo": "CA Independiente",
+      "pj": 22,
+      "menos2_5": 64,
+      "menos0_5": 0,
+      "menos1_5": 23,
+      "menos3_5": 77,
+      "menos4_5": 91,
+      "menos5_5": 95
+    },
+    {
+      "equipo": "CA Boca Juniors",
+      "pj": 22,
+      "menos2_5": 64,
+      "menos0_5": 9,
+      "menos1_5": 27,
+      "menos3_5": 86,
+      "menos4_5": 95,
+      "menos5_5": 100
+    },
+    {
+      "equipo": "CA Banfield",
+      "pj": 21,
+      "menos2_5": 62,
+      "menos0_5": 10,
+      "menos1_5": 38,
+      "menos3_5": 86,
+      "menos4_5": 90,
+      "menos5_5": 100
+    },
+    {
+      "equipo": "Newells Old Boys",
+      "pj": 21,
+      "menos2_5": 62,
+      "menos0_5": 5,
+      "menos1_5": 19,
+      "menos3_5": 76,
+      "menos4_5": 86,
+      "menos5_5": 100
+    },
+    {
+      "equipo": "CA Lanus",
+      "pj": 22,
+      "menos2_5": 59,
+      "menos0_5": 14,
+      "menos1_5": 41,
+      "menos3_5": 82,
+      "menos4_5": 91,
+      "menos5_5": 100
+    },
+    {
+      "equipo": "CSD Defensa y Justicia",
+      "pj": 21,
+      "menos2_5": 57,
+      "menos0_5": 14,
+      "menos1_5": 19,
+      "menos3_5": 81,
+      "menos4_5": 90,
+      "menos5_5": 95
+    },
+    {
+      "equipo": "Racing Club de Avellaneda",
+      "pj": 23,
+      "menos2_5": 57,
+      "menos0_5": 17,
+      "menos1_5": 30,
+      "menos3_5": 91,
+      "menos4_5": 100,
+      "menos5_5": 100
+    },
+    {
+      "equipo": "CA Tucuman",
+      "pj": 21,
+      "menos2_5": 57,
+      "menos0_5": 19,
+      "menos1_5": 38,
+      "menos3_5": 90,
+      "menos4_5": 100,
+      "menos5_5": 100
+    },
+    {
+      "equipo": "CA Talleres de Cordoba",
+      "pj": 22,
+      "menos2_5": 55,
+      "menos0_5": 14,
+      "menos1_5": 32,
+      "menos3_5": 86,
+      "menos4_5": 100,
+      "menos5_5": 100
+    },
+    {
+      "equipo": "Gimnasia y Esgrima La Plata",
+      "pj": 23,
+      "menos2_5": 52,
+      "menos0_5": 4,
+      "menos1_5": 30,
+      "menos3_5": 83,
+      "menos4_5": 96,
+      "menos5_5": 100
+    },
+    {
+      "equipo": "CA Rosario Central",
+      "pj": 24,
+      "menos2_5": 50,
+      "menos0_5": 12,
+      "menos1_5": 29,
+      "menos3_5": 92,
+      "menos4_5": 100,
+      "menos5_5": 100
+    },
+    {
+      "equipo": "CA Sarmiento",
+      "pj": 21,
+      "menos2_5": 48,
+      "menos0_5": 5,
+      "menos1_5": 33,
+      "menos3_5": 81,
+      "menos4_5": 90,
+      "menos5_5": 100
+    },
+    {
+      "equipo": "CA Union de Santa Fe",
+      "pj": 24,
+      "menos2_5": 46,
+      "menos0_5": 8,
+      "menos1_5": 21,
+      "menos3_5": 71,
+      "menos4_5": 92,
+      "menos5_5": 96
+    },
+    {
+      "equipo": "CS Independiente Rivadavia",
+      "pj": 22,
+      "menos2_5": 45,
+      "menos0_5": 9,
+      "menos1_5": 18,
+      "menos3_5": 82,
+      "menos4_5": 86,
+      "menos5_5": 95
+    }
+  ],
+  "disparos_over": [
+    {
+      "equipo": "Instituto AC Cordoba",
+      "mas10_5": 86,
+      "mas11_5": 67,
+      "mas12_5": 62,
+      "mas13_5": 52,
+      "mas14_5": 48,
+      "mas15_5": 33
+    },
+    {
+      "equipo": "CA Tigre",
+      "mas10_5": 81,
+      "mas11_5": 67,
+      "mas12_5": 62,
+      "mas13_5": 52,
+      "mas14_5": 48,
+      "mas15_5": 38
+    },
+    {
+      "equipo": "CA Union de Santa Fe",
+      "mas10_5": 79,
+      "mas11_5": 75,
+      "mas12_5": 67,
+      "mas13_5": 63,
+      "mas14_5": 54,
+      "mas15_5": 50
+    },
+    {
+      "equipo": "CS Independiente Rivadavia",
+      "mas10_5": 77,
+      "mas11_5": 68,
+      "mas12_5": 64,
+      "mas13_5": 55,
+      "mas14_5": 55,
+      "mas15_5": 45
+    },
+    {
+      "equipo": "Argentinos Juniors",
+      "mas10_5": 75,
+      "mas11_5": 75,
+      "mas12_5": 67,
+      "mas13_5": 57,
+      "mas14_5": 46,
+      "mas15_5": 46
+    },
+    {
+      "equipo": "CA Independiente",
+      "mas10_5": 73,
+      "mas11_5": 68,
+      "mas12_5": 59,
+      "mas13_5": 36,
+      "mas14_5": 23,
+      "mas15_5": 23
+    },
+    {
+      "equipo": "Estudiantes de La Plata",
+      "mas10_5": 73,
+      "mas11_5": 68,
+      "mas12_5": 55,
+      "mas13_5": 45,
+      "mas14_5": 41,
+      "mas15_5": 32
+    },
+    {
+      "equipo": "CA Belgrano de Cordoba",
+      "mas10_5": 72,
+      "mas11_5": 56,
+      "mas12_5": 44,
+      "mas13_5": 24,
+      "mas14_5": 16,
+      "mas15_5": 8
+    },
+    {
+      "equipo": "CA Boca Juniors",
+      "mas10_5": 68,
+      "mas11_5": 50,
+      "mas12_5": 41,
+      "mas13_5": 36,
+      "mas14_5": 32,
+      "mas15_5": 32
+    },
+    {
+      "equipo": "CA River Plate",
+      "mas10_5": 68,
+      "mas11_5": 64,
+      "mas12_5": 56,
+      "mas13_5": 52,
+      "mas14_5": 52,
+      "mas15_5": 48
+    },
+    {
+      "equipo": "CA Rosario Central",
+      "mas10_5": 67,
+      "mas11_5": 57,
+      "mas12_5": 50,
+      "mas13_5": 42,
+      "mas14_5": 33,
+      "mas15_5": 28
+    },
+    {
+      "equipo": "CA Talleres de Cordoba",
+      "mas10_5": 64,
+      "mas11_5": 59,
+      "mas12_5": 45,
+      "mas13_5": 45,
+      "mas14_5": 41,
+      "mas15_5": 27
+    },
+    {
+      "equipo": "CA Lanus",
+      "mas10_5": 64,
+      "mas11_5": 55,
+      "mas12_5": 45,
+      "mas13_5": 41,
+      "mas14_5": 36,
+      "mas15_5": 23
+    },
+    {
+      "equipo": "CA Banfield",
+      "mas10_5": 62,
+      "mas11_5": 56,
+      "mas12_5": 48,
+      "mas13_5": 48,
+      "mas14_5": 28,
+      "mas15_5": 28
+    },
+    {
+      "equipo": "CA Tucuman",
+      "mas10_5": 62,
+      "mas11_5": 52,
+      "mas12_5": 48,
+      "mas13_5": 43,
+      "mas14_5": 33,
+      "mas15_5": 33
+    },
+    {
+      "equipo": "CA Platense",
+      "mas10_5": 62,
+      "mas11_5": 62,
+      "mas12_5": 48,
+      "mas13_5": 43,
+      "mas14_5": 33,
+      "mas15_5": 28
+    },
+    {
+      "equipo": "Racing Club de Avellaneda",
+      "mas10_5": 61,
+      "mas11_5": 48,
+      "mas12_5": 39,
+      "mas13_5": 30,
+      "mas14_5": 26,
+      "mas15_5": 26
+    },
+    {
+      "equipo": "CSD Defensa y Justicia",
+      "mas10_5": 56,
+      "mas11_5": 38,
+      "mas12_5": 33,
+      "mas13_5": 28,
+      "mas14_5": 24,
+      "mas15_5": 19
+    },
+    {
+      "equipo": "Gimnasia y Esgrima La Plata",
+      "mas10_5": 56,
+      "mas11_5": 48,
+      "mas12_5": 35,
+      "mas13_5": 26,
+      "mas14_5": 17,
+      "mas15_5": 13
+    },
+    {
+      "equipo": "CA Sarmiento",
+      "mas10_5": 56,
+      "mas11_5": 43,
+      "mas12_5": 28,
+      "mas13_5": 19,
+      "mas14_5": 14,
+      "mas15_5": 14
+    },
+    {
+      "equipo": "CA Barracas Central",
+      "mas10_5": 56,
+      "mas11_5": 38,
+      "mas12_5": 33,
+      "mas13_5": 19,
+      "mas14_5": 14,
+      "mas15_5": 14
+    },
+    {
+      "equipo": "CA Aldosivi",
+      "mas10_5": 55,
+      "mas11_5": 45,
+      "mas12_5": 32,
+      "mas13_5": 27,
+      "mas14_5": 18,
+      "mas15_5": 14
+    },
+    {
+      "equipo": "Club Atletico Velez Sarsfield",
+      "mas10_5": 55,
+      "mas11_5": 45,
+      "mas12_5": 23,
+      "mas13_5": 23,
+      "mas14_5": 18,
+      "mas15_5": 9
+    },
+    {
+      "equipo": "Atletico Gimnasia y Esgrima de Mendoza",
+      "mas10_5": 52,
+      "mas11_5": 48,
+      "mas12_5": 43,
+      "mas13_5": 28,
+      "mas14_5": 28,
+      "mas15_5": 24
+    },
+    {
+      "equipo": "CA Huracan",
+      "mas10_5": 52,
+      "mas11_5": 39,
+      "mas12_5": 39,
+      "mas13_5": 39,
+      "mas14_5": 26,
+      "mas15_5": 17
+    },
+    {
+      "equipo": "AA Estudiantes de Rio Cuarto",
+      "mas10_5": 52,
+      "mas11_5": 48,
+      "mas12_5": 33,
+      "mas13_5": 28,
+      "mas14_5": 19,
+      "mas15_5": 14
+    },
+    {
+      "equipo": "CA San Lorenzo de Almagro",
+      "mas10_5": 50,
+      "mas11_5": 36,
+      "mas12_5": 32,
+      "mas13_5": 23,
+      "mas14_5": 18,
+      "mas15_5": 14
+    },
+    {
+      "equipo": "CD Riestra",
+      "mas10_5": 38,
+      "mas11_5": 28,
+      "mas12_5": 19,
+      "mas13_5": 19,
+      "mas14_5": 10,
+      "mas15_5": 10
+    },
+    {
+      "equipo": "Newells Old Boys",
+      "mas10_5": 38,
+      "mas11_5": 28,
+      "mas12_5": 24,
+      "mas13_5": 19,
+      "mas14_5": 10,
+      "mas15_5": 10
+    },
+    {
+      "equipo": "CA Central Cordoba de Santiago del Estero",
+      "mas10_5": 24,
+      "mas11_5": 19,
+      "mas12_5": 19,
+      "mas13_5": 19,
+      "mas14_5": 5,
+      "mas15_5": 5
+    }
+  ],
+  "ambos_marcan_AEM": [
+    {
+      "equipo": "CS Independiente Rivadavia",
+      "pj": 22,
+      "cant": 15,
+      "pct": 68,
+      "local_pct": 83,
+      "visitante_pct": 50
+    },
+    {
+      "equipo": "CSD Defensa y Justicia",
+      "pj": 21,
+      "cant": 13,
+      "pct": 62,
+      "local_pct": 73,
+      "visitante_pct": 50
+    },
+    {
+      "equipo": "CA Independiente",
+      "pj": 22,
+      "cant": 13,
+      "pct": 59,
+      "local_pct": 50,
+      "visitante_pct": 67
+    },
+    {
+      "equipo": "CA Union de Santa Fe",
+      "pj": 24,
+      "cant": 14,
+      "pct": 58,
+      "local_pct": 50,
+      "visitante_pct": 64
+    },
+    {
+      "equipo": "CA Rosario Central",
+      "pj": 24,
+      "cant": 14,
+      "pct": 58,
+      "local_pct": 67,
+      "visitante_pct": 50
+    },
+    {
+      "equipo": "Newells Old Boys",
+      "pj": 21,
+      "cant": 11,
+      "pct": 52,
+      "local_pct": 45,
+      "visitante_pct": 60
+    },
+    {
+      "equipo": "Racing Club de Avellaneda",
+      "pj": 23,
+      "cant": 12,
+      "pct": 52,
+      "local_pct": 60,
+      "visitante_pct": 46
+    },
+    {
+      "equipo": "Club Atletico Velez Sarsfield",
+      "pj": 22,
+      "cant": 11,
+      "pct": 50,
+      "local_pct": 42,
+      "visitante_pct": 60
+    },
+    {
+      "equipo": "CA Boca Juniors",
+      "pj": 22,
+      "cant": 11,
+      "pct": 50,
+      "local_pct": 45,
+      "visitante_pct": 55
+    },
+    {
+      "equipo": "CA Tigre",
+      "pj": 21,
+      "cant": 10,
+      "pct": 48,
+      "local_pct": 50,
+      "visitante_pct": 45
+    },
+    {
+      "equipo": "CA Sarmiento",
+      "pj": 21,
+      "cant": 10,
+      "pct": 48,
+      "local_pct": 45,
+      "visitante_pct": 50
+    },
+    {
+      "equipo": "CA Tucuman",
+      "pj": 21,
+      "cant": 10,
+      "pct": 48,
+      "local_pct": 40,
+      "visitante_pct": 55
+    },
+    {
+      "equipo": "CA Aldosivi",
+      "pj": 22,
+      "cant": 10,
+      "pct": 45,
+      "local_pct": 45,
+      "visitante_pct": 45
+    },
+    {
+      "equipo": "CA Talleres de Cordoba",
+      "pj": 22,
+      "cant": 10,
+      "pct": 45,
+      "local_pct": 40,
+      "visitante_pct": 50
+    },
+    {
+      "equipo": "CA Banfield",
+      "pj": 21,
+      "cant": 9,
+      "pct": 43,
+      "local_pct": 40,
+      "visitante_pct": 45
+    },
+    {
+      "equipo": "CA Huracan",
+      "pj": 23,
+      "cant": 10,
+      "pct": 43,
+      "local_pct": 50,
+      "visitante_pct": 38
+    },
+    {
+      "equipo": "CA Barracas Central",
+      "pj": 21,
+      "cant": 9,
+      "pct": 43,
+      "local_pct": 50,
+      "visitante_pct": 36
+    },
+    {
+      "equipo": "Atletico Gimnasia y Esgrima de Mendoza",
+      "pj": 21,
+      "cant": 9,
+      "pct": 43,
+      "local_pct": 45,
+      "visitante_pct": 40
+    }
+  ],
+  "goles_marcados_actualizado": [
+    {
+      "equipo": "CS Independiente Rivadavia",
+      "pj": 22,
+      "total": 35,
+      "avg": 1.59,
+      "local": 2.0,
+      "visitante": 1.1
+    },
+    {
+      "equipo": "CA Union de Santa Fe",
+      "pj": 24,
+      "total": 34,
+      "avg": 1.42,
+      "local": 1.4,
+      "visitante": 1.43
+    },
+    {
+      "equipo": "CA Independiente",
+      "pj": 22,
+      "total": 31,
+      "avg": 1.41,
+      "local": 1.6,
+      "visitante": 1.25
+    },
+    {
+      "equipo": "CA Boca Juniors",
+      "pj": 22,
+      "total": 29,
+      "avg": 1.32,
+      "local": 1.09,
+      "visitante": 1.55
+    },
+    {
+      "equipo": "CA Rosario Central",
+      "pj": 24,
+      "total": 30,
+      "avg": 1.25,
+      "local": 1.42,
+      "visitante": 1.08
+    },
+    {
+      "equipo": "Argentinos Juniors",
+      "pj": 24,
+      "total": 30,
+      "avg": 1.25,
+      "local": 1.36,
+      "visitante": 1.1
+    },
+    {
+      "equipo": "CA River Plate",
+      "pj": 25,
+      "total": 31,
+      "avg": 1.24,
+      "local": 1.53,
+      "visitante": 0.8
+    },
+    {
+      "equipo": "CA Belgrano de Cordoba",
+      "pj": 25,
+      "total": 30,
+      "avg": 1.2,
+      "local": 1.42,
+      "visitante": 1.0
+    },
+    {
+      "equipo": "Estudiantes de La Plata",
+      "pj": 22,
+      "total": 26,
+      "avg": 1.18,
+      "local": 1.5,
+      "visitante": 0.8
+    },
+    {
+      "equipo": "Club Atletico Velez Sarsfield",
+      "pj": 22,
+      "total": 25,
+      "avg": 1.14,
+      "local": 1.0,
+      "visitante": 1.3
+    },
+    {
+      "equipo": "CSD Defensa y Justicia",
+      "pj": 21,
+      "total": 24,
+      "avg": 1.14,
+      "local": 1.09,
+      "visitante": 1.2
+    },
+    {
+      "equipo": "Gimnasia y Esgrima La Plata",
+      "pj": 23,
+      "total": 26,
+      "avg": 1.13,
+      "local": 1.4,
+      "visitante": 0.92
+    },
+    {
+      "equipo": "CA Sarmiento",
+      "pj": 21,
+      "total": 23,
+      "avg": 1.1,
+      "local": 1.36,
+      "visitante": 0.8
+    },
+    {
+      "equipo": "CA Lanus",
+      "pj": 22,
+      "total": 24,
+      "avg": 1.09,
+      "local": 1.0,
+      "visitante": 1.18
+    },
+    {
+      "equipo": "CA Tigre",
+      "pj": 21,
+      "total": 22,
+      "avg": 1.05,
+      "local": 1.2,
+      "visitante": 0.91
+    },
+    {
+      "equipo": "CA Talleres de Cordoba",
+      "pj": 22,
+      "total": 23,
+      "avg": 1.05,
+      "local": 1.0,
+      "visitante": 1.08
+    },
+    {
+      "equipo": "Instituto AC Cordoba",
+      "pj": 21,
+      "total": 22,
+      "avg": 1.05,
+      "local": 1.4,
+      "visitante": 0.73
+    },
+    {
+      "equipo": "CA Huracan",
+      "pj": 23,
+      "total": 24,
+      "avg": 1.04,
+      "local": 1.2,
+      "visitante": 0.92
+    },
+    {
+      "equipo": "CA Banfield",
+      "pj": 21,
+      "total": 21,
+      "avg": 1.0,
+      "local": 1.3,
+      "visitante": 0.73
+    },
+    {
+      "equipo": "Newells Old Boys",
+      "pj": 21,
+      "total": 21,
+      "avg": 1.0,
+      "local": 1.0,
+      "visitante": 1.0
+    },
+    {
+      "equipo": "Racing Club de Avellaneda",
+      "pj": 23,
+      "total": 23,
+      "avg": 1.0,
+      "local": 1.0,
+      "visitante": 1.0
+    },
+    {
+      "equipo": "Atletico Gimnasia y Esgrima de Mendoza",
+      "pj": 21,
+      "total": 20,
+      "avg": 0.95,
+      "local": 1.36,
+      "visitante": 0.5
+    },
+    {
+      "equipo": "CA Tucuman",
+      "pj": 21,
+      "total": 19,
+      "avg": 0.9,
+      "local": 0.9,
+      "visitante": 0.91
+    },
+    {
+      "equipo": "CA Barracas Central",
+      "pj": 21,
+      "total": 18,
+      "avg": 0.86,
+      "local": 1.0,
+      "visitante": 0.73
+    },
+    {
+      "equipo": "CA San Lorenzo de Almagro",
+      "pj": 22,
+      "total": 18,
+      "avg": 0.82,
+      "local": 1.09,
+      "visitante": 0.55
+    },
+    {
+      "equipo": "CA Platense",
+      "pj": 21,
+      "total": 15,
+      "avg": 0.71,
+      "local": 0.64,
+      "visitante": 0.8
+    },
+    {
+      "equipo": "CA Central Cordoba de Santiago del Estero",
+      "pj": 21,
+      "total": 14,
+      "avg": 0.67,
+      "local": 1.0,
+      "visitante": 0.3
+    },
+    {
+      "equipo": "CD Riestra",
+      "pj": 21,
+      "total": 11,
+      "avg": 0.52,
+      "local": 0.82,
+      "visitante": 0.2
+    },
+    {
+      "equipo": "CA Aldosivi",
+      "pj": 22,
+      "total": 10,
+      "avg": 0.45,
+      "local": 0.45,
+      "visitante": 0.45
+    },
+    {
+      "equipo": "AA Estudiantes de Rio Cuarto",
+      "pj": 21,
+      "total": 7,
+      "avg": 0.33,
+      "local": 0.45,
+      "visitante": 0.2
+    }
+  ],
+  "goles_encajados_actualizado": [
+    {
+      "equipo": "Newells Old Boys",
+      "pj": 21,
+      "total": 32,
+      "avg": 1.52,
+      "local": 1.09,
+      "visitante": 2.0
+    },
+    {
+      "equipo": "AA Estudiantes de Rio Cuarto",
+      "pj": 21,
+      "total": 30,
+      "avg": 1.43,
+      "local": 1.0,
+      "visitante": 1.9
+    },
+    {
+      "equipo": "CA Union de Santa Fe",
+      "pj": 24,
+      "total": 32,
+      "avg": 1.33,
+      "local": 0.8,
+      "visitante": 1.71
+    },
+    {
+      "equipo": "CSD Defensa y Justicia",
+      "pj": 21,
+      "total": 28,
+      "avg": 1.33,
+      "local": 1.18,
+      "visitante": 1.5
+    },
+    {
+      "equipo": "CA Sarmiento",
+      "pj": 21,
+      "total": 28,
+      "avg": 1.33,
+      "local": 0.91,
+      "visitante": 1.8
+    },
+    {
+      "equipo": "CA Aldosivi",
+      "pj": 22,
+      "total": 28,
+      "avg": 1.27,
+      "local": 0.91,
+      "visitante": 1.64
+    },
+    {
+      "equipo": "CA Central Cordoba de Santiago del Estero",
+      "pj": 21,
+      "total": 26,
+      "avg": 1.24,
+      "local": 1.09,
+      "visitante": 1.4
+    },
+    {
+      "equipo": "Gimnasia y Esgrima La Plata",
+      "pj": 23,
+      "total": 28,
+      "avg": 1.22,
+      "local": 1.0,
+      "visitante": 1.38
+    },
+    {
+      "equipo": "Atletico Gimnasia y Esgrima de Mendoza",
+      "pj": 21,
+      "total": 25,
+      "avg": 1.19,
+      "local": 0.82,
+      "visitante": 1.6
+    },
+    {
+      "equipo": "CA Independiente",
+      "pj": 22,
+      "total": 26,
+      "avg": 1.18,
+      "local": 1.0,
+      "visitante": 1.33
+    },
+    {
+      "equipo": "CA Banfield",
+      "pj": 21,
+      "total": 24,
+      "avg": 1.14,
+      "local": 1.0,
+      "visitante": 1.27
+    },
+    {
+      "equipo": "CA Platense",
+      "pj": 21,
+      "total": 24,
+      "avg": 1.14,
+      "local": 1.36,
+      "visitante": 0.9
+    },
+    {
+      "equipo": "CA Talleres de Cordoba",
+      "pj": 22,
+      "total": 24,
+      "avg": 1.09,
+      "local": 1.2,
+      "visitante": 1.0
+    },
+    {
+      "equipo": "CA Lanus",
+      "pj": 22,
+      "total": 23,
+      "avg": 1.05,
+      "local": 0.82,
+      "visitante": 1.27
+    },
+    {
+      "equipo": "CA Tucuman",
+      "pj": 21,
+      "total": 22,
+      "avg": 1.05,
+      "local": 0.8,
+      "visitante": 1.27
+    },
+    {
+      "equipo": "CS Independiente Rivadavia",
+      "pj": 22,
+      "total": 23,
+      "avg": 1.05,
+      "local": 1.17,
+      "visitante": 0.9
+    },
+    {
+      "equipo": "Racing Club de Avellaneda",
+      "pj": 23,
+      "total": 24,
+      "avg": 1.04,
+      "local": 1.2,
+      "visitante": 0.92
+    },
+    {
+      "equipo": "CA Rosario Central",
+      "pj": 24,
+      "total": 22,
+      "avg": 0.92,
+      "local": 0.83,
+      "visitante": 1.0
+    },
+    {
+      "equipo": "CA San Lorenzo de Almagro",
+      "pj": 22,
+      "total": 20,
+      "avg": 0.91,
+      "local": 1.18,
+      "visitante": 0.64
+    },
+    {
+      "equipo": "Instituto AC Cordoba",
+      "pj": 21,
+      "total": 19,
+      "avg": 0.9,
+      "local": 0.9,
+      "visitante": 0.91
+    },
+    {
+      "equipo": "CA Huracan",
+      "pj": 23,
+      "total": 20,
+      "avg": 0.87,
+      "local": 0.8,
+      "visitante": 0.92
+    },
+    {
+      "equipo": "CA Boca Juniors",
+      "pj": 22,
+      "total": 19,
+      "avg": 0.86,
+      "local": 0.64,
+      "visitante": 1.09
+    },
+    {
+      "equipo": "CA Barracas Central",
+      "pj": 21,
+      "total": 18,
+      "avg": 0.86,
+      "local": 0.9,
+      "visitante": 0.82
+    },
+    {
+      "equipo": "CA River Plate",
+      "pj": 25,
+      "total": 21,
+      "avg": 0.84,
+      "local": 1.0,
+      "visitante": 0.6
+    },
+    {
+      "equipo": "CA Tigre",
+      "pj": 21,
+      "total": 17,
+      "avg": 0.81,
+      "local": 0.8,
+      "visitante": 0.82
+    },
+    {
+      "equipo": "CD Riestra",
+      "pj": 21,
+      "total": 17,
+      "avg": 0.81,
+      "local": 0.45,
+      "visitante": 1.2
+    },
+    {
+      "equipo": "Argentinos Juniors",
+      "pj": 24,
+      "total": 19,
+      "avg": 0.79,
+      "local": 0.43,
+      "visitante": 1.3
+    },
+    {
+      "equipo": "Club Atletico Velez Sarsfield",
+      "pj": 22,
+      "total": 16,
+      "avg": 0.73,
+      "local": 0.67,
+      "visitante": 0.8
+    },
+    {
+      "equipo": "CA Belgrano de Cordoba",
+      "pj": 25,
+      "total": 18,
+      "avg": 0.72,
+      "local": 0.58,
+      "visitante": 0.85
+    },
+    {
+      "equipo": "Estudiantes de La Plata",
+      "pj": 22,
+      "total": 13,
+      "avg": 0.59,
+      "local": 0.58,
+      "visitante": 0.6
+    }
+  ],
+  "aem_primera_segunda_mitad": [
+    {
+      "equipo": "CS Independiente Rivadavia",
+      "pj": 22,
+      "aem_1ra_pct": 32,
+      "aem_2da_pct": 23
+    },
+    {
+      "equipo": "CA Independiente",
+      "pj": 22,
+      "aem_1ra_pct": 32,
+      "aem_2da_pct": 23
+    },
+    {
+      "equipo": "Atletico Gimnasia y Esgrima de Mendoza",
+      "pj": 21,
+      "aem_1ra_pct": 28,
+      "aem_2da_pct": 5
+    },
+    {
+      "equipo": "Club Atletico Velez Sarsfield",
+      "pj": 22,
+      "aem_1ra_pct": 23,
+      "aem_2da_pct": 9
+    },
+    {
+      "equipo": "CA River Plate",
+      "pj": 25,
+      "aem_1ra_pct": 20,
+      "aem_2da_pct": 16
+    },
+    {
+      "equipo": "CSD Defensa y Justicia",
+      "pj": 21,
+      "aem_1ra_pct": 19,
+      "aem_2da_pct": 28
+    },
+    {
+      "equipo": "CA Rosario Central",
+      "pj": 24,
+      "aem_1ra_pct": 17,
+      "aem_2da_pct": 17
+    },
+    {
+      "equipo": "Argentinos Juniors",
+      "pj": 24,
+      "aem_1ra_pct": 17,
+      "aem_2da_pct": 17
+    },
+    {
+      "equipo": "Gimnasia y Esgrima La Plata",
+      "pj": 23,
+      "aem_1ra_pct": 17,
+      "aem_2da_pct": 13
+    },
+    {
+      "equipo": "CA Boca Juniors",
+      "pj": 22,
+      "aem_1ra_pct": 14,
+      "aem_2da_pct": 23
+    },
+    {
+      "equipo": "CA Aldosivi",
+      "pj": 22,
+      "aem_1ra_pct": 14,
+      "aem_2da_pct": 14
+    },
+    {
+      "equipo": "CA Banfield",
+      "pj": 21,
+      "aem_1ra_pct": 14,
+      "aem_2da_pct": 19
+    },
+    {
+      "equipo": "CA Union de Santa Fe",
+      "pj": 24,
+      "aem_1ra_pct": 13,
+      "aem_2da_pct": 33
+    },
+    {
+      "equipo": "Racing Club de Avellaneda",
+      "pj": 23,
+      "aem_1ra_pct": 13,
+      "aem_2da_pct": 22
+    },
+    {
+      "equipo": "CA Huracan",
+      "pj": 23,
+      "aem_1ra_pct": 13,
+      "aem_2da_pct": 17
+    },
+    {
+      "equipo": "CA Tucuman",
+      "pj": 21,
+      "aem_1ra_pct": 10,
+      "aem_2da_pct": 24
+    },
+    {
+      "equipo": "CA Barracas Central",
+      "pj": 21,
+      "aem_1ra_pct": 10,
+      "aem_2da_pct": 5
+    },
+    {
+      "equipo": "CA Talleres de Cordoba",
+      "pj": 22,
+      "aem_1ra_pct": 9,
+      "aem_2da_pct": 27
+    },
+    {
+      "equipo": "Newells Old Boys",
+      "pj": 21,
+      "aem_1ra_pct": 5,
+      "aem_2da_pct": 38
+    },
+    {
+      "equipo": "CA Tigre",
+      "pj": 21,
+      "aem_1ra_pct": 5,
+      "aem_2da_pct": 28
+    },
+    {
+      "equipo": "CA Sarmiento",
+      "pj": 21,
+      "aem_1ra_pct": 5,
+      "aem_2da_pct": 33
+    },
+    {
+      "equipo": "Instituto AC Cordoba",
+      "pj": 21,
+      "aem_1ra_pct": 5,
+      "aem_2da_pct": 28
+    },
+    {
+      "equipo": "CA Platense",
+      "pj": 21,
+      "aem_1ra_pct": 5,
+      "aem_2da_pct": 28
+    },
+    {
+      "equipo": "CA Lanus",
+      "pj": 22,
+      "aem_1ra_pct": 5,
+      "aem_2da_pct": 32
+    },
+    {
+      "equipo": "CA San Lorenzo de Almagro",
+      "pj": 22,
+      "aem_1ra_pct": 5,
+      "aem_2da_pct": 23
+    },
+    {
+      "equipo": "CA Central Cordoba de Santiago del Estero",
+      "pj": 21,
+      "aem_1ra_pct": 5,
+      "aem_2da_pct": 14
+    },
+    {
+      "equipo": "AA Estudiantes de Rio Cuarto",
+      "pj": 21,
+      "aem_1ra_pct": 5,
+      "aem_2da_pct": 10
+    },
+    {
+      "equipo": "CA Belgrano de Cordoba",
+      "pj": 25,
+      "aem_1ra_pct": 4,
+      "aem_2da_pct": 28
+    },
+    {
+      "equipo": "CD Riestra",
+      "pj": 21,
+      "aem_1ra_pct": 0,
+      "aem_2da_pct": 0
+    },
+    {
+      "equipo": "Estudiantes de La Plata",
+      "pj": 22,
+      "aem_1ra_pct": 0,
+      "aem_2da_pct": 0
+    }
+  ],
+  "sin_marcar_split_local_visitante": {
+    "local": [
+      {
+        "equipo": "CA Independiente",
+        "pj": 10,
+        "pct": 10
+      },
+      {
+        "equipo": "CA Union de Santa Fe",
+        "pj": 10,
+        "pct": 20
+      },
+      {
+        "equipo": "Newells Old Boys",
+        "pj": 11,
+        "pct": 27
+      },
+      {
+        "equipo": "Club Atletico Velez Sarsfield",
+        "pj": 12,
+        "pct": 25
+      },
+      {
+        "equipo": "CA Tucuman",
+        "pj": 10,
+        "pct": 40
+      },
+      {
+        "equipo": "CA Boca Juniors",
+        "pj": 11,
+        "pct": 18
+      },
+      {
+        "equipo": "CA Talleres de Cordoba",
+        "pj": 10,
+        "pct": 40
+      },
+      {
+        "equipo": "CSD Defensa y Justicia",
+        "pj": 11,
+        "pct": 18
+      },
+      {
+        "equipo": "CA Sarmiento",
+        "pj": 11,
+        "pct": 9
+      },
+      {
+        "equipo": "CA Rosario Central",
+        "pj": 12,
+        "pct": 25
+      },
+      {
+        "equipo": "Argentinos Juniors",
+        "pj": 14,
+        "pct": 14
+      },
+      {
+        "equipo": "CS Independiente Rivadavia",
+        "pj": 12,
+        "pct": 8
+      },
+      {
+        "equipo": "Racing Club de Avellaneda",
+        "pj": 10,
+        "pct": 30
+      },
+      {
+        "equipo": "CA Aldosivi",
+        "pj": 11,
+        "pct": 55
+      },
+      {
+        "equipo": "CA Tigre",
+        "pj": 10,
+        "pct": 20
+      },
+      {
+        "equipo": "CA Banfield",
+        "pj": 10,
+        "pct": 30
+      },
+      {
+        "equipo": "CA Lanus",
+        "pj": 11,
+        "pct": 45
+      },
+      {
+        "equipo": "CA Platense",
+        "pj": 11,
+        "pct": 55
+      },
+      {
+        "equipo": "Atletico Gimnasia y Esgrima de Mendoza",
+        "pj": 11,
+        "pct": 18
+      },
+      {
+        "equipo": "CA Huracan",
+        "pj": 10,
+        "pct": 20
+      },
+      {
+        "equipo": "Gimnasia y Esgrima La Plata",
+        "pj": 10,
+        "pct": 20
+      },
+      {
+        "equipo": "CA Belgrano de Cordoba",
+        "pj": 12,
+        "pct": 25
+      },
+      {
+        "equipo": "CA Barracas Central",
+        "pj": 10,
+        "pct": 30
+      },
+      {
+        "equipo": "CA San Lorenzo de Almagro",
+        "pj": 11,
+        "pct": 18
+      },
+      {
+        "equipo": "Instituto AC Cordoba",
+        "pj": 10,
+        "pct": 20
+      },
+      {
+        "equipo": "AA Estudiantes de Rio Cuarto",
+        "pj": 11,
+        "pct": 64
+      },
+      {
+        "equipo": "CD Riestra",
+        "pj": 11,
+        "pct": 55
+      },
+      {
+        "equipo": "CA Central Cordoba de Santiago del Estero",
+        "pj": 11,
+        "pct": 36
+      },
+      {
+        "equipo": "Estudiantes de La Plata",
+        "pj": 12,
+        "pct": 42
+      },
+      {
+        "equipo": "CA River Plate",
+        "pj": 15,
+        "pct": 27
+      }
+    ],
+    "visitante": [
+      {
+        "equipo": "CA Independiente",
+        "pj": 12,
+        "pct": 17
+      },
+      {
+        "equipo": "CA Union de Santa Fe",
+        "pj": 14,
+        "pct": 36
+      },
+      {
+        "equipo": "Newells Old Boys",
+        "pj": 10,
+        "pct": 40
+      },
+      {
+        "equipo": "Club Atletico Velez Sarsfield",
+        "pj": 10,
+        "pct": 10
+      },
+      {
+        "equipo": "CA Tucuman",
+        "pj": 11,
+        "pct": 18
+      },
+      {
+        "equipo": "CA Boca Juniors",
+        "pj": 11,
+        "pct": 9
+      },
+      {
+        "equipo": "CA Talleres de Cordoba",
+        "pj": 12,
+        "pct": 33
+      },
+      {
+        "equipo": "CSD Defensa y Justicia",
+        "pj": 10,
+        "pct": 40
+      },
+      {
+        "equipo": "CA Sarmiento",
+        "pj": 10,
+        "pct": 50
+      },
+      {
+        "equipo": "CA Rosario Central",
+        "pj": 12,
+        "pct": 25
+      },
+      {
+        "equipo": "Argentinos Juniors",
+        "pj": 10,
+        "pct": 30
+      },
+      {
+        "equipo": "CS Independiente Rivadavia",
+        "pj": 10,
+        "pct": 30
+      },
+      {
+        "equipo": "Racing Club de Avellaneda",
+        "pj": 13,
+        "pct": 31
+      },
+      {
+        "equipo": "CA Aldosivi",
+        "pj": 11,
+        "pct": 55
+      },
+      {
+        "equipo": "CA Tigre",
+        "pj": 11,
+        "pct": 55
+      },
+      {
+        "equipo": "CA Banfield",
+        "pj": 11,
+        "pct": 45
+      },
+      {
+        "equipo": "CA Lanus",
+        "pj": 11,
+        "pct": 27
+      },
+      {
+        "equipo": "CA Platense",
+        "pj": 10,
+        "pct": 50
+      },
+      {
+        "equipo": "Atletico Gimnasia y Esgrima de Mendoza",
+        "pj": 10,
+        "pct": 50
+      },
+      {
+        "equipo": "CA Huracan",
+        "pj": 13,
+        "pct": 46
+      },
+      {
+        "equipo": "Gimnasia y Esgrima La Plata",
+        "pj": 13,
+        "pct": 38
+      },
+      {
+        "equipo": "CA Belgrano de Cordoba",
+        "pj": 13,
+        "pct": 31
+      },
+      {
+        "equipo": "CA Barracas Central",
+        "pj": 11,
+        "pct": 45
+      },
+      {
+        "equipo": "CA San Lorenzo de Almagro",
+        "pj": 11,
+        "pct": 55
+      },
+      {
+        "equipo": "Instituto AC Cordoba",
+        "pj": 11,
+        "pct": 36
+      },
+      {
+        "equipo": "AA Estudiantes de Rio Cuarto",
+        "pj": 10,
+        "pct": 80
+      },
+      {
+        "equipo": "CD Riestra",
+        "pj": 10,
+        "pct": 80
+      },
+      {
+        "equipo": "CA Central Cordoba de Santiago del Estero",
+        "pj": 10,
+        "pct": 80
+      },
+      {
+        "equipo": "Estudiantes de La Plata",
+        "pj": 10,
+        "pct": 50
+      },
+      {
+        "equipo": "CA River Plate",
+        "pj": 10,
+        "pct": 50
+      }
+    ]
+  },
+  "forma_reciente_ultimos_6_local": [
+    {
+      "equipo": "Atletico Gimnasia y Esgrima de Mendoza",
+      "v": 6,
+      "e": 0,
+      "d": 0,
+      "gf": 12,
+      "gc": 4,
+      "pts": 18,
+      "ppp": 3.0,
+      "pa0_pct": 50,
+      "psm_pct": 0,
+      "aem_pct": 50,
+      "mas2_5_pct": 50
+    },
+    {
+      "equipo": "Argentinos Juniors",
+      "v": 5,
+      "e": 1,
+      "d": 0,
+      "gf": 10,
+      "gc": 2,
+      "pts": 16,
+      "ppp": 2.67,
+      "pa0_pct": 67,
+      "psm_pct": 0,
+      "aem_pct": 33,
+      "mas2_5_pct": 33
+    },
+    {
+      "equipo": "CS Independiente Rivadavia",
+      "v": 5,
+      "e": 0,
+      "d": 1,
+      "gf": 15,
+      "gc": 6,
+      "pts": 15,
+      "ppp": 2.5,
+      "pa0_pct": 17,
+      "psm_pct": 0,
+      "aem_pct": 83,
+      "mas2_5_pct": 83
+    },
+    {
+      "equipo": "CA Rosario Central",
+      "v": 4,
+      "e": 2,
+      "d": 0,
+      "gf": 10,
+      "gc": 5,
+      "pts": 14,
+      "ppp": 2.33,
+      "pa0_pct": 17,
+      "psm_pct": 17,
+      "aem_pct": 83,
+      "mas2_5_pct": 67
+    },
+    {
+      "equipo": "Instituto AC Cordoba",
+      "v": 4,
+      "e": 0,
+      "d": 2,
+      "gf": 8,
+      "gc": 5,
+      "pts": 12,
+      "ppp": 2.0,
+      "pa0_pct": 33,
+      "psm_pct": 17,
+      "aem_pct": 50,
+      "mas2_5_pct": 50
+    },
+    {
+      "equipo": "CA Belgrano de Cordoba",
+      "v": 4,
+      "e": 0,
+      "d": 2,
+      "gf": 10,
+      "gc": 3,
+      "pts": 12,
+      "ppp": 2.0,
+      "pa0_pct": 50,
+      "psm_pct": 33,
+      "aem_pct": 17,
+      "mas2_5_pct": 33
+    },
+    {
+      "equipo": "CA Sarmiento",
+      "v": 4,
+      "e": 0,
+      "d": 2,
+      "gf": 10,
+      "gc": 6,
+      "pts": 12,
+      "ppp": 2.0,
+      "pa0_pct": 50,
+      "psm_pct": 0,
+      "aem_pct": 50,
+      "mas2_5_pct": 50
+    },
+    {
+      "equipo": "Gimnasia y Esgrima La Plata",
+      "v": 4,
+      "e": 0,
+      "d": 2,
+      "gf": 8,
+      "gc": 6,
+      "pts": 12,
+      "ppp": 2.0,
+      "pa0_pct": 67,
+      "psm_pct": 17,
+      "aem_pct": 17,
+      "mas2_5_pct": 33
+    },
+    {
+      "equipo": "Newells Old Boys",
+      "v": 3,
+      "e": 3,
+      "d": 0,
+      "gf": 7,
+      "gc": 3,
+      "pts": 12,
+      "ppp": 2.0,
+      "pa0_pct": 67,
+      "psm_pct": 17,
+      "aem_pct": 33,
+      "mas2_5_pct": 17
+    },
+    {
+      "equipo": "CA Independiente",
+      "v": 3,
+      "e": 1,
+      "d": 2,
+      "gf": 10,
+      "gc": 8,
+      "pts": 10,
+      "ppp": 1.67,
+      "pa0_pct": 33,
+      "psm_pct": 17,
+      "aem_pct": 50,
+      "mas2_5_pct": 50
+    },
+    {
+      "equipo": "CSD Defensa y Justicia",
+      "v": 3,
+      "e": 1,
+      "d": 2,
+      "gf": 8,
+      "gc": 9,
+      "pts": 10,
+      "ppp": 1.67,
+      "pa0_pct": 17,
+      "psm_pct": 17,
+      "aem_pct": 67,
+      "mas2_5_pct": 67
+    },
+    {
+      "equipo": "CA Banfield",
+      "v": 3,
+      "e": 1,
+      "d": 2,
+      "gf": 7,
+      "gc": 6,
+      "pts": 10,
+      "ppp": 1.67,
+      "pa0_pct": 50,
+      "psm_pct": 33,
+      "aem_pct": 33,
+      "mas2_5_pct": 33
+    },
+    {
+      "equipo": "Estudiantes de La Plata",
+      "v": 3,
+      "e": 1,
+      "d": 2,
+      "gf": 9,
+      "gc": 4,
+      "pts": 10,
+      "ppp": 1.67,
+      "pa0_pct": 50,
+      "psm_pct": 50,
+      "aem_pct": 17,
+      "mas2_5_pct": 50
+    },
+    {
+      "equipo": "CD Riestra",
+      "v": 3,
+      "e": 1,
+      "d": 2,
+      "gf": 8,
+      "gc": 3,
+      "pts": 10,
+      "ppp": 1.67,
+      "pa0_pct": 50,
+      "psm_pct": 33,
+      "aem_pct": 17,
+      "mas2_5_pct": 17
+    },
+    {
+      "equipo": "CA San Lorenzo de Almagro",
+      "v": 3,
+      "e": 1,
+      "d": 2,
+      "gf": 4,
+      "gc": 4,
+      "pts": 10,
+      "ppp": 1.67,
+      "pa0_pct": 67,
+      "psm_pct": 33,
+      "aem_pct": 17,
+      "mas2_5_pct": 17
+    },
+    {
+      "equipo": "Club Atletico Velez Sarsfield",
+      "v": 2,
+      "e": 3,
+      "d": 1,
+      "gf": 6,
+      "gc": 5,
+      "pts": 9,
+      "ppp": 1.5,
+      "pa0_pct": 33,
+      "psm_pct": 17,
+      "aem_pct": 50,
+      "mas2_5_pct": 17
+    },
+    {
+      "equipo": "CA Boca Juniors",
+      "v": 2,
+      "e": 3,
+      "d": 1,
+      "gf": 8,
+      "gc": 6,
+      "pts": 9,
+      "ppp": 1.5,
+      "pa0_pct": 33,
+      "psm_pct": 0,
+      "aem_pct": 67,
+      "mas2_5_pct": 17
+    },
+    {
+      "equipo": "CA River Plate",
+      "v": 3,
+      "e": 0,
+      "d": 3,
+      "gf": 7,
+      "gc": 5,
+      "pts": 9,
+      "ppp": 1.5,
+      "pa0_pct": 50,
+      "psm_pct": 33,
+      "aem_pct": 17,
+      "mas2_5_pct": 17
+    },
+    {
+      "equipo": "CA Huracan",
+      "v": 2,
+      "e": 2,
+      "d": 2,
+      "gf": 6,
+      "gc": 5,
+      "pts": 8,
+      "ppp": 1.33,
+      "pa0_pct": 50,
+      "psm_pct": 33,
+      "aem_pct": 50,
+      "mas2_5_pct": 50
+    },
+    {
+      "equipo": "CA Lanus",
+      "v": 2,
+      "e": 2,
+      "d": 2,
+      "gf": 3,
+      "gc": 4,
+      "pts": 8,
+      "ppp": 1.33,
+      "pa0_pct": 67,
+      "psm_pct": 50,
+      "aem_pct": 17,
+      "mas2_5_pct": 17
+    },
+    {
+      "equipo": "CA Union de Santa Fe",
+      "v": 2,
+      "e": 2,
+      "d": 2,
+      "gf": 9,
+      "gc": 8,
+      "pts": 8,
+      "ppp": 1.33,
+      "pa0_pct": 17,
+      "psm_pct": 0,
+      "aem_pct": 83,
+      "mas2_5_pct": 50
+    },
+    {
+      "equipo": "CA Barracas Central",
+      "v": 2,
+      "e": 1,
+      "d": 3,
+      "gf": 5,
+      "gc": 6,
+      "pts": 7,
+      "ppp": 1.17,
+      "pa0_pct": 33,
+      "psm_pct": 33,
+      "aem_pct": 50,
+      "mas2_5_pct": 50
+    },
+    {
+      "equipo": "CA Tigre",
+      "v": 1,
+      "e": 4,
+      "d": 1,
+      "gf": 4,
+      "gc": 5,
+      "pts": 7,
+      "ppp": 1.17,
+      "pa0_pct": 33,
+      "psm_pct": 33,
+      "aem_pct": 50,
+      "mas2_5_pct": 0
+    },
+    {
+      "equipo": "CA Tucuman",
+      "v": 1,
+      "e": 4,
+      "d": 1,
+      "gf": 4,
+      "gc": 4,
+      "pts": 7,
+      "ppp": 1.17,
+      "pa0_pct": 50,
+      "psm_pct": 33,
+      "aem_pct": 50,
+      "mas2_5_pct": 17
+    },
+    {
+      "equipo": "CA Central Cordoba de Santiago del Estero",
+      "v": 2,
+      "e": 0,
+      "d": 4,
+      "gf": 7,
+      "gc": 11,
+      "pts": 6,
+      "ppp": 1.0,
+      "pa0_pct": 17,
+      "psm_pct": 33,
+      "aem_pct": 50,
+      "mas2_5_pct": 50
+    },
+    {
+      "equipo": "CA Talleres de Cordoba",
+      "v": 2,
+      "e": 0,
+      "d": 4,
+      "gf": 5,
+      "gc": 8,
+      "pts": 6,
+      "ppp": 1.0,
+      "pa0_pct": 33,
+      "psm_pct": 50,
+      "aem_pct": 17,
+      "mas2_5_pct": 33
+    },
+    {
+      "equipo": "Racing Club de Avellaneda",
+      "v": 1,
+      "e": 2,
+      "d": 3,
+      "gf": 4,
+      "gc": 8,
+      "pts": 5,
+      "ppp": 0.83,
+      "pa0_pct": 17,
+      "psm_pct": 50,
+      "aem_pct": 50,
+      "mas2_5_pct": 33
+    },
+    {
+      "equipo": "AA Estudiantes de Rio Cuarto",
+      "v": 1,
+      "e": 1,
+      "d": 4,
+      "gf": 3,
+      "gc": 7,
+      "pts": 4,
+      "ppp": 0.67,
+      "pa0_pct": 33,
+      "psm_pct": 50,
+      "aem_pct": 33,
+      "mas2_5_pct": 33
+    },
+    {
+      "equipo": "CA Aldosivi",
+      "v": 0,
+      "e": 4,
+      "d": 2,
+      "gf": 4,
+      "gc": 7,
+      "pts": 4,
+      "ppp": 0.67,
+      "pa0_pct": 33,
+      "psm_pct": 33,
+      "aem_pct": 67,
+      "mas2_5_pct": 33
+    },
+    {
+      "equipo": "CA Platense",
+      "v": 0,
+      "e": 3,
+      "d": 3,
+      "gf": 4,
+      "gc": 11,
+      "pts": 3,
+      "ppp": 0.5,
+      "pa0_pct": 0,
+      "psm_pct": 50,
+      "aem_pct": 50,
+      "mas2_5_pct": 33
+    }
+  ],
+  "forma_reciente_ultimos_6_visitante": [
+    {
+      "equipo": "Instituto AC Cordoba",
+      "v": 4,
+      "e": 1,
+      "d": 1,
+      "gf": 6,
+      "gc": 2,
+      "pts": 13,
+      "ppp": 2.17,
+      "pa0_pct": 67,
+      "psm_pct": 17,
+      "aem_pct": 17,
+      "mas2_5_pct": 0
+    },
+    {
+      "equipo": "CA Belgrano de Cordoba",
+      "v": 3,
+      "e": 3,
+      "d": 0,
+      "gf": 7,
+      "gc": 3,
+      "pts": 12,
+      "ppp": 2.0,
+      "pa0_pct": 67,
+      "psm_pct": 33,
+      "aem_pct": 33,
+      "mas2_5_pct": 17
+    },
+    {
+      "equipo": "CA Boca Juniors",
+      "v": 3,
+      "e": 2,
+      "d": 1,
+      "gf": 10,
+      "gc": 7,
+      "pts": 11,
+      "ppp": 1.83,
+      "pa0_pct": 33,
+      "psm_pct": 17,
+      "aem_pct": 50,
+      "mas2_5_pct": 67
+    },
+    {
+      "equipo": "CA Barracas Central",
+      "v": 3,
+      "e": 2,
+      "d": 1,
+      "gf": 5,
+      "gc": 4,
+      "pts": 11,
+      "ppp": 1.83,
+      "pa0_pct": 50,
+      "psm_pct": 33,
+      "aem_pct": 33,
+      "mas2_5_pct": 17
+    },
+    {
+      "equipo": "CA River Plate",
+      "v": 3,
+      "e": 1,
+      "d": 2,
+      "gf": 7,
+      "gc": 4,
+      "pts": 10,
+      "ppp": 1.67,
+      "pa0_pct": 33,
+      "psm_pct": 33,
+      "aem_pct": 33,
+      "mas2_5_pct": 17
+    },
+    {
+      "equipo": "CA Tucuman",
+      "v": 3,
+      "e": 1,
+      "d": 2,
+      "gf": 5,
+      "gc": 3,
+      "pts": 10,
+      "ppp": 1.67,
+      "pa0_pct": 67,
+      "psm_pct": 33,
+      "aem_pct": 17,
+      "mas2_5_pct": 17
+    },
+    {
+      "equipo": "Argentinos Juniors",
+      "v": 3,
+      "e": 0,
+      "d": 3,
+      "gf": 7,
+      "gc": 10,
+      "pts": 9,
+      "ppp": 1.5,
+      "pa0_pct": 17,
+      "psm_pct": 33,
+      "aem_pct": 50,
+      "mas2_5_pct": 50
+    },
+    {
+      "equipo": "CA Rosario Central",
+      "v": 3,
+      "e": 0,
+      "d": 3,
+      "gf": 6,
+      "gc": 7,
+      "pts": 9,
+      "ppp": 1.5,
+      "pa0_pct": 33,
+      "psm_pct": 17,
+      "aem_pct": 50,
+      "mas2_5_pct": 50
+    },
+    {
+      "equipo": "Gimnasia y Esgrima La Plata",
+      "v": 3,
+      "e": 0,
+      "d": 3,
+      "gf": 5,
+      "gc": 9,
+      "pts": 9,
+      "ppp": 1.5,
+      "pa0_pct": 33,
+      "psm_pct": 33,
+      "aem_pct": 33,
+      "mas2_5_pct": 50
+    },
+    {
+      "equipo": "Estudiantes de La Plata",
+      "v": 3,
+      "e": 0,
+      "d": 3,
+      "gf": 5,
+      "gc": 5,
+      "pts": 9,
+      "ppp": 1.5,
+      "pa0_pct": 33,
+      "psm_pct": 50,
+      "aem_pct": 17,
+      "mas2_5_pct": 17
+    },
+    {
+      "equipo": "CA Independiente",
+      "v": 3,
+      "e": 0,
+      "d": 3,
+      "gf": 8,
+      "gc": 8,
+      "pts": 9,
+      "ppp": 1.5,
+      "pa0_pct": 17,
+      "psm_pct": 33,
+      "aem_pct": 50,
+      "mas2_5_pct": 50
+    },
+    {
+      "equipo": "Club Atletico Velez Sarsfield",
+      "v": 2,
+      "e": 3,
+      "d": 1,
+      "gf": 9,
+      "gc": 6,
+      "pts": 9,
+      "ppp": 1.5,
+      "pa0_pct": 33,
+      "psm_pct": 17,
+      "aem_pct": 67,
+      "mas2_5_pct": 33
+    },
+    {
+      "equipo": "CA Banfield",
+      "v": 2,
+      "e": 2,
+      "d": 2,
+      "gf": 4,
+      "gc": 4,
+      "pts": 8,
+      "ppp": 1.33,
+      "pa0_pct": 33,
+      "psm_pct": 50,
+      "aem_pct": 33,
+      "mas2_5_pct": 17
+    },
+    {
+      "equipo": "CA Talleres de Cordoba",
+      "v": 2,
+      "e": 2,
+      "d": 2,
+      "gf": 8,
+      "gc": 6,
+      "pts": 8,
+      "ppp": 1.33,
+      "pa0_pct": 33,
+      "psm_pct": 33,
+      "aem_pct": 50,
+      "mas2_5_pct": 50
+    },
+    {
+      "equipo": "Newells Old Boys",
+      "v": 2,
+      "e": 1,
+      "d": 3,
+      "gf": 8,
+      "gc": 12,
+      "pts": 7,
+      "ppp": 1.17,
+      "pa0_pct": 0,
+      "psm_pct": 33,
+      "aem_pct": 67,
+      "mas2_5_pct": 67
+    },
+    {
+      "equipo": "CA Huracan",
+      "v": 2,
+      "e": 1,
+      "d": 3,
+      "gf": 6,
+      "gc": 7,
+      "pts": 7,
+      "ppp": 1.17,
+      "pa0_pct": 33,
+      "psm_pct": 50,
+      "aem_pct": 33,
+      "mas2_5_pct": 33
+    },
+    {
+      "equipo": "CA Union de Santa Fe",
+      "v": 2,
+      "e": 1,
+      "d": 3,
+      "gf": 7,
+      "gc": 9,
+      "pts": 7,
+      "ppp": 1.17,
+      "pa0_pct": 0,
+      "psm_pct": 50,
+      "aem_pct": 50,
+      "mas2_5_pct": 50
+    },
+    {
+      "equipo": "CS Independiente Rivadavia",
+      "v": 1,
+      "e": 3,
+      "d": 2,
+      "gf": 4,
+      "gc": 5,
+      "pts": 6,
+      "ppp": 1.0,
+      "pa0_pct": 50,
+      "psm_pct": 50,
+      "aem_pct": 33,
+      "mas2_5_pct": 17
+    },
+    {
+      "equipo": "CA Sarmiento",
+      "v": 2,
+      "e": 0,
+      "d": 4,
+      "gf": 7,
+      "gc": 13,
+      "pts": 6,
+      "ppp": 1.0,
+      "pa0_pct": 0,
+      "psm_pct": 33,
+      "aem_pct": 67,
+      "mas2_5_pct": 83
+    },
+    {
+      "equipo": "CA San Lorenzo de Almagro",
+      "v": 1,
+      "e": 3,
+      "d": 2,
+      "gf": 4,
+      "gc": 5,
+      "pts": 6,
+      "ppp": 1.0,
+      "pa0_pct": 33,
+      "psm_pct": 50,
+      "aem_pct": 33,
+      "mas2_5_pct": 17
+    },
+    {
+      "equipo": "CA Lanus",
+      "v": 2,
+      "e": 0,
+      "d": 4,
+      "gf": 6,
+      "gc": 7,
+      "pts": 6,
+      "ppp": 1.0,
+      "pa0_pct": 33,
+      "psm_pct": 33,
+      "aem_pct": 33,
+      "mas2_5_pct": 50
+    },
+    {
+      "equipo": "CA Tigre",
+      "v": 1,
+      "e": 3,
+      "d": 2,
+      "gf": 4,
+      "gc": 4,
+      "pts": 6,
+      "ppp": 1.0,
+      "pa0_pct": 33,
+      "psm_pct": 67,
+      "aem_pct": 33,
+      "mas2_5_pct": 17
+    },
+    {
+      "equipo": "CA Central Cordoba de Santiago del Estero",
+      "v": 1,
+      "e": 2,
+      "d": 3,
+      "gf": 3,
+      "gc": 9,
+      "pts": 5,
+      "ppp": 0.83,
+      "pa0_pct": 17,
+      "psm_pct": 67,
+      "aem_pct": 33,
+      "mas2_5_pct": 33
+    },
+    {
+      "equipo": "Racing Club de Avellaneda",
+      "v": 1,
+      "e": 2,
+      "d": 3,
+      "gf": 4,
+      "gc": 6,
+      "pts": 5,
+      "ppp": 0.83,
+      "pa0_pct": 33,
+      "psm_pct": 33,
+      "aem_pct": 50,
+      "mas2_5_pct": 33
+    },
+    {
+      "equipo": "CA Platense",
+      "v": 1,
+      "e": 2,
+      "d": 3,
+      "gf": 6,
+      "gc": 8,
+      "pts": 5,
+      "ppp": 0.83,
+      "pa0_pct": 33,
+      "psm_pct": 33,
+      "aem_pct": 50,
+      "mas2_5_pct": 33
+    },
+    {
+      "equipo": "CSD Defensa y Justicia",
+      "v": 1,
+      "e": 1,
+      "d": 4,
+      "gf": 8,
+      "gc": 13,
+      "pts": 4,
+      "ppp": 0.67,
+      "pa0_pct": 0,
+      "psm_pct": 33,
+      "aem_pct": 67,
+      "mas2_5_pct": 67
+    },
+    {
+      "equipo": "Atletico Gimnasia y Esgrima de Mendoza",
+      "v": 0,
+      "e": 2,
+      "d": 4,
+      "gf": 2,
+      "gc": 9,
+      "pts": 2,
+      "ppp": 0.33,
+      "pa0_pct": 17,
+      "psm_pct": 67,
+      "aem_pct": 33,
+      "mas2_5_pct": 17
+    },
+    {
+      "equipo": "CD Riestra",
+      "v": 0,
+      "e": 1,
+      "d": 5,
+      "gf": 1,
+      "gc": 9,
+      "pts": 1,
+      "ppp": 0.17,
+      "pa0_pct": 17,
+      "psm_pct": 83,
+      "aem_pct": 17,
+      "mas2_5_pct": 17
+    },
+    {
+      "equipo": "CA Aldosivi",
+      "v": 0,
+      "e": 1,
+      "d": 5,
+      "gf": 3,
+      "gc": 10,
+      "pts": 1,
+      "ppp": 0.17,
+      "pa0_pct": 0,
+      "psm_pct": 50,
+      "aem_pct": 50,
+      "mas2_5_pct": 33
+    },
+    {
+      "equipo": "AA Estudiantes de Rio Cuarto",
+      "v": 0,
+      "e": 1,
+      "d": 5,
+      "gf": 1,
+      "gc": 9,
+      "pts": 1,
+      "ppp": 0.17,
+      "pa0_pct": 17,
+      "psm_pct": 83,
+      "aem_pct": 17,
+      "mas2_5_pct": 33
+    }
+  ],
+  "ventaja_local": {
+    "fuente": "footystats.org/es/argentina/primera-division/home-advantage-table",
+    "nota": "Ventaja local = aumento porcentual del rendimiento del equipo jugando de local vs de visitante (marcando y/o defendiendo). PPP = puntos por partido. Complementa forma_reciente_ultimos_6_local/visitante: esta tabla es un promedio de toda la temporada, la otra son solo los ultimos 6.",
+    "general": [
+      {
+        "equipo": "CD Riestra",
+        "ventaja_local_pct": 51,
+        "marcados_pct": 58,
+        "defensa_pct": 44,
+        "ppp_local": 1.27,
+        "ppp_visitante": 0.3
+      },
+      {
+        "equipo": "Atletico Gimnasia y Esgrima de Mendoza",
+        "ventaja_local_pct": 37,
+        "marcados_pct": 43,
+        "defensa_pct": 31,
+        "ppp_local": 2.0,
+        "ppp_visitante": 0.6
+      },
+      {
+        "equipo": "AA Estudiantes de Rio Cuarto",
+        "ventaja_local_pct": 33,
+        "marcados_pct": 36,
+        "defensa_pct": 30,
+        "ppp_local": 0.73,
+        "ppp_visitante": 0.1
+      },
+      {
+        "equipo": "CA Central Cordoba de Santiago del Estero",
+        "ventaja_local_pct": 31,
+        "marcados_pct": 49,
+        "defensa_pct": 12,
+        "ppp_local": 1.45,
+        "ppp_visitante": 0.6
+      },
+      {
+        "equipo": "CA Sarmiento",
+        "ventaja_local_pct": 28,
+        "marcados_pct": 24,
+        "defensa_pct": 32,
+        "ppp_local": 2.0,
+        "ppp_visitante": 0.6
+      },
+      {
+        "equipo": "Argentinos Juniors",
+        "ventaja_local_pct": 28,
+        "marcados_pct": 9,
+        "defensa_pct": 46,
+        "ppp_local": 2.43,
+        "ppp_visitante": 1.4
+      },
+      {
+        "equipo": "CA Banfield",
+        "ventaja_local_pct": 21,
+        "marcados_pct": 30,
+        "defensa_pct": 12,
+        "ppp_local": 1.7,
+        "ppp_visitante": 0.73
+      },
+      {
+        "equipo": "Gimnasia y Esgrima La Plata",
+        "ventaja_local_pct": 21,
+        "marcados_pct": 24,
+        "defensa_pct": 18,
+        "ppp_local": 1.9,
+        "ppp_visitante": 1.46
+      },
+      {
+        "equipo": "CA Union de Santa Fe",
+        "ventaja_local_pct": 20,
+        "marcados_pct": -1,
+        "defensa_pct": 40,
+        "ppp_local": 1.6,
+        "ppp_visitante": 1.07
+      },
+      {
+        "equipo": "CA Belgrano de Cordoba",
+        "ventaja_local_pct": 19,
+        "marcados_pct": 18,
+        "defensa_pct": 19,
+        "ppp_local": 1.92,
+        "ppp_visitante": 1.77
+      },
+      {
+        "equipo": "Estudiantes de La Plata",
+        "ventaja_local_pct": 15,
+        "marcados_pct": 27,
+        "defensa_pct": 2,
+        "ppp_local": 1.83,
+        "ppp_visitante": 1.5
+      },
+      {
+        "equipo": "CA Aldosivi",
+        "ventaja_local_pct": 14,
+        "marcados_pct": 0,
+        "defensa_pct": 28,
+        "ppp_local": 0.73,
+        "ppp_visitante": 0.18
+      },
+      {
+        "equipo": "CA Independiente",
+        "ventaja_local_pct": 14,
+        "marcados_pct": 13,
+        "defensa_pct": 15,
+        "ppp_local": 1.8,
+        "ppp_visitante": 1.25
+      },
+      {
+        "equipo": "Newells Old Boys",
+        "ventaja_local_pct": 14,
+        "marcados_pct": 0,
+        "defensa_pct": 28,
+        "ppp_local": 1.27,
+        "ppp_visitante": 0.8
+      },
+      {
+        "equipo": "CA Rosario Central",
+        "ventaja_local_pct": 12,
+        "marcados_pct": 14,
+        "defensa_pct": 10,
+        "ppp_local": 2.0,
+        "ppp_visitante": 1.67
+      },
+      {
+        "equipo": "CA Tucuman",
+        "ventaja_local_pct": 12,
+        "marcados_pct": 0,
+        "defensa_pct": 24,
+        "ppp_local": 1.2,
+        "ppp_visitante": 0.91
+      },
+      {
+        "equipo": "CA Huracan",
+        "ventaja_local_pct": 12,
+        "marcados_pct": 15,
+        "defensa_pct": 8,
+        "ppp_local": 1.7,
+        "ppp_visitante": 1.15
+      },
+      {
+        "equipo": "CA Tigre",
+        "ventaja_local_pct": 8,
+        "marcados_pct": 14,
+        "defensa_pct": 1,
+        "ppp_local": 1.7,
+        "ppp_visitante": 1.0
+      },
+      {
+        "equipo": "CS Independiente Rivadavia",
+        "ventaja_local_pct": 8,
+        "marcados_pct": 26,
+        "defensa_pct": -11,
+        "ppp_local": 2.08,
+        "ppp_visitante": 1.6
+      },
+      {
+        "equipo": "CA Lanus",
+        "ventaja_local_pct": 7,
+        "marcados_pct": -8,
+        "defensa_pct": 22,
+        "ppp_local": 1.45,
+        "ppp_visitante": 1.27
+      },
+      {
+        "equipo": "CA Barracas Central",
+        "ventaja_local_pct": 6,
+        "marcados_pct": 16,
+        "defensa_pct": -5,
+        "ppp_local": 1.4,
+        "ppp_visitante": 1.45
+      },
+      {
+        "equipo": "CA Boca Juniors",
+        "ventaja_local_pct": 5,
+        "marcados_pct": -17,
+        "defensa_pct": 26,
+        "ppp_local": 1.64,
+        "ppp_visitante": 1.64
+      },
+      {
+        "equipo": "CSD Defensa y Justicia",
+        "ventaja_local_pct": 4,
+        "marcados_pct": -4,
+        "defensa_pct": 11,
+        "ppp_local": 1.36,
+        "ppp_visitante": 1.2
+      },
+      {
+        "equipo": "CA San Lorenzo de Almagro",
+        "ventaja_local_pct": 2,
+        "marcados_pct": 33,
+        "defensa_pct": -30,
+        "ppp_local": 1.55,
+        "ppp_visitante": 1.09
+      },
+      {
+        "equipo": "CA River Plate",
+        "ventaja_local_pct": 2,
+        "marcados_pct": 23,
+        "defensa_pct": -19,
+        "ppp_local": 1.67,
+        "ppp_visitante": 1.4
+      },
+      {
+        "equipo": "Instituto AC Cordoba",
+        "ventaja_local_pct": 0,
+        "marcados_pct": 33,
+        "defensa_pct": 0,
+        "ppp_local": 1.9,
+        "ppp_visitante": 1.27
+      },
+      {
+        "equipo": "Club Atletico Velez Sarsfield",
+        "ventaja_local_pct": -2,
+        "marcados_pct": -12,
+        "defensa_pct": 8,
+        "ppp_local": 1.83,
+        "ppp_visitante": 1.7
+      },
+      {
+        "equipo": "CA Talleres de Cordoba",
+        "ventaja_local_pct": -8,
+        "marcados_pct": -5,
+        "defensa_pct": -10,
+        "ppp_local": 1.3,
+        "ppp_visitante": 1.33
+      },
+      {
+        "equipo": "Racing Club de Avellaneda",
+        "ventaja_local_pct": -8,
+        "marcados_pct": 0,
+        "defensa_pct": -15,
+        "ppp_local": 1.2,
+        "ppp_visitante": 1.23
+      },
+      {
+        "equipo": "CA Platense",
+        "ventaja_local_pct": -15,
+        "marcados_pct": -10,
+        "defensa_pct": -19,
+        "ppp_local": 0.91,
+        "ppp_visitante": 1.1
+      }
+    ],
+    "goles_marcados_local_vs_visitante": [
+      {
+        "equipo": "CD Riestra",
+        "ventaja_anotadora_pct": 58,
+        "marcados_local_promedio": 0.82,
+        "marcados_visitante_promedio": 0.2
+      },
+      {
+        "equipo": "CA Central Cordoba de Santiago del Estero",
+        "ventaja_anotadora_pct": 49,
+        "marcados_local_promedio": 1.0,
+        "marcados_visitante_promedio": 0.3
+      },
+      {
+        "equipo": "Atletico Gimnasia y Esgrima de Mendoza",
+        "ventaja_anotadora_pct": 43,
+        "marcados_local_promedio": 1.36,
+        "marcados_visitante_promedio": 0.5
+      },
+      {
+        "equipo": "AA Estudiantes de Rio Cuarto",
+        "ventaja_anotadora_pct": 36,
+        "marcados_local_promedio": 0.45,
+        "marcados_visitante_promedio": 0.2
+      },
+      {
+        "equipo": "CA San Lorenzo de Almagro",
+        "ventaja_anotadora_pct": 33,
+        "marcados_local_promedio": 1.09,
+        "marcados_visitante_promedio": 0.55
+      },
+      {
+        "equipo": "Instituto AC Cordoba",
+        "ventaja_anotadora_pct": 33,
+        "marcados_local_promedio": 1.4,
+        "marcados_visitante_promedio": 0.73
+      },
+      {
+        "equipo": "CA Banfield",
+        "ventaja_anotadora_pct": 30,
+        "marcados_local_promedio": 1.3,
+        "marcados_visitante_promedio": 0.73
+      },
+      {
+        "equipo": "Estudiantes de La Plata",
+        "ventaja_anotadora_pct": 27,
+        "marcados_local_promedio": 1.5,
+        "marcados_visitante_promedio": 0.8
+      },
+      {
+        "equipo": "CS Independiente Rivadavia",
+        "ventaja_anotadora_pct": 26,
+        "marcados_local_promedio": 2.0,
+        "marcados_visitante_promedio": 1.1
+      },
+      {
+        "equipo": "CA Sarmiento",
+        "ventaja_anotadora_pct": 24,
+        "marcados_local_promedio": 1.36,
+        "marcados_visitante_promedio": 0.8
+      },
+      {
+        "equipo": "Gimnasia y Esgrima La Plata",
+        "ventaja_anotadora_pct": 24,
+        "marcados_local_promedio": 1.4,
+        "marcados_visitante_promedio": 0.92
+      },
+      {
+        "equipo": "CA River Plate",
+        "ventaja_anotadora_pct": 23,
+        "marcados_local_promedio": 1.53,
+        "marcados_visitante_promedio": 0.8
+      },
+      {
+        "equipo": "CA Belgrano de Cordoba",
+        "ventaja_anotadora_pct": 18,
+        "marcados_local_promedio": 1.42,
+        "marcados_visitante_promedio": 1.0
+      },
+      {
+        "equipo": "CA Barracas Central",
+        "ventaja_anotadora_pct": 16,
+        "marcados_local_promedio": 1.0,
+        "marcados_visitante_promedio": 0.73
+      },
+      {
+        "equipo": "CA Huracan",
+        "ventaja_anotadora_pct": 15,
+        "marcados_local_promedio": 1.2,
+        "marcados_visitante_promedio": 0.92
+      },
+      {
+        "equipo": "CA Rosario Central",
+        "ventaja_anotadora_pct": 14,
+        "marcados_local_promedio": 1.42,
+        "marcados_visitante_promedio": 1.08
+      },
+      {
+        "equipo": "CA Tigre",
+        "ventaja_anotadora_pct": 14,
+        "marcados_local_promedio": 1.2,
+        "marcados_visitante_promedio": 0.91
+      },
+      {
+        "equipo": "CA Independiente",
+        "ventaja_anotadora_pct": 13,
+        "marcados_local_promedio": 1.6,
+        "marcados_visitante_promedio": 1.25
+      },
+      {
+        "equipo": "Argentinos Juniors",
+        "ventaja_anotadora_pct": 9,
+        "marcados_local_promedio": 1.36,
+        "marcados_visitante_promedio": 1.1
+      },
+      {
+        "equipo": "CA Aldosivi",
+        "ventaja_anotadora_pct": 0,
+        "marcados_local_promedio": 0.45,
+        "marcados_visitante_promedio": 0.45
+      },
+      {
+        "equipo": "Newells Old Boys",
+        "ventaja_anotadora_pct": 0,
+        "marcados_local_promedio": 1.0,
+        "marcados_visitante_promedio": 1.0
+      },
+      {
+        "equipo": "CA Tucuman",
+        "ventaja_anotadora_pct": 0,
+        "marcados_local_promedio": 0.9,
+        "marcados_visitante_promedio": 0.91
+      },
+      {
+        "equipo": "Racing Club de Avellaneda",
+        "ventaja_anotadora_pct": 0,
+        "marcados_local_promedio": 1.0,
+        "marcados_visitante_promedio": 1.0
+      },
+      {
+        "equipo": "CA Union de Santa Fe",
+        "ventaja_anotadora_pct": -1,
+        "marcados_local_promedio": 1.4,
+        "marcados_visitante_promedio": 1.43
+      },
+      {
+        "equipo": "CSD Defensa y Justicia",
+        "ventaja_anotadora_pct": -4,
+        "marcados_local_promedio": 1.09,
+        "marcados_visitante_promedio": 1.2
+      },
+      {
+        "equipo": "CA Talleres de Cordoba",
+        "ventaja_anotadora_pct": -5,
+        "marcados_local_promedio": 1.0,
+        "marcados_visitante_promedio": 1.08
+      },
+      {
+        "equipo": "CA Lanus",
+        "ventaja_anotadora_pct": -8,
+        "marcados_local_promedio": 1.0,
+        "marcados_visitante_promedio": 1.18
+      },
+      {
+        "equipo": "CA Platense",
+        "ventaja_anotadora_pct": -10,
+        "marcados_local_promedio": 0.64,
+        "marcados_visitante_promedio": 0.8
+      },
+      {
+        "equipo": "Club Atletico Velez Sarsfield",
+        "ventaja_anotadora_pct": -12,
+        "marcados_local_promedio": 1.0,
+        "marcados_visitante_promedio": 1.3
+      },
+      {
+        "equipo": "CA Boca Juniors",
+        "ventaja_anotadora_pct": -17,
+        "marcados_local_promedio": 1.09,
+        "marcados_visitante_promedio": 1.55
+      }
+    ],
+    "goles_recibidos_local_vs_visitante": [
+      {
+        "equipo": "Argentinos Juniors",
+        "ventaja_defensiva_pct": 46,
+        "recibidos_local_promedio": 0.43,
+        "recibidos_visitante_promedio": 1.3
+      },
+      {
+        "equipo": "CD Riestra",
+        "ventaja_defensiva_pct": 44,
+        "recibidos_local_promedio": 0.45,
+        "recibidos_visitante_promedio": 1.2
+      },
+      {
+        "equipo": "CA Union de Santa Fe",
+        "ventaja_defensiva_pct": 40,
+        "recibidos_local_promedio": 0.8,
+        "recibidos_visitante_promedio": 1.71
+      },
+      {
+        "equipo": "CA Sarmiento",
+        "ventaja_defensiva_pct": 32,
+        "recibidos_local_promedio": 0.91,
+        "recibidos_visitante_promedio": 1.8
+      },
+      {
+        "equipo": "Atletico Gimnasia y Esgrima de Mendoza",
+        "ventaja_defensiva_pct": 31,
+        "recibidos_local_promedio": 0.82,
+        "recibidos_visitante_promedio": 1.6
+      },
+      {
+        "equipo": "AA Estudiantes de Rio Cuarto",
+        "ventaja_defensiva_pct": 30,
+        "recibidos_local_promedio": 1.0,
+        "recibidos_visitante_promedio": 1.9
+      },
+      {
+        "equipo": "CA Aldosivi",
+        "ventaja_defensiva_pct": 28,
+        "recibidos_local_promedio": 0.91,
+        "recibidos_visitante_promedio": 1.64
+      },
+      {
+        "equipo": "Newells Old Boys",
+        "ventaja_defensiva_pct": 28,
+        "recibidos_local_promedio": 1.09,
+        "recibidos_visitante_promedio": 2.0
+      },
+      {
+        "equipo": "CA Boca Juniors",
+        "ventaja_defensiva_pct": 26,
+        "recibidos_local_promedio": 0.64,
+        "recibidos_visitante_promedio": 1.09
+      },
+      {
+        "equipo": "CA Tucuman",
+        "ventaja_defensiva_pct": 24,
+        "recibidos_local_promedio": 0.8,
+        "recibidos_visitante_promedio": 1.27
+      },
+      {
+        "equipo": "CA Lanus",
+        "ventaja_defensiva_pct": 22,
+        "recibidos_local_promedio": 0.82,
+        "recibidos_visitante_promedio": 1.27
+      },
+      {
+        "equipo": "CA Belgrano de Cordoba",
+        "ventaja_defensiva_pct": 19,
+        "recibidos_local_promedio": 0.58,
+        "recibidos_visitante_promedio": 0.85
+      },
+      {
+        "equipo": "Gimnasia y Esgrima La Plata",
+        "ventaja_defensiva_pct": 18,
+        "recibidos_local_promedio": 1.0,
+        "recibidos_visitante_promedio": 1.38
+      },
+      {
+        "equipo": "CA Independiente",
+        "ventaja_defensiva_pct": 15,
+        "recibidos_local_promedio": 1.0,
+        "recibidos_visitante_promedio": 1.33
+      },
+      {
+        "equipo": "CA Central Cordoba de Santiago del Estero",
+        "ventaja_defensiva_pct": 12,
+        "recibidos_local_promedio": 1.09,
+        "recibidos_visitante_promedio": 1.4
+      },
+      {
+        "equipo": "CA Banfield",
+        "ventaja_defensiva_pct": 12,
+        "recibidos_local_promedio": 1.0,
+        "recibidos_visitante_promedio": 1.27
+      },
+      {
+        "equipo": "CSD Defensa y Justicia",
+        "ventaja_defensiva_pct": 11,
+        "recibidos_local_promedio": 1.18,
+        "recibidos_visitante_promedio": 1.5
+      },
+      {
+        "equipo": "CA Rosario Central",
+        "ventaja_defensiva_pct": 10,
+        "recibidos_local_promedio": 0.83,
+        "recibidos_visitante_promedio": 1.0
+      },
+      {
+        "equipo": "CA Huracan",
+        "ventaja_defensiva_pct": 8,
+        "recibidos_local_promedio": 0.8,
+        "recibidos_visitante_promedio": 0.92
+      },
+      {
+        "equipo": "Club Atletico Velez Sarsfield",
+        "ventaja_defensiva_pct": 8,
+        "recibidos_local_promedio": 0.67,
+        "recibidos_visitante_promedio": 0.8
+      },
+      {
+        "equipo": "Estudiantes de La Plata",
+        "ventaja_defensiva_pct": 2,
+        "recibidos_local_promedio": 0.58,
+        "recibidos_visitante_promedio": 0.6
+      },
+      {
+        "equipo": "CA Tigre",
+        "ventaja_defensiva_pct": 1,
+        "recibidos_local_promedio": 0.8,
+        "recibidos_visitante_promedio": 0.82
+      },
+      {
+        "equipo": "Instituto AC Cordoba",
+        "ventaja_defensiva_pct": 0,
+        "recibidos_local_promedio": 0.9,
+        "recibidos_visitante_promedio": 0.91
+      },
+      {
+        "equipo": "CA Barracas Central",
+        "ventaja_defensiva_pct": -5,
+        "recibidos_local_promedio": 0.9,
+        "recibidos_visitante_promedio": 0.82
+      },
+      {
+        "equipo": "CA Talleres de Cordoba",
+        "ventaja_defensiva_pct": -10,
+        "recibidos_local_promedio": 1.2,
+        "recibidos_visitante_promedio": 1.0
+      },
+      {
+        "equipo": "CS Independiente Rivadavia",
+        "ventaja_defensiva_pct": -11,
+        "recibidos_local_promedio": 1.17,
+        "recibidos_visitante_promedio": 0.9
+      },
+      {
+        "equipo": "Racing Club de Avellaneda",
+        "ventaja_defensiva_pct": -15,
+        "recibidos_local_promedio": 1.2,
+        "recibidos_visitante_promedio": 0.92
+      },
+      {
+        "equipo": "CA River Plate",
+        "ventaja_defensiva_pct": -19,
+        "recibidos_local_promedio": 1.0,
+        "recibidos_visitante_promedio": 0.6
+      },
+      {
+        "equipo": "CA Platense",
+        "ventaja_defensiva_pct": -19,
+        "recibidos_local_promedio": 1.36,
+        "recibidos_visitante_promedio": 0.9
+      },
+      {
+        "equipo": "CA San Lorenzo de Almagro",
+        "ventaja_defensiva_pct": -30,
+        "recibidos_local_promedio": 1.18,
+        "recibidos_visitante_promedio": 0.64
+      }
+    ]
+  }
+}

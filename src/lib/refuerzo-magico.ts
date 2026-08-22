@@ -75,7 +75,7 @@ const RM_DATA = RM_DATA_RAW as unknown as RMDataFile;
 
 // Mapeo validado a mano (script de matcheo por tokens contra los 30
 // nombres reales de Promiedos, ago 2026) — ver nota arriba.
-const PROMIEDOS_ID_TO_JSON_TEAM: Record<string, string> = {
+export const PROMIEDOS_ID_TO_JSON_TEAM: Record<string, string> = {
   "hcag": "CA Union de Santa Fe",
   "hcch": "CS Independiente Rivadavia",
   "ihe": "CA Independiente",

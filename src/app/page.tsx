@@ -6,6 +6,7 @@ import EnVivoTab from "@/components/tabs/EnVivoTab";
 import GrandTTab from "@/components/tabs/GrandTTab";
 import FantasyPremierTab from "@/components/tabs/FantasyPremierTab";
 import RefuerzoMagicoTab from "@/components/tabs/RefuerzoMagicoTab";
+import CombinadaFechaTab from "@/components/tabs/CombinadaFechaTab";
 
 const TABS = [
   { id: "tactico",   label: "AYUDANTE TÁCTICO" },
@@ -13,6 +14,7 @@ const TABS = [
   { id: "grandt",    label: "GRAN DT" },
   { id: "fantasy",   label: "FANTASY PREMIER" },
   { id: "magico",    label: "REFUERZO MÁGICO" },
+  { id: "combinada", label: "LA COMBINADA DE LA FECHA" },
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
@@ -52,6 +54,7 @@ export default function Home() {
         {activeTab === "grandt"    && <GrandTTab />}
         {activeTab === "fantasy"   && <FantasyPremierTab />}
         {activeTab === "magico"    && <RefuerzoMagicoTab />}
+        {activeTab === "combinada" && <CombinadaFechaTab />}
       </div>
     </div>
   );
