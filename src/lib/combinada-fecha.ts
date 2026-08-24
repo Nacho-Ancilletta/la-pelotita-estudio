@@ -17,9 +17,10 @@
 // arma su propia combinada seleccionando partidos a mano.
 
 import { getFixtureLiga, type PromiedosGame } from "@/lib/promiedos";
-import { PROMIEDOS_ID_TO_JSON_TEAM } from "@/lib/refuerzo-magico";
+import { PROMIEDOS_ID_TO_JSON_TEAM, PROMIEDOS_ID_TO_RANKING_TEAM } from "@/lib/refuerzo-magico";
 import { getStandings, espnTeamLogoUrl } from "@/lib/espn";
 import COMBINADA_DATA_RAW from "@/data/combinada-fecha-data-2026.json";
+import FORMA_GOLES_RAW from "@/data/tabla-forma-goles-2026.json";
 
 // ── Shape del JSON — solo se tipan los campos que el algoritmo realmente usa
 // (menos_de_X_goles/disparos_over/aem_primera_segunda_mitad/sin_marcar_split
@@ -61,6 +62,53 @@ const FORM_VISITANTE_BY_TEAM = byTeam(DATA.forma_reciente_ultimos_6_visitante);
 const VENTAJA_LOCAL_BY_TEAM = byTeam(DATA.ventaja_local.general);
 const GOLES_MARCADOS_LV_BY_TEAM = byTeam(DATA.ventaja_local.goles_marcados_local_vs_visitante);
 const GOLES_RECIBIDOS_LV_BY_TEAM = byTeam(DATA.ventaja_local.goles_recibidos_local_vs_visitante);
+
+// ── Forma reciente + goles por partido (tabla-forma-goles-2026.json,
+// FootyStats, actualizado fecha a fecha — el archivo se reemplaza entero
+// cada semana, sin versionado/histórico). El campo `equipo` usa la MISMA
+// convención Transfermarkt que ranking-valor-plantel-2026.json/pool-
+// candidatos-refuerzo-magico-2026.json (ej. "Instituto ACC", "Sarmiento
+// (Junín)") — NO la convención FootyStats de PROMIEDOS_ID_TO_JSON_TEAM
+// (ej. "CA Sarmiento") que usa el resto de este archivo — por eso el
+// cruce acá reusa PROMIEDOS_ID_TO_RANKING_TEAM (de refuerzo-magico.ts,
+// mapeo de los 30 equipos ya verificado a mano) en vez de
+// PROMIEDOS_ID_TO_JSON_TEAM. `nombre_footystats` del JSON es solo
+// referencia de origen del dato, no se usa para el cruce.
+interface FormaGolesRow {
+  equipo: string;
+  w: number; d: number; l: number;
+  ppg_ultimos10: number;
+  clean_sheets_pct: number; failed_to_score_pct: number; btts_pct: number; over25_pct: number;
+  goles_favor_por_partido: number; goles_favor_local: number; goles_favor_visitante: number; goles_favor_ventaja_local_pct: number;
+  goles_contra_por_partido: number; goles_contra_local: number; goles_contra_visitante: number; goles_contra_ventaja_local_pct: number;
+}
+const FORMA_GOLES_BY_TEAM = byTeam((FORMA_GOLES_RAW as unknown as { equipos: FormaGolesRow[] }).equipos);
+
+export interface FormaGolesTeam {
+  w: number; d: number; l: number;
+  ppgUltimos10: number;
+  cleanSheetsPct: number; failedToScorePct: number; bttsPct: number; over25Pct: number;
+  golesFavorPorPartido: number; golesFavorLocal: number; golesFavorVisitante: number; golesFavorVentajaLocalPct: number;
+  golesContraPorPartido: number; golesContraLocal: number; golesContraVisitante: number; golesContraVentajaLocalPct: number;
+}
+// null = el equipo no tiene fila en tabla-forma-goles-2026.json (dato
+// faltante puntual, ej. recién ascendido sin 10 partidos jugados aún) —
+// la UI muestra "sin datos de forma" para ESE equipo, nunca inventa.
+export interface FormaGolesComparison { home: FormaGolesTeam | null; away: FormaGolesTeam | null; }
+
+function buildFormaGolesTeam(rankingTeam: string | undefined): FormaGolesTeam | null {
+  const row = rankingTeam ? FORMA_GOLES_BY_TEAM.get(rankingTeam) : undefined;
+  if (!row) return null;
+  return {
+    w: row.w, d: row.d, l: row.l, ppgUltimos10: row.ppg_ultimos10,
+    cleanSheetsPct: row.clean_sheets_pct, failedToScorePct: row.failed_to_score_pct,
+    bttsPct: row.btts_pct, over25Pct: row.over25_pct,
+    golesFavorPorPartido: row.goles_favor_por_partido, golesFavorLocal: row.goles_favor_local,
+    golesFavorVisitante: row.goles_favor_visitante, golesFavorVentajaLocalPct: row.goles_favor_ventaja_local_pct,
+    golesContraPorPartido: row.goles_contra_por_partido, golesContraLocal: row.goles_contra_local,
+    golesContraVisitante: row.goles_contra_visitante, golesContraVentajaLocalPct: row.goles_contra_ventaja_local_pct,
+  };
+}
 
 function clamp(v: number, min: number, max: number) { return Math.min(max, Math.max(min, v)); }
 function round1(v: number) { return Math.round(v * 10) / 10; }
@@ -181,6 +229,7 @@ export interface MatchAnalysis {
   formTensionNotes: string[];
   ventajaLocalNote: string | null;
   pppComparison: PppComparison | null;
+  formaGoles: FormaGolesComparison;
 }
 
 function computeMarketSignal(
@@ -204,7 +253,10 @@ function computeMarketSignal(
 // homeDisplayName: nombre corto de Promiedos (ej. "River") solo para el texto
 // de ventajaLocalNote — el nombre del JSON (ej. "CA River Plate") no separa
 // bien por último token ("Plate"), así que no se usa para mostrar.
-export function analyzeMatch(homeJsonTeam: string, awayJsonTeam: string, homeDisplayName: string): MatchAnalysis {
+export function analyzeMatch(
+  homeJsonTeam: string, awayJsonTeam: string, homeDisplayName: string,
+  homeRankingTeam?: string, awayRankingTeam?: string,
+): MatchAnalysis {
   const homeOver = OVER25_BY_TEAM.get(homeJsonTeam);
   const awayOver = OVER25_BY_TEAM.get(awayJsonTeam);
   const homeAem = AEM_BY_TEAM.get(homeJsonTeam);
@@ -243,7 +295,12 @@ export function analyzeMatch(homeJsonTeam: string, awayJsonTeam: string, homeDis
     ? `localía casi no le pesa a ${homeDisplayName} (+${homeVentaja.ventaja_local_pct}%)`
     : null;
 
-  return { over25: over25Result?.signal ?? null, aem: aemResult?.signal ?? null, expectedTotalGoals: expGoals, formTensionNotes, ventajaLocalNote, pppComparison };
+  const formaGoles: FormaGolesComparison = {
+    home: buildFormaGolesTeam(homeRankingTeam),
+    away: buildFormaGolesTeam(awayRankingTeam),
+  };
+
+  return { over25: over25Result?.signal ?? null, aem: aemResult?.signal ?? null, expectedTotalGoals: expGoals, formTensionNotes, ventajaLocalNote, pppComparison, formaGoles };
 }
 
 // ── Escudos vía ESPN — mismo patrón que getEspnTeamLogos en
@@ -318,7 +375,11 @@ export async function getCombinadaFechaMatches(): Promise<ComboMatch[]> {
   return games.map((g) => {
     const homeJsonTeam = PROMIEDOS_ID_TO_JSON_TEAM[g.homeTeam.id];
     const awayJsonTeam = PROMIEDOS_ID_TO_JSON_TEAM[g.awayTeam.id];
-    const analysis = homeJsonTeam && awayJsonTeam ? analyzeMatch(homeJsonTeam, awayJsonTeam, g.homeTeam.shortName || g.homeTeam.name) : null;
+    const homeRankingTeam = PROMIEDOS_ID_TO_RANKING_TEAM[g.homeTeam.id];
+    const awayRankingTeam = PROMIEDOS_ID_TO_RANKING_TEAM[g.awayTeam.id];
+    const analysis = homeJsonTeam && awayJsonTeam
+      ? analyzeMatch(homeJsonTeam, awayJsonTeam, g.homeTeam.shortName || g.homeTeam.name, homeRankingTeam, awayRankingTeam)
+      : null;
     return {
       id: g.id,
       homeTeam: toComboTeam(g.homeTeam, logos),

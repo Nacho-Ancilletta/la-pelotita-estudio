@@ -7,6 +7,7 @@ import {
   getKnownResults, saveKnownResult,
   type ComboMatch, type ComboTeam, type MarketLean, type MarketSignal,
   type PppComparison, type TeamPppSelf, type SelectedPick, type PickResult, type KnownResult,
+  type FormaGolesTeam,
 } from "@/lib/combinada-fecha";
 
 // "DD-MM-YYYY HH:mm" (formato propio de Promiedos, ver lib/promiedos.ts) →
@@ -234,6 +235,99 @@ function PppComparisonBlock({ ppp, homeShort, awayShort, selectedHome, selectedA
   );
 }
 
+// ── Forma reciente / Goles por partido (tabla-forma-goles-2026.json) —
+// tercer y cuarto bloque de la tarjeta, mismo grid/ancho/estilo que los 2
+// de arriba (Más/Menos 2.5 y Rendimiento Local/Visitante). Dato faltante
+// puntual de UN equipo → "sin datos de forma" solo en su fila, nunca se
+// oculta el resto del partido ni la columna entera. ─────────────────────
+const FORMA_CHIP_CLASSES = "font-mono text-[8px] text-cream/40 bg-bg-deep/60 border border-bg-card rounded px-1 py-0.5 whitespace-nowrap";
+
+function SinDatosDeForma({ short }: { short: string }) {
+  return (
+    <div className="py-1">
+      <div className="font-mono text-[9px] text-cream/60 font-bold mb-1">{short}</div>
+      <div className="font-mono text-[9px] text-cream/25">Sin datos de forma</div>
+    </div>
+  );
+}
+
+function FormaTeamRow({ short, forma }: { short: string; forma: FormaGolesTeam | null }) {
+  if (!forma) return <SinDatosDeForma short={short} />;
+  return (
+    <div className="py-1">
+      <div className="flex items-center justify-between gap-2 mb-1">
+        <span className="font-mono text-[9px] text-cream/60 font-bold">{short}</span>
+        <span className="font-mono text-[9px] text-cream/50 tabular-nums">{forma.ppgUltimos10.toFixed(2)} pts/partido</span>
+      </div>
+      <div className="font-mono text-[9px] text-cream/40 tabular-nums mb-1">{forma.w}V {forma.d}E {forma.l}D</div>
+      <div className="flex flex-wrap gap-1">
+        <span className={FORMA_CHIP_CLASSES}>Valla invicta {forma.cleanSheetsPct}%</span>
+        <span className={FORMA_CHIP_CLASSES}>No convirtió {forma.failedToScorePct}%</span>
+        <span className={FORMA_CHIP_CLASSES}>Ambos marcan {forma.bttsPct}%</span>
+        <span className={FORMA_CHIP_CLASSES}>+2.5 goles {forma.over25Pct}%</span>
+      </div>
+    </div>
+  );
+}
+
+function FormaRecienteBlock({ home, away, homeShort, awayShort }: {
+  home: FormaGolesTeam | null; away: FormaGolesTeam | null; homeShort: string; awayShort: string;
+}) {
+  return (
+    <div className="rounded border border-bg-card bg-bg-deep/40 p-2.5 flex-1 min-w-0">
+      <div className="font-mono text-[9px] text-cream/40 tracking-widest mb-1.5">FORMA RECIENTE (ÚLTIMOS 10)</div>
+      <div className="divide-y divide-bg-card/40">
+        <FormaTeamRow short={homeShort} forma={home} />
+        <FormaTeamRow short={awayShort} forma={away} />
+      </div>
+    </div>
+  );
+}
+
+function signedPctSmall(v: number): string {
+  return `${v >= 0 ? "+" : ""}${v}%`;
+}
+
+// matchCond: local para el home, visitante para el away — estructural del
+// partido (el home siempre juega de local), no una condición calculada.
+// Resalta el valor de goles_favor/contra que corresponde a ESA condición
+// real, no siempre el de local.
+function GolesTeamRow({ short, forma, matchCond }: { short: string; forma: FormaGolesTeam | null; matchCond: "local" | "visitante" }) {
+  if (!forma) return <SinDatosDeForma short={short} />;
+  const favorDestacado = matchCond === "local" ? forma.golesFavorLocal : forma.golesFavorVisitante;
+  const contraDestacado = matchCond === "local" ? forma.golesContraLocal : forma.golesContraVisitante;
+  const condTag = matchCond === "local" ? "L" : "V";
+  return (
+    <div className="py-1">
+      <div className="font-mono text-[9px] text-cream/60 font-bold mb-1">{short}</div>
+      <div className="flex items-center justify-between font-mono text-[9px] text-cream/40 tabular-nums">
+        <span>Favor (temp. {forma.golesFavorPorPartido.toFixed(2)})</span>
+        <span className="text-orange font-bold">{favorDestacado.toFixed(2)} ({condTag})</span>
+      </div>
+      <div className="font-mono text-[8px] text-cream/25 mb-1">{signedPctSmall(forma.golesFavorVentajaLocalPct)} de local</div>
+      <div className="flex items-center justify-between font-mono text-[9px] text-cream/40 tabular-nums">
+        <span>Contra (temp. {forma.golesContraPorPartido.toFixed(2)})</span>
+        <span className="text-orange font-bold">{contraDestacado.toFixed(2)} ({condTag})</span>
+      </div>
+      <div className="font-mono text-[8px] text-cream/25">{signedPctSmall(forma.golesContraVentajaLocalPct)} de local</div>
+    </div>
+  );
+}
+
+function GolesPorPartidoBlock({ home, away, homeShort, awayShort }: {
+  home: FormaGolesTeam | null; away: FormaGolesTeam | null; homeShort: string; awayShort: string;
+}) {
+  return (
+    <div className="rounded border border-bg-card bg-bg-deep/40 p-2.5 flex-1 min-w-0">
+      <div className="font-mono text-[9px] text-cream/40 tracking-widest mb-1.5">GOLES POR PARTIDO</div>
+      <div className="divide-y divide-bg-card/40">
+        <GolesTeamRow short={homeShort} forma={home} matchCond="local" />
+        <GolesTeamRow short={awayShort} forma={away} matchCond="visitante" />
+      </div>
+    </div>
+  );
+}
+
 // ── Un equipo dentro de la tarjeta (escudo + nombre) ───────────────────────
 
 function TeamBlock({ team }: { team: ComboTeam }) {
@@ -351,6 +445,20 @@ function MatchCard({ match, matchPicks, onTogglePick }: {
               </div>
             )}
             {match.analysis.formTensionNotes.map((n, i) => <div key={i}>{n}</div>)}
+          </div>
+
+          {/* Forma reciente / Goles por partido — mismo grid de 2 columnas
+              simétricas que el primer bloque de mercados, tabla-forma-
+              goles-2026.json (30 equipos, se reemplaza entero fecha a fecha). */}
+          <div className="flex gap-2 mt-2.5">
+            <FormaRecienteBlock
+              home={match.analysis.formaGoles.home} away={match.analysis.formaGoles.away}
+              homeShort={homeShort} awayShort={awayShort}
+            />
+            <GolesPorPartidoBlock
+              home={match.analysis.formaGoles.home} away={match.analysis.formaGoles.away}
+              homeShort={homeShort} awayShort={awayShort}
+            />
           </div>
         </>
       ) : (

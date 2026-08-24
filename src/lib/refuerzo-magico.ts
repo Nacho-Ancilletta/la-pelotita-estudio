@@ -136,7 +136,10 @@ const VALUE_POOL_BY_BUCKET: Record<RMPosition, ValuePoolPlayer[]> = {
   VOL: VALUE_POOL.mediocampistas, DEL: VALUE_POOL.delanteros,
 };
 
-// id-Promiedos → nombre Transfermarkt (ranking-valor-plantel-2026.json).
+// id-Promiedos → nombre Transfermarkt (ranking-valor-plantel-2026.json,
+// pool-candidatos-refuerzo-magico-2026.json y tabla-forma-goles-2026.json
+// comparten esta misma convención de nombre — exportado para que
+// combinada-fecha.ts lo reuse en vez de duplicarlo).
 // Construido cruzando cada entrada YA VERIFICADA de PROMIEDOS_ID_TO_JSON_TEAM
 // (identidad real de club, no texto) contra el nombre Transfermarkt del
 // mismo club — hardcodeado y verificado a mano en vez de fuzzy-match en
@@ -144,7 +147,7 @@ const VALUE_POOL_BY_BUCKET: Record<RMPosition, ValuePoolPlayer[]> = {
 // daría acceso económico incorrecto a un equipo (ej. "Independiente" vs
 // "Independiente Rivadavia" — la MISMA colisión de nombres que ya rompió
 // un fuzzy-match antes en este archivo, ver nota de PROMIEDOS_ID_TO_JSON_TEAM).
-const PROMIEDOS_ID_TO_RANKING_TEAM: Record<string, string> = {
+export const PROMIEDOS_ID_TO_RANKING_TEAM: Record<string, string> = {
   "hcag": "Unión de Santa Fe",
   "hcch": "Independiente Rivadavia",
   "ihe": "Independiente",
