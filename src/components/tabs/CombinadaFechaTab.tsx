@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   getCombinadaFechaMatches, getSelectedPicks, saveSelectedPicks, evaluatePick, pppSelfCondition,
   getKnownResults, saveKnownResult,
   type ComboMatch, type ComboTeam, type MarketLean, type MarketSignal,
-  type PppComparison, type PppCondition, type SelectedPick, type PickResult, type KnownResult,
+  type PppComparison, type PppCondition, type TeamPppSelf, type SelectedPick, type PickResult, type KnownResult,
 } from "@/lib/combinada-fecha";
 
 // "DD-MM-YYYY HH:mm" (formato propio de Promiedos, ver lib/promiedos.ts) →
@@ -97,6 +98,142 @@ function pppConditionClasses(cond: PppCondition): string {
     : "text-orange bg-orange/15 border-orange/40";
 }
 
+// Pastilla clickeable: "Gana X de Local/Visitante" es una chance de resultado
+// real (el equipo rinde mejor exactamente en la condición que le toca jugar
+// ESE partido — local siempre para el home, visitante siempre para el away,
+// eso es estructural), no una descripción de rendimiento general. Cuando el
+// propio historial NO respalda esa chance (self-condition no coincide con la
+// condición real del partido), se muestra texto neutro honesto en vez de
+// "Gana X" — nunca se infla una chance que el dato no sostiene.
+function pppMatchLabel(cond: PppCondition, matchCond: "local" | "visitante", teamShort: string): { text: string; matches: boolean } {
+  if (cond === matchCond) {
+    return { text: `Gana ${teamShort} de ${matchCond === "local" ? "Local" : "Visitante"}`, matches: true };
+  }
+  if (cond === "parejo") return { text: `${teamShort} parejo de local y visitante`, matches: false };
+  const otherLabel = matchCond === "local" ? "visitante" : "local";
+  return { text: `${teamShort} rinde mejor de ${otherLabel}`, matches: false };
+}
+function pppMatchClasses(matches: boolean): string {
+  return matches
+    ? "text-orange bg-orange/15 border-orange/40 hover:border-orange"
+    : "text-cream/40 bg-bg-deep/60 border-bg-card hover:border-orange/40";
+}
+
+// ── Hover de detalle — portal a document.body con position:fixed, así el
+// overflow-hidden de MatchCard (y el overflow-auto del tab) nunca lo recorta.
+// Se posiciona con la posición REAL del trigger en el viewport (no un valor
+// fijo por columna): abre a la derecha si el trigger está en la mitad
+// izquierda de la pantalla, a la izquierda si está en la mitad derecha, y se
+// clampea dentro del viewport en ambos ejes — esto también resuelve mobile
+// (una sola columna) sin lógica aparte. ────────────────────────────────────
+function PppDetailTooltip({ anchorEl, detail, teamName, onRequestClose }: {
+  anchorEl: HTMLElement; detail: TeamPppSelf; teamName: string; onRequestClose: () => void;
+}) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [style, setStyle] = useState<React.CSSProperties>({ position: "fixed", top: -9999, left: -9999, visibility: "hidden" });
+
+  useLayoutEffect(() => {
+    const card = cardRef.current;
+    if (!card) return;
+    const anchorRect = anchorEl.getBoundingClientRect();
+    const cardRect = card.getBoundingClientRect();
+    const margin = 8;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+
+    const openRight = anchorRect.left + anchorRect.width / 2 < vw / 2;
+    let left = openRight ? anchorRect.left : anchorRect.right - cardRect.width;
+    left = Math.min(Math.max(left, margin), Math.max(margin, vw - cardRect.width - margin));
+
+    const openBelow = anchorRect.top < vh / 2;
+    let top = openBelow ? anchorRect.bottom + margin : anchorRect.top - cardRect.height - margin;
+    top = Math.min(Math.max(top, margin), Math.max(margin, vh - cardRect.height - margin));
+
+    setStyle({ position: "fixed", left, top, visibility: "visible", zIndex: 50 });
+  }, [anchorEl]);
+
+  useEffect(() => {
+    window.addEventListener("scroll", onRequestClose, true);
+    window.addEventListener("resize", onRequestClose);
+    return () => {
+      window.removeEventListener("scroll", onRequestClose, true);
+      window.removeEventListener("resize", onRequestClose);
+    };
+  }, [onRequestClose]);
+
+  const row = (label: string, value: string) => (
+    <div className="flex justify-between gap-3">
+      <span className="text-cream/40">{label}</span>
+      <span className="text-cream tabular-nums">{value}</span>
+    </div>
+  );
+  const fmt = (v: number | null) => (v == null ? "—" : v.toFixed(2));
+
+  return createPortal(
+    <div
+      ref={cardRef}
+      style={style}
+      className="w-64 rounded border border-orange/40 bg-bg-deep shadow-xl p-3 font-mono text-[10px] pointer-events-none space-y-1"
+    >
+      <div className="text-orange font-bold tracking-widest mb-1.5">{teamName.toUpperCase()}</div>
+      {row("Ventaja de local", `+${detail.ventajaLocalPct}%`)}
+      {row("Ventaja anotadora", `+${detail.marcadosPct}%`)}
+      {row("Ventaja defensiva", `+${detail.defensaPct}%`)}
+      {row("PPP local · visitante", `${detail.local.toFixed(2)} · ${detail.visitante.toFixed(2)}`)}
+      {row("Marca (L · V)", `${fmt(detail.marcadosLocalAvg)} · ${fmt(detail.marcadosVisitanteAvg)} goles/PJ`)}
+      {row("Recibe (L · V)", `${fmt(detail.recibidosLocalAvg)} · ${fmt(detail.recibidosVisitanteAvg)} goles/PJ`)}
+    </div>,
+    document.body
+  );
+}
+
+// Pastilla + trigger de hover/tap. El click de la pastilla sigue siendo
+// "elegir este mercado" (comportamiento existente) — el hover/tap del detalle
+// vive en el ícono "ⓘ" aparte (stopPropagation) para no pisar esa selección
+// al tocar en mobile. En desktop, pasar el mouse por toda la pastilla alcanza.
+function PppPill({ label, matches, selected, onSelect, detail, teamName }: {
+  label: string; matches: boolean; selected: boolean; onSelect: () => void;
+  detail: TeamPppSelf; teamName: string;
+}) {
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const [showTip, setShowTip] = useState(false);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  function openNow() {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    setShowTip(true);
+  }
+  function closeSoon() {
+    closeTimer.current = setTimeout(() => setShowTip(false), 100);
+  }
+
+  return (
+    <>
+      <button
+        ref={btnRef}
+        type="button"
+        onClick={onSelect}
+        onMouseEnter={openNow}
+        onMouseLeave={closeSoon}
+        className={["font-mono text-[10px] font-bold rounded px-1.5 py-0.5 border transition-colors inline-flex items-center gap-1",
+          selected ? "border-orange bg-orange/20 text-orange" : pppMatchClasses(matches)].join(" ")}
+      >
+        {label}
+        <span
+          onClick={(e) => { e.stopPropagation(); setShowTip((v) => !v); }}
+          className="inline-flex items-center justify-center w-3 h-3 rounded-full border border-current/50 text-[8px] leading-none shrink-0"
+          aria-label={`detalle de ${teamName}`}
+        >
+          i
+        </span>
+      </button>
+      {showTip && btnRef.current && (
+        <PppDetailTooltip anchorEl={btnRef.current} detail={detail} teamName={teamName} onRequestClose={() => setShowTip(false)} />
+      )}
+    </>
+  );
+}
+
 function PppComparisonBlock({ ppp, homeShort, awayShort, selectedHome, selectedAway, onSelectHome, onSelectAway }: {
   ppp: PppComparison; homeShort: string; awayShort: string;
   selectedHome: boolean; selectedAway: boolean;
@@ -104,24 +241,14 @@ function PppComparisonBlock({ ppp, homeShort, awayShort, selectedHome, selectedA
 }) {
   const homeCond = pppSelfCondition(ppp.home);
   const awayCond = pppSelfCondition(ppp.away);
+  const home = pppMatchLabel(homeCond, "local", homeShort);
+  const away = pppMatchLabel(awayCond, "visitante", awayShort);
   return (
     <div className="rounded border border-bg-card bg-bg-deep/40 p-2.5 flex-1 min-w-0">
       <div className="font-mono text-[9px] text-cream/40 tracking-widest mb-1.5">RENDIMIENTO LOCAL VS VISITANTE</div>
       <div className="flex flex-wrap gap-1 mb-1.5">
-        <button
-          type="button" onClick={onSelectHome}
-          className={["font-mono text-[10px] font-bold rounded px-1.5 py-0.5 border transition-colors",
-            selectedHome ? "border-orange bg-orange/20 text-orange" : pppConditionClasses(homeCond)].join(" ")}
-        >
-          {pppConditionLabel(homeCond, homeShort)}
-        </button>
-        <button
-          type="button" onClick={onSelectAway}
-          className={["font-mono text-[10px] font-bold rounded px-1.5 py-0.5 border transition-colors",
-            selectedAway ? "border-orange bg-orange/20 text-orange" : pppConditionClasses(awayCond)].join(" ")}
-        >
-          {pppConditionLabel(awayCond, awayShort)}
-        </button>
+        <PppPill label={home.text} matches={home.matches} selected={selectedHome} onSelect={onSelectHome} detail={ppp.home} teamName={homeShort} />
+        <PppPill label={away.text} matches={away.matches} selected={selectedAway} onSelect={onSelectAway} detail={ppp.away} teamName={awayShort} />
       </div>
       <div className="font-mono text-[9px] text-cream/30 tabular-nums leading-relaxed">
         PPP {homeShort} local {ppp.home.local} / visitante {ppp.home.visitante} · PPP {awayShort} local {ppp.away.local} / visitante {ppp.away.visitante}
@@ -183,10 +310,13 @@ function MatchCard({ match, matchPicks, onTogglePick }: {
     if (!ppp) return;
     const cond = pppSelfCondition(team === "home" ? ppp.home : ppp.away);
     const teamShort = team === "home" ? homeShort : awayShort;
+    // Mismo texto que la pastilla clickeable (pppMatchLabel) — el snapshot en
+    // "Mi combinada" tiene que coincidir con lo que el usuario vio al elegir.
+    const label = pppMatchLabel(cond, team === "home" ? "local" : "visitante", teamShort).text;
     onTogglePick({
       id: pickId(match.id, team === "home" ? "ppp_home" : "ppp_away"), matchId: match.id,
       homeTeam: homeShort, awayTeam: awayShort, startTime: match.startTime,
-      marketTitle: "RENDIMIENTO LOCAL VS VISITANTE", marketLabel: pppConditionLabel(cond, teamShort),
+      marketTitle: "RENDIMIENTO LOCAL VS VISITANTE", marketLabel: label,
       kind: { type: "ppp", team },
     });
   }

@@ -31,6 +31,8 @@ interface FormRow {
   pa0_pct: number; psm_pct: number; aem_pct: number; mas2_5_pct: number;
 }
 interface VentajaLocalRow { equipo: string; ventaja_local_pct: number; marcados_pct: number; defensa_pct: number; ppp_local: number; ppp_visitante: number; }
+interface GolesMarcadosLVRow { equipo: string; ventaja_anotadora_pct: number; marcados_local_promedio: number; marcados_visitante_promedio: number; }
+interface GolesRecibidosLVRow { equipo: string; ventaja_defensiva_pct: number; recibidos_local_promedio: number; recibidos_visitante_promedio: number; }
 
 interface CombinadaDataFile {
   mas_de_2_5_goles: PctRow[];
@@ -39,7 +41,11 @@ interface CombinadaDataFile {
   goles_encajados_actualizado: GoalsRow[];
   forma_reciente_ultimos_6_local: FormRow[];
   forma_reciente_ultimos_6_visitante: FormRow[];
-  ventaja_local: { general: VentajaLocalRow[] };
+  ventaja_local: {
+    general: VentajaLocalRow[];
+    goles_marcados_local_vs_visitante: GolesMarcadosLVRow[];
+    goles_recibidos_local_vs_visitante: GolesRecibidosLVRow[];
+  };
 }
 const DATA = COMBINADA_DATA_RAW as unknown as CombinadaDataFile;
 
@@ -53,6 +59,8 @@ const CONCEDED_BY_TEAM = byTeam(DATA.goles_encajados_actualizado);
 const FORM_LOCAL_BY_TEAM = byTeam(DATA.forma_reciente_ultimos_6_local);
 const FORM_VISITANTE_BY_TEAM = byTeam(DATA.forma_reciente_ultimos_6_visitante);
 const VENTAJA_LOCAL_BY_TEAM = byTeam(DATA.ventaja_local.general);
+const GOLES_MARCADOS_LV_BY_TEAM = byTeam(DATA.ventaja_local.goles_marcados_local_vs_visitante);
+const GOLES_RECIBIDOS_LV_BY_TEAM = byTeam(DATA.ventaja_local.goles_recibidos_local_vs_visitante);
 
 function clamp(v: number, min: number, max: number) { return Math.min(max, Math.max(min, v)); }
 function round1(v: number) { return Math.round(v * 10) / 10; }
@@ -117,7 +125,23 @@ function expectedTotalGoals(homeScored: GoalsRow, homeConceded: GoalsRow, awaySc
 // no contra el rival — comparar entre los dos equipos del partido no dice
 // nada de si CADA UNO rinde mejor de local o de visitante (bug real: el
 // texto original decía "X rinde más en su condición" sin aclarar cuál).
-export interface TeamPppSelf { local: number; visitante: number; }
+// local/visitante alimentan pppSelfCondition (comparación contra sí mismo,
+// ver abajo); el resto son solo datos de respaldo para el hover de detalle
+// (Fix 3) — nunca entran en el cálculo del lean, es contexto para el usuario.
+export interface TeamPppSelf {
+  local: number;
+  visitante: number;
+  ventajaLocalPct: number;
+  marcadosPct: number;
+  defensaPct: number;
+  // null = ese equipo no tiene fila en goles_marcados/recibidos_local_vs_visitante
+  // del JSON (misma cobertura despareja de FootyStats ya documentada en otras
+  // tablas de este archivo) — nunca inventado, el hover muestra "—".
+  marcadosLocalAvg: number | null;
+  marcadosVisitanteAvg: number | null;
+  recibidosLocalAvg: number | null;
+  recibidosVisitanteAvg: number | null;
+}
 export interface PppComparison { home: TeamPppSelf; away: TeamPppSelf; }
 export type PppCondition = "local" | "visitante" | "parejo";
 const PPP_CONDITION_THRESHOLD = 0.15;
@@ -125,6 +149,22 @@ export function pppSelfCondition(self: TeamPppSelf): PppCondition {
   const diff = self.local - self.visitante;
   if (Math.abs(diff) < PPP_CONDITION_THRESHOLD) return "parejo";
   return diff > 0 ? "local" : "visitante";
+}
+
+function buildTeamPppSelf(ventaja: VentajaLocalRow, jsonTeam: string): TeamPppSelf {
+  const marcados = GOLES_MARCADOS_LV_BY_TEAM.get(jsonTeam);
+  const recibidos = GOLES_RECIBIDOS_LV_BY_TEAM.get(jsonTeam);
+  return {
+    local: round1(ventaja.ppp_local),
+    visitante: round1(ventaja.ppp_visitante),
+    ventajaLocalPct: ventaja.ventaja_local_pct,
+    marcadosPct: ventaja.marcados_pct,
+    defensaPct: ventaja.defensa_pct,
+    marcadosLocalAvg: marcados?.marcados_local_promedio ?? null,
+    marcadosVisitanteAvg: marcados?.marcados_visitante_promedio ?? null,
+    recibidosLocalAvg: recibidos?.recibidos_local_promedio ?? null,
+    recibidosVisitanteAvg: recibidos?.recibidos_visitante_promedio ?? null,
+  };
 }
 
 export interface MatchAnalysis {
@@ -179,10 +219,7 @@ export function analyzeMatch(homeJsonTeam: string, awayJsonTeam: string, homeDis
   const homeFormLocal = FORM_LOCAL_BY_TEAM.get(homeJsonTeam);
   const awayFormVisitante = FORM_VISITANTE_BY_TEAM.get(awayJsonTeam);
   const pppComparison = homeVentaja && awayVentaja
-    ? {
-        home: { local: round1(homeVentaja.ppp_local), visitante: round1(homeVentaja.ppp_visitante) },
-        away: { local: round1(awayVentaja.ppp_local), visitante: round1(awayVentaja.ppp_visitante) },
-      }
+    ? { home: buildTeamPppSelf(homeVentaja, homeJsonTeam), away: buildTeamPppSelf(awayVentaja, awayJsonTeam) }
     : null;
 
   // Paso 3: el ajuste de goles esperados solo aplica al mercado de goles
