@@ -160,7 +160,6 @@ function PppDetailTooltip({ anchorEl, detail, teamName, matchCond, onRequestClos
       </div>
       {row("Ventaja de local", signedPct(detail.ventajaLocalPct))}
       {row("Goles de Local", signedPct(detail.marcadosPct))}
-      {row("Goles Recibidos", signedPct(detail.defensaPct))}
       {row("Puntos por partido (L-V)", `${detail.local.toFixed(2)} · ${detail.visitante.toFixed(2)}`)}
       {row("Marca (L · V)", `${fmt(detail.marcadosLocalAvg)} · ${fmt(detail.marcadosVisitanteAvg)} goles/PJ`)}
       {row("Recibe (L · V)", `${fmt(detail.recibidosLocalAvg)} · ${fmt(detail.recibidosVisitanteAvg)} goles/PJ`)}
