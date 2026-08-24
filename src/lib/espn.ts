@@ -303,6 +303,14 @@ export async function getHeadToHead(
     }
   }
 
+  // Post-procesamiento: el loop de arriba puede pasarse de 5 (una temporada
+  // con 2+ cruces empuja de una todos sus partidos aunque ya hubiera 4 —
+  // el `if (matches.length >= 5) break` solo frena entre temporadas, no
+  // corta DENTRO de una). `seenIds` ya dedupea por id de evento. Ordenar por
+  // fecha desc y recién ahí cortar a 5 asegura que sean los 5 más recientes
+  // (y no una selección arbitraria) y que cualquier resumen/split calculado
+  // sobre este mismo array (summarizeH2H) sume sobre los mismos 5 que se
+  // muestran — nunca sobre el array sin recortar.
   matches.sort((a, b) => b.timestamp - a.timestamp);
-  return matches;
+  return matches.slice(0, 5);
 }

@@ -514,7 +514,9 @@ export default function EspnFixtures() {
     setH2hCardLoading(p => ({ ...p, [evId]: true }));
     try {
       const fromSeason = new Date(ev.date).getFullYear();
-      const h2hKey = `pelotita_espn_h2h_${leagueId}_${home.team.id}_${away.team.id}_${fromSeason}`;
+      // v2: getHeadToHead ahora corta a 5 post-sort (antes podía devolver 6+,
+      // bump para no quedar 7 días mostrando un cruce viejo con el bug).
+      const h2hKey = `pelotita_espn_h2h_v2_${leagueId}_${home.team.id}_${away.team.id}_${fromSeason}`;
       let list = cacheGet<H2HMatch[]>(h2hKey);
       if (!list) {
         list = await getHeadToHead(leagueId, Number(home.team.id), home.team.name, Number(away.team.id), away.team.name, fromSeason);

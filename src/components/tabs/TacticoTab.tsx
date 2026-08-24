@@ -292,7 +292,9 @@ export default function TacticoTab() {
       if (!rowA || !rowB) throw new Error("Equipo no encontrado en esta temporada");
       setStatsA(rowA); setStatsB(rowB);
 
-      const h2hKey = `pelotita_espn_h2h_${leagueSlug}_${teamAId}_${teamBId}_${seasonYear}`;
+      // v2: getHeadToHead ahora corta a 5 post-sort (antes podía devolver 6+,
+      // bump para no quedar 7 días mostrando un cruce viejo con el bug).
+      const h2hKey = `pelotita_espn_h2h_v2_${leagueSlug}_${teamAId}_${teamBId}_${seasonYear}`;
       const H2H_TTL_MS = 7 * 24 * 60 * 60 * 1000; // cruces históricos casi no cambian entre grabaciones
       let list = cacheGet<H2HMatch[]>(h2hKey);
       if (!list) {
