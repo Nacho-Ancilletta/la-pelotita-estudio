@@ -3,10 +3,10 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import {
-  getCombinadaFechaMatches, getSelectedPicks, saveSelectedPicks, evaluatePick, pppSelfCondition,
+  getCombinadaFechaMatches, getSelectedPicks, saveSelectedPicks, evaluatePick,
   getKnownResults, saveKnownResult,
   type ComboMatch, type ComboTeam, type MarketLean, type MarketSignal,
-  type PppComparison, type PppCondition, type TeamPppSelf, type SelectedPick, type PickResult, type KnownResult,
+  type PppComparison, type TeamPppSelf, type SelectedPick, type PickResult, type KnownResult,
 } from "@/lib/combinada-fecha";
 
 // "DD-MM-YYYY HH:mm" (formato propio de Promiedos, ver lib/promiedos.ts) →
@@ -48,10 +48,10 @@ function marketLabel(market: "over25" | "aem", lean: MarketLean): string {
 
 // Mercado clickeable — al elegirlo queda "en mi combinada" (ver sección al
 // pie del tab). Sin signal (cobertura despareja de la fuente) no hay nada
-// que elegir, queda como texto plano.
-function MarketBlock({ title, market, signal, selected, onSelect }: {
-  title: string; market: "over25" | "aem"; signal: MarketSignal | null;
-  selected: boolean; onSelect: () => void;
+// que elegir, queda como texto plano. Único mercado que sigue usando este
+// bloque es Más/Menos 2.5 — AEM pasó a texto informativo (ver MatchCard).
+function MarketBlock({ title, signal, selected, onSelect }: {
+  title: string; signal: MarketSignal | null; selected: boolean; onSelect: () => void;
 }) {
   if (!signal) {
     return (
@@ -72,7 +72,7 @@ function MarketBlock({ title, market, signal, selected, onSelect }: {
     >
       <div className="font-mono text-[9px] text-cream/40 tracking-widest mb-1.5">{title}</div>
       <div className={["inline-block font-mono text-[10px] font-bold rounded px-1.5 py-0.5 border", leanBadgeClasses(signal.lean)].join(" ")}>
-        {marketLabel(market, signal.lean)}
+        {marketLabel("over25", signal.lean)}
       </div>
       <div className="mt-1.5 font-mono text-[9px] text-cream/30 tabular-nums leading-relaxed">
         temporada {signal.seasonPct}%
@@ -84,40 +84,17 @@ function MarketBlock({ title, market, signal, selected, onSelect }: {
   );
 }
 
-// ── Fallback de AEM (y contexto en todos los partidos): cada equipo contra
-// SÍ MISMO — ppp_local vs ppp_visitante propio, nunca contra el rival (así
-// el texto siempre aclara de qué condición se trata, nunca "rinde más" a
-// secas). Cubre los 30 equipos sin excepción (ventaja_local en el JSON). ──
-function pppConditionLabel(cond: PppCondition, teamShort: string): string {
-  if (cond === "parejo") return `${teamShort} rinde parecido de local y visitante`;
-  return `${teamShort} rinde mejor de ${cond}`;
+// Pastilla clickeable: "Gana X de Local/Visitante" es siempre la chance de
+// resultado en la condición que le toca jugar ESE partido — local siempre
+// para el home, visitante siempre para el away, es estructural. El dato de
+// en qué condición rinde MEJOR cada equipo (pueda coincidir o no con la que
+// juega hoy) es información real y válida, pero va solo en el texto chico
+// de abajo de la tarjeta (ventajaLocalNote) y en el hover de detalle —
+// nunca reemplaza el texto del botón.
+function pppMatchLabel(matchCond: "local" | "visitante", teamShort: string): string {
+  return `Gana ${teamShort} de ${matchCond === "local" ? "Local" : "Visitante"}`;
 }
-function pppConditionClasses(cond: PppCondition): string {
-  return cond === "parejo"
-    ? "text-cream/40 bg-bg-deep/60 border-bg-card"
-    : "text-orange bg-orange/15 border-orange/40";
-}
-
-// Pastilla clickeable: "Gana X de Local/Visitante" es una chance de resultado
-// real (el equipo rinde mejor exactamente en la condición que le toca jugar
-// ESE partido — local siempre para el home, visitante siempre para el away,
-// eso es estructural), no una descripción de rendimiento general. Cuando el
-// propio historial NO respalda esa chance (self-condition no coincide con la
-// condición real del partido), se muestra texto neutro honesto en vez de
-// "Gana X" — nunca se infla una chance que el dato no sostiene.
-function pppMatchLabel(cond: PppCondition, matchCond: "local" | "visitante", teamShort: string): { text: string; matches: boolean } {
-  if (cond === matchCond) {
-    return { text: `Gana ${teamShort} de ${matchCond === "local" ? "Local" : "Visitante"}`, matches: true };
-  }
-  if (cond === "parejo") return { text: `${teamShort} parejo de local y visitante`, matches: false };
-  const otherLabel = matchCond === "local" ? "visitante" : "local";
-  return { text: `${teamShort} rinde mejor de ${otherLabel}`, matches: false };
-}
-function pppMatchClasses(matches: boolean): string {
-  return matches
-    ? "text-orange bg-orange/15 border-orange/40 hover:border-orange"
-    : "text-cream/40 bg-bg-deep/60 border-bg-card hover:border-orange/40";
-}
+const PPP_PILL_CLASSES = "text-orange bg-orange/15 border-orange/40 hover:border-orange";
 
 // ── Hover de detalle — portal a document.body con position:fixed, así el
 // overflow-hidden de MatchCard (y el overflow-auto del tab) nunca lo recorta.
@@ -126,8 +103,8 @@ function pppMatchClasses(matches: boolean): string {
 // izquierda de la pantalla, a la izquierda si está en la mitad derecha, y se
 // clampea dentro del viewport en ambos ejes — esto también resuelve mobile
 // (una sola columna) sin lógica aparte. ────────────────────────────────────
-function PppDetailTooltip({ anchorEl, detail, teamName, onRequestClose }: {
-  anchorEl: HTMLElement; detail: TeamPppSelf; teamName: string; onRequestClose: () => void;
+function PppDetailTooltip({ anchorEl, detail, teamName, matchCond, onRequestClose }: {
+  anchorEl: HTMLElement; detail: TeamPppSelf; teamName: string; matchCond: "local" | "visitante"; onRequestClose: () => void;
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [style, setStyle] = useState<React.CSSProperties>({ position: "fixed", top: -9999, left: -9999, visibility: "hidden" });
@@ -168,6 +145,9 @@ function PppDetailTooltip({ anchorEl, detail, teamName, onRequestClose }: {
     </div>
   );
   const fmt = (v: number | null) => (v == null ? "—" : v.toFixed(2));
+  // v puede ser negativo (ej. ventaja_local_pct/marcados_pct/defensa_pct de
+  // un equipo con localía floja) — anteponer "+" a mano daba "+-30%".
+  const signedPct = (v: number) => `${v >= 0 ? "+" : ""}${v}%`;
 
   return createPortal(
     <div
@@ -175,11 +155,13 @@ function PppDetailTooltip({ anchorEl, detail, teamName, onRequestClose }: {
       style={style}
       className="w-64 rounded border border-orange/40 bg-bg-deep shadow-xl p-3 font-mono text-[10px] pointer-events-none space-y-1"
     >
-      <div className="text-orange font-bold tracking-widest mb-1.5">{teamName.toUpperCase()}</div>
-      {row("Ventaja de local", `+${detail.ventajaLocalPct}%`)}
-      {row("Ventaja anotadora", `+${detail.marcadosPct}%`)}
-      {row("Ventaja defensiva", `+${detail.defensaPct}%`)}
-      {row("PPP local · visitante", `${detail.local.toFixed(2)} · ${detail.visitante.toFixed(2)}`)}
+      <div className="text-orange font-bold tracking-widest mb-1.5">
+        {teamName.toUpperCase()} DE {matchCond === "local" ? "LOCAL" : "VISITANTE"}
+      </div>
+      {row("Ventaja de local", signedPct(detail.ventajaLocalPct))}
+      {row("Goles de Local", signedPct(detail.marcadosPct))}
+      {row("Goles Recibidos", signedPct(detail.defensaPct))}
+      {row("Puntos por partido (L-V)", `${detail.local.toFixed(2)} · ${detail.visitante.toFixed(2)}`)}
       {row("Marca (L · V)", `${fmt(detail.marcadosLocalAvg)} · ${fmt(detail.marcadosVisitanteAvg)} goles/PJ`)}
       {row("Recibe (L · V)", `${fmt(detail.recibidosLocalAvg)} · ${fmt(detail.recibidosVisitanteAvg)} goles/PJ`)}
     </div>,
@@ -191,9 +173,9 @@ function PppDetailTooltip({ anchorEl, detail, teamName, onRequestClose }: {
 // "elegir este mercado" (comportamiento existente) — el hover/tap del detalle
 // vive en el ícono "ⓘ" aparte (stopPropagation) para no pisar esa selección
 // al tocar en mobile. En desktop, pasar el mouse por toda la pastilla alcanza.
-function PppPill({ label, matches, selected, onSelect, detail, teamName }: {
-  label: string; matches: boolean; selected: boolean; onSelect: () => void;
-  detail: TeamPppSelf; teamName: string;
+function PppPill({ label, selected, onSelect, detail, teamName, matchCond }: {
+  label: string; selected: boolean; onSelect: () => void;
+  detail: TeamPppSelf; teamName: string; matchCond: "local" | "visitante";
 }) {
   const btnRef = useRef<HTMLButtonElement>(null);
   const [showTip, setShowTip] = useState(false);
@@ -216,7 +198,7 @@ function PppPill({ label, matches, selected, onSelect, detail, teamName }: {
         onMouseEnter={openNow}
         onMouseLeave={closeSoon}
         className={["font-mono text-[10px] font-bold rounded px-1.5 py-0.5 border transition-colors inline-flex items-center gap-1",
-          selected ? "border-orange bg-orange/20 text-orange" : pppMatchClasses(matches)].join(" ")}
+          selected ? "border-orange bg-orange/20 text-orange" : PPP_PILL_CLASSES].join(" ")}
       >
         {label}
         <span
@@ -228,7 +210,7 @@ function PppPill({ label, matches, selected, onSelect, detail, teamName }: {
         </span>
       </button>
       {showTip && btnRef.current && (
-        <PppDetailTooltip anchorEl={btnRef.current} detail={detail} teamName={teamName} onRequestClose={() => setShowTip(false)} />
+        <PppDetailTooltip anchorEl={btnRef.current} detail={detail} teamName={teamName} matchCond={matchCond} onRequestClose={() => setShowTip(false)} />
       )}
     </>
   );
@@ -239,16 +221,12 @@ function PppComparisonBlock({ ppp, homeShort, awayShort, selectedHome, selectedA
   selectedHome: boolean; selectedAway: boolean;
   onSelectHome: () => void; onSelectAway: () => void;
 }) {
-  const homeCond = pppSelfCondition(ppp.home);
-  const awayCond = pppSelfCondition(ppp.away);
-  const home = pppMatchLabel(homeCond, "local", homeShort);
-  const away = pppMatchLabel(awayCond, "visitante", awayShort);
   return (
     <div className="rounded border border-bg-card bg-bg-deep/40 p-2.5 flex-1 min-w-0">
       <div className="font-mono text-[9px] text-cream/40 tracking-widest mb-1.5">RENDIMIENTO LOCAL VS VISITANTE</div>
       <div className="flex flex-wrap gap-1 mb-1.5">
-        <PppPill label={home.text} matches={home.matches} selected={selectedHome} onSelect={onSelectHome} detail={ppp.home} teamName={homeShort} />
-        <PppPill label={away.text} matches={away.matches} selected={selectedAway} onSelect={onSelectAway} detail={ppp.away} teamName={awayShort} />
+        <PppPill label={pppMatchLabel("local", homeShort)} matchCond="local" selected={selectedHome} onSelect={onSelectHome} detail={ppp.home} teamName={homeShort} />
+        <PppPill label={pppMatchLabel("visitante", awayShort)} matchCond="visitante" selected={selectedAway} onSelect={onSelectAway} detail={ppp.away} teamName={awayShort} />
       </div>
       <div className="font-mono text-[9px] text-cream/30 tabular-nums leading-relaxed">
         PPP {homeShort} local {ppp.home.local} / visitante {ppp.home.visitante} · PPP {awayShort} local {ppp.away.local} / visitante {ppp.away.visitante}
@@ -295,24 +273,13 @@ function MatchCard({ match, matchPicks, onTogglePick }: {
       kind: { type: "over25", predictedSide: s.adjustedPct >= 50 ? "over" : "under" },
     });
   }
-  function toggleAem() {
-    const s = match.analysis?.aem;
-    if (!s) return;
-    onTogglePick({
-      id: pickId(match.id, "aem"), matchId: match.id,
-      homeTeam: homeShort, awayTeam: awayShort, startTime: match.startTime,
-      marketTitle: "AMBOS MARCAN (AEM)", marketLabel: marketLabel("aem", s.lean),
-      kind: { type: "aem", predictedSide: s.adjustedPct >= 50 ? "si" : "no" },
-    });
-  }
   function togglePpp(team: "home" | "away") {
     const ppp = match.analysis?.pppComparison;
     if (!ppp) return;
-    const cond = pppSelfCondition(team === "home" ? ppp.home : ppp.away);
     const teamShort = team === "home" ? homeShort : awayShort;
     // Mismo texto que la pastilla clickeable (pppMatchLabel) — el snapshot en
     // "Mi combinada" tiene que coincidir con lo que el usuario vio al elegir.
-    const label = pppMatchLabel(cond, team === "home" ? "local" : "visitante", teamShort).text;
+    const label = pppMatchLabel(team === "home" ? "local" : "visitante", teamShort);
     onTogglePick({
       id: pickId(match.id, team === "home" ? "ppp_home" : "ppp_away"), matchId: match.id,
       homeTeam: homeShort, awayTeam: awayShort, startTime: match.startTime,
@@ -354,39 +321,36 @@ function MatchCard({ match, matchPicks, onTogglePick }: {
         <>
           <div className="flex gap-2">
             <MarketBlock
-              title="MÁS/MENOS 2.5 GOLES" market="over25" signal={match.analysis.over25}
+              title="MÁS/MENOS 2.5 GOLES" signal={match.analysis.over25}
               selected={pickedIds.has(pickId(match.id, "over25"))} onSelect={toggleOver25}
             />
-            {match.analysis.aem ? (
-              <MarketBlock
-                title="AMBOS MARCAN (AEM)" market="aem" signal={match.analysis.aem}
-                selected={pickedIds.has(pickId(match.id, "aem"))} onSelect={toggleAem}
-              />
-            ) : match.analysis.pppComparison ? (
-              // AEM no cubre este partido (18/30 equipos) — se reemplaza por
-              // PPP local vs visitante, que sí cubre los 30 (ventaja_local).
+            {/* RENDIMIENTO LOCAL VS VISITANTE va siempre acá — ventaja_local
+                cubre los 30 equipos, nunca falta (a diferencia de AEM, que
+                cubre 18/30 y ahora es solo una línea de texto más abajo). */}
+            {match.analysis.pppComparison && (
               <PppComparisonBlock
                 ppp={match.analysis.pppComparison} homeShort={homeShort} awayShort={awayShort}
                 selectedHome={pickedIds.has(pickId(match.id, "ppp_home"))}
                 selectedAway={pickedIds.has(pickId(match.id, "ppp_away"))}
                 onSelectHome={() => togglePpp("home")} onSelectAway={() => togglePpp("away")}
               />
-            ) : null}
+            )}
           </div>
           <div className="mt-2.5 font-mono text-[9px] text-cream/30 leading-relaxed space-y-0.5">
             {match.analysis.expectedTotalGoals != null && (
               <div>goles esperados del partido: <span className="text-cream/50 tabular-nums">{match.analysis.expectedTotalGoals}</span></div>
             )}
-            {/* Cuando AEM sí está disponible, el PPP no ocupa un bloque propio
-                — igual se muestra como contexto en todos los partidos, acá compacto. */}
-            {match.analysis.aem && match.analysis.pppComparison && (
+            {match.analysis.ventajaLocalNote && <div>{match.analysis.ventajaLocalNote}</div>}
+            {/* AEM ya no ocupa un bloque propio (cobertura 18/30) — cuando hay
+                dato para los 2 equipos del partido, se suma como línea más
+                acá; si no hay, se omite sin mensaje de "sin dato". */}
+            {match.analysis.aem && (
               <div>
-                {pppConditionLabel(pppSelfCondition(match.analysis.pppComparison.home), homeShort)}
-                {" · "}
-                {pppConditionLabel(pppSelfCondition(match.analysis.pppComparison.away), awayShort)}
+                Ambos marcan: {marketLabel("aem", match.analysis.aem.lean)}
+                {" — temporada "}{match.analysis.aem.seasonPct}%
+                {match.analysis.aem.recentFormPct != null && <> · últimos 6 {match.analysis.aem.recentFormPct}%</>}
               </div>
             )}
-            {match.analysis.ventajaLocalNote && <div>{match.analysis.ventajaLocalNote}</div>}
             {match.analysis.formTensionNotes.map((n, i) => <div key={i}>{n}</div>)}
           </div>
         </>
