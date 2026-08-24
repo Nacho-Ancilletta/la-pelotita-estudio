@@ -1,0 +1,44 @@
+{
+  "meta": {
+    "fuente": "Transfermarkt.com.ar, valor total de plantel, torneo Clausura 2025/2026 Argentina",
+    "fecha_captura": "2026-08-24",
+    "moneda": "EUR millones",
+    "escalones": {
+      "A": "posiciones 1-10 (acceso a cualquier candidato del pool)",
+      "B": "posiciones 11-20 (acceso a candidatos hasta techo medio)",
+      "C": "posiciones 21-30 (acceso solo a candidatos baratos)"
+    }
+  },
+  "ranking": [
+    { "posicion": 1, "equipo": "River Plate", "valor_plantel_eur_millones": 80.00, "escalon": "A" },
+    { "posicion": 2, "equipo": "Boca Juniors", "valor_plantel_eur_millones": 56.50, "escalon": "A" },
+    { "posicion": 3, "equipo": "Rosario Central", "valor_plantel_eur_millones": 39.00, "escalon": "A" },
+    { "posicion": 4, "equipo": "Racing Club", "valor_plantel_eur_millones": 32.95, "escalon": "A" },
+    { "posicion": 5, "equipo": "Talleres", "valor_plantel_eur_millones": 27.73, "escalon": "A" },
+    { "posicion": 6, "equipo": "Argentinos Juniors", "valor_plantel_eur_millones": 27.28, "escalon": "A" },
+    { "posicion": 7, "equipo": "Estudiantes de La Plata", "valor_plantel_eur_millones": 27.00, "escalon": "A" },
+    { "posicion": 8, "equipo": "Independiente Rivadavia", "valor_plantel_eur_millones": 26.80, "escalon": "A" },
+    { "posicion": 9, "equipo": "Independiente", "valor_plantel_eur_millones": 26.65, "escalon": "A" },
+    { "posicion": 10, "equipo": "San Lorenzo de Almagro", "valor_plantel_eur_millones": 24.73, "escalon": "A" },
+    { "posicion": 11, "equipo": "Vélez Sarsfield", "valor_plantel_eur_millones": 23.53, "escalon": "B" },
+    { "posicion": 12, "equipo": "Lanús", "valor_plantel_eur_millones": 19.73, "escalon": "B" },
+    { "posicion": 13, "equipo": "Tigre", "valor_plantel_eur_millones": 18.85, "escalon": "B" },
+    { "posicion": 14, "equipo": "Belgrano", "valor_plantel_eur_millones": 18.00, "escalon": "B" },
+    { "posicion": 15, "equipo": "Gimnasia y Esgrima La Plata", "valor_plantel_eur_millones": 16.83, "escalon": "B" },
+    { "posicion": 16, "equipo": "Defensa y Justicia", "valor_plantel_eur_millones": 15.70, "escalon": "B" },
+    { "posicion": 17, "equipo": "Platense", "valor_plantel_eur_millones": 15.25, "escalon": "B" },
+    { "posicion": 18, "equipo": "Unión de Santa Fe", "valor_plantel_eur_millones": 14.83, "escalon": "B" },
+    { "posicion": 19, "equipo": "Newell's Old Boys", "valor_plantel_eur_millones": 14.70, "escalon": "B" },
+    { "posicion": 20, "equipo": "Huracán", "valor_plantel_eur_millones": 13.33, "escalon": "B" },
+    { "posicion": 21, "equipo": "Instituto ACC", "valor_plantel_eur_millones": 11.65, "escalon": "C" },
+    { "posicion": 22, "equipo": "Barracas Central", "valor_plantel_eur_millones": 11.45, "escalon": "C" },
+    { "posicion": 23, "equipo": "Banfield", "valor_plantel_eur_millones": 11.08, "escalon": "C" },
+    { "posicion": 24, "equipo": "Sarmiento (Junín)", "valor_plantel_eur_millones": 7.08, "escalon": "C" },
+    { "posicion": 25, "equipo": "Aldosivi", "valor_plantel_eur_millones": 6.15, "escalon": "C" },
+    { "posicion": 26, "equipo": "Atlético Tucumán", "valor_plantel_eur_millones": 6.10, "escalon": "C" },
+    { "posicion": 27, "equipo": "Deportivo Riestra", "valor_plantel_eur_millones": 5.98, "escalon": "C" },
+    { "posicion": 28, "equipo": "Gimnasia y Esgrima (Mendoza)", "valor_plantel_eur_millones": 5.63, "escalon": "C" },
+    { "posicion": 29, "equipo": "Central Córdoba (SdE)", "valor_plantel_eur_millones": 4.78, "escalon": "C" },
+    { "posicion": 30, "equipo": "Estudiantes (Río Cuarto)", "valor_plantel_eur_millones": 3.30, "escalon": "C" }
+  ]
+}

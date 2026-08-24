@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getTeams, recommend, type RMTeam, type RMResult, type RMPosition } from "@/lib/refuerzo-magico";
+import { getTeams, recommend, type RMTeam, type RMResult, type RMPosition, type PresupuestoResult } from "@/lib/refuerzo-magico";
+
+const POSITION_LABEL: Record<RMPosition, string> = { ARQ: "Arquero", DEF: "Defensor", VOL: "Mediocampista", DEL: "Delantero" };
+const ESCALON_LABEL: Record<PresupuestoResult["escalon"], string> = { A: "alto", B: "medio", C: "bajo" };
 
 // Escudo del club — ÚNICO elemento visual del círculo (pedido explícito:
 // se sacaron las fotos de cara de jugador, fuente poco confiable — ver
@@ -95,7 +98,9 @@ function statRows(c: RMResult): { label: string; value: string }[] {
   return [...byPosition[c.position], ...row("Puntos Gran DT", c.grandTPoints)];
 }
 
-function CandidateCard({ candidate, isOpen, onToggle }: { candidate: RMResult; isOpen: boolean; onToggle: () => void }) {
+function CandidateCard({ candidate, isOpen, onToggle, escalonLabel }: {
+  candidate: RMResult; isOpen: boolean; onToggle: () => void; escalonLabel?: string;
+}) {
   const scoreColor = candidate.fit.score >= 70 ? "text-green-400" : candidate.fit.score >= 45 ? "text-orange" : "text-cream/40";
   return (
     <div className="rounded-lg border border-bg-card bg-bg-card/10 overflow-hidden">
@@ -103,7 +108,21 @@ function CandidateCard({ candidate, isOpen, onToggle }: { candidate: RMResult; i
         <ClubShield logoSrc={candidate.teamLogo} alt={candidate.teamName} />
         <div className="font-mono text-cream text-xs font-bold leading-tight">{candidate.name}</div>
         <div className="font-mono text-cream/40 text-[10px]">{candidate.teamName}</div>
+        {/* Modo presupuesto: club actual + valor de mercado (Transfermarkt,
+            cruce por nombre) — solo si el cruce encontró dato real, nunca
+            "—" inventado (mismo criterio de cero-campos-vacíos del resto
+            de la ficha). */}
+        {candidate.clubActual != null && candidate.valorMercadoEUR != null && (
+          <div className="font-mono text-cream/30 text-[9px] -mt-1">
+            {candidate.clubActual} · €{candidate.valorMercadoEUR.toFixed(2).replace(".", ",")}M
+          </div>
+        )}
         <div className={["font-mono text-lg font-bold tabular-nums", scoreColor].join(" ")}>{candidate.fit.score}<span className="text-[10px] text-cream/30">/100 fit</span></div>
+        {escalonLabel && (
+          <span className="font-mono text-[9px] text-orange/70 bg-orange/10 border border-orange/30 rounded px-1.5 py-0.5 tracking-wide">
+            Presupuesto: escalón {escalonLabel}
+          </span>
+        )}
         <span className={["font-mono text-orange text-sm transition-transform", isOpen ? "rotate-180" : ""].join(" ")}>⌄</span>
       </button>
 
@@ -133,12 +152,29 @@ function CandidateCard({ candidate, isOpen, onToggle }: { candidate: RMResult; i
   );
 }
 
+// Cupo sin candidatos accesibles dentro del techo del equipo — modo
+// presupuesto únicamente (ver missingPositions en recommend()). Nunca se
+// deja el cupo vacío ni se muestra un candidato fuera de rango.
+function MissingCandidateCard({ position }: { position: RMPosition }) {
+  return (
+    <div className="rounded-lg border border-bg-card/60 bg-bg-card/5 p-4 flex flex-col items-center justify-center gap-2 text-center min-h-[180px]">
+      <span className="text-2xl opacity-20">🚫</span>
+      <div className="font-mono text-cream/30 text-[10px] tracking-widest">{POSITION_LABEL[position].toUpperCase()}</div>
+      <div className="font-mono text-cream/25 text-[10px] leading-relaxed">
+        No hay candidatos accesibles dentro del presupuesto estimado para esta posición.
+      </div>
+    </div>
+  );
+}
+
 export default function RefuerzoMagicoTab() {
   const [teams, setTeams] = useState<RMTeam[]>([]);
   const [teamsLoading, setTeamsLoading] = useState(false);
   const [teamId, setTeamId] = useState<string>("");
+  const [presupuestoActivo, setPresupuestoActivo] = useState(false);
 
   const [picks, setPicks] = useState<RMResult[] | null>(null);
+  const [presupuestoResult, setPresupuestoResult] = useState<PresupuestoResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [openCards, setOpenCards] = useState<Set<string>>(new Set());
@@ -165,11 +201,13 @@ export default function RefuerzoMagicoTab() {
     setError(null);
     setOpenCards(new Set());
     try {
-      const r = await recommend(team);
+      const r = await recommend(team, { presupuesto: presupuestoActivo });
       setPicks(r.picks);
+      setPresupuestoResult(r.presupuesto ?? null);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Error al buscar refuerzo mágico");
       setPicks(null);
+      setPresupuestoResult(null);
     } finally {
       setLoading(false);
     }
@@ -194,6 +232,15 @@ export default function RefuerzoMagicoTab() {
               </select>
             </label>
 
+            <label className="flex items-center gap-2 font-mono text-[10px] text-cream/60 pb-1.5 cursor-pointer select-none">
+              <input
+                type="checkbox" checked={presupuestoActivo}
+                onChange={(e) => setPresupuestoActivo(e.target.checked)}
+                className="accent-orange"
+              />
+              Ajustar por presupuesto real (valor de mercado)
+            </label>
+
             <button
               onClick={buscar}
               disabled={!teamId || loading}
@@ -213,12 +260,18 @@ export default function RefuerzoMagicoTab() {
         )}
 
         {picks && !loading && (
-          picks.length === 0 ? (
+          picks.length === 0 && (presupuestoResult?.missingPositions.length ?? 0) === 0 ? (
             <div className="text-cream/20 font-mono text-xs py-6 text-center">Sin candidatos disponibles.</div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {picks.map((c) => (
-                <CandidateCard key={c.id} candidate={c} isOpen={openCards.has(c.id)} onToggle={() => toggleCard(c.id)} />
+                <CandidateCard
+                  key={c.id} candidate={c} isOpen={openCards.has(c.id)} onToggle={() => toggleCard(c.id)}
+                  escalonLabel={presupuestoResult ? ESCALON_LABEL[presupuestoResult.escalon] : undefined}
+                />
+              ))}
+              {presupuestoResult?.missingPositions.map((p, i) => (
+                <MissingCandidateCard key={`missing-${p}-${i}`} position={p} />
               ))}
             </div>
           )

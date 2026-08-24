@@ -58,6 +58,8 @@ import { getFichajesData, getPlayerProfile, photoUrlFromSlug, type FichajesPlaye
 import { getScores365Data, type Scores365PlayerStats } from "@/lib/365scores";
 import { getStandings, espnTeamLogoUrl } from "@/lib/espn";
 import RM_DATA_RAW from "@/data/refuerzo-magico-data-2026.json";
+import RANKING_VALOR_RAW from "@/data/ranking-valor-plantel-2026.json";
+import VALUE_POOL_RAW from "@/data/pool-candidatos-refuerzo-magico-2026.json";
 
 interface RMDiagnostico {
   ofensiva_score: number;
@@ -107,6 +109,108 @@ export const PROMIEDOS_ID_TO_JSON_TEAM: Record<string, string> = {
   "hccd": "CA Aldosivi",
   "bbjea": "CD Riestra",
 };
+
+// ── Refuerzo Mágico con valor de mercado (ago 2026) ─────────────────────
+// Variante que suma el poder económico REAL del equipo (Transfermarkt,
+// ranking-valor-plantel-2026.json) y el valor de mercado individual de
+// cada candidato (pool-candidatos-refuerzo-magico-2026.json, ~350
+// jugadores con club oficial confirmado) al scoring existente — para que
+// no sugiera un jugador que el equipo no podría pagar ni loco. Es opt-in
+// (`recommend(team, { presupuesto: true })`): sin ese flag, el
+// comportamiento clásico queda idéntico a como estaba.
+interface RankingValorRow { posicion: number; equipo: string; valor_plantel_eur_millones: number; escalon: "A" | "B" | "C"; }
+const RANKING_VALOR: RankingValorRow[] = (RANKING_VALOR_RAW as { ranking: RankingValorRow[] }).ranking;
+const RANKING_VALOR_BY_EQUIPO = new Map(RANKING_VALOR.map((r) => [normalize(r.equipo), r]));
+
+interface ValuePoolPlayer {
+  nombre: string; posicion: string; edad: number;
+  valor_mercado_eur_millones: number; club: string; confianza_club: string; nota?: string;
+}
+interface ValuePoolFile {
+  porteros: ValuePoolPlayer[]; defensas: ValuePoolPlayer[];
+  mediocampistas: ValuePoolPlayer[]; delanteros: ValuePoolPlayer[];
+}
+const VALUE_POOL = VALUE_POOL_RAW as unknown as ValuePoolFile;
+const VALUE_POOL_BY_BUCKET: Record<RMPosition, ValuePoolPlayer[]> = {
+  ARQ: VALUE_POOL.porteros, DEF: VALUE_POOL.defensas,
+  VOL: VALUE_POOL.mediocampistas, DEL: VALUE_POOL.delanteros,
+};
+
+// id-Promiedos → nombre Transfermarkt (ranking-valor-plantel-2026.json).
+// Construido cruzando cada entrada YA VERIFICADA de PROMIEDOS_ID_TO_JSON_TEAM
+// (identidad real de club, no texto) contra el nombre Transfermarkt del
+// mismo club — hardcodeado y verificado a mano en vez de fuzzy-match en
+// runtime, mismo criterio que esa tabla: un club mal identificado acá le
+// daría acceso económico incorrecto a un equipo (ej. "Independiente" vs
+// "Independiente Rivadavia" — la MISMA colisión de nombres que ya rompió
+// un fuzzy-match antes en este archivo, ver nota de PROMIEDOS_ID_TO_JSON_TEAM).
+const PROMIEDOS_ID_TO_RANKING_TEAM: Record<string, string> = {
+  "hcag": "Unión de Santa Fe",
+  "hcch": "Independiente Rivadavia",
+  "ihe": "Independiente",
+  "ihh": "Newell's Old Boys",
+  "hcbh": "Defensa y Justicia",
+  "hbbh": "Sarmiento (Junín)",
+  "iia": "Gimnasia y Esgrima La Plata",
+  "igg": "Boca Juniors",
+  "ihf": "Rosario Central",
+  "jche": "Talleres",
+  "igj": "Lanús",
+  "ihi": "Banfield",
+  "bbjbf": "Gimnasia y Esgrima (Mendoza)",
+  "igi": "River Plate",
+  "ihg": "Racing Club",
+  "ihb": "Argentinos Juniors",
+  "gbfc": "Atlético Tucumán",
+  "hchc": "Instituto ACC",
+  "fhid": "Belgrano",
+  "iie": "Huracán",
+  "beafh": "Central Córdoba (SdE)",
+  "iid": "Tigre",
+  "ihc": "Vélez Sarsfield",
+  "hcah": "Platense",
+  "igh": "Estudiantes de La Plata",
+  "bheaf": "Estudiantes (Río Cuarto)",
+  "igf": "San Lorenzo de Almagro",
+  "jafb": "Barracas Central",
+  "hccd": "Aldosivi",
+  "bbjea": "Deportivo Riestra",
+};
+
+export type Escalon = "A" | "B" | "C";
+export interface EscalonInfo {
+  escalon: Escalon;
+  techoEurM: number | null; // null = sin techo (escalón A, acceso a cualquier candidato)
+  enRanking: boolean; // false = el equipo no matcheó contra el ranking, se usó el fallback
+}
+
+// Techos ajustables sin tocar el resto de la lógica — parámetro a tunear
+// después de ver la distribución real de valores del pool (min 0.25M,
+// max 20M al momento de escribir esto).
+const TECHO_VALOR_POR_ESCALON: Record<Escalon, number | null> = { A: null, B: 5, C: 2 };
+export function getTechoValorPorEscalon(escalon: Escalon): number | null {
+  return TECHO_VALOR_POR_ESCALON[escalon];
+}
+
+// Fallback: equipo sin fila en el ranking (no debería pasar, los 30 están
+// mapeados) → escalón C por defecto + warning, nunca rompe la búsqueda.
+export function getEscalonEquipo(team: RMTeam): EscalonInfo {
+  const rankingName = PROMIEDOS_ID_TO_RANKING_TEAM[team.id];
+  const row = rankingName ? RANKING_VALOR_BY_EQUIPO.get(normalize(rankingName)) : undefined;
+  if (!row) {
+    console.warn(`[Refuerzo Mágico] "${team.name}" sin dato de valor de plantel — se lo trata como escalón C por defecto`);
+    return { escalon: "C", techoEurM: getTechoValorPorEscalon("C"), enRanking: false };
+  }
+  return { escalon: row.escalon, techoEurM: getTechoValorPorEscalon(row.escalon), enRanking: true };
+}
+
+// Cruce por nombre contra el pool de valor (mismo criterio best-effort que
+// el resto del archivo) — sin match, el candidato queda sin valor conocido
+// y se excluye del modo presupuesto (no se asume "barato" ni "caro" sobre
+// un dato que no existe).
+function findValueMatch(candidateName: string, position: RMPosition): ValuePoolPlayer | undefined {
+  return bestTokenMatch(candidateName, VALUE_POOL_BY_BUCKET[position], (p) => tokenizeForMatch(p.nombre));
+}
 
 const LEAGUE_SLUG = "arg.1" as const;
 
@@ -189,6 +293,13 @@ export interface RMCandidate {
   // el candidato con más data verificable de 365scores puntúa un poco
   // más — se computa en enrichWith365, ver esa función.
   coverage365: number;
+  // Modo presupuesto (opt-in, ver getEscalonEquipo/recommend) — solo se
+  // completan cuando `recommend()` corre con `{ presupuesto: true }`, cruce
+  // por nombre contra pool-candidatos-refuerzo-magico-2026.json. Opcionales
+  // para no tener que tocar cada sitio que construye un RMCandidate "a
+  // secas" (buildPromiedosPool, getGoalkeeperPool) — ahí quedan undefined.
+  valorMercadoEUR?: number | null;
+  clubActual?: string | null;
 }
 export interface FitResult { score: number; }
 export type RMResult = RMCandidate & { fit: FitResult };
@@ -815,7 +926,21 @@ function weightedSampleWithoutReplacement<T>(items: { item: T; weight: number }[
   return result;
 }
 
-export async function recommend(team: RMTeam): Promise<{ picks: RMResult[]; composition: RMPosition[] }> {
+export interface RecommendOptions { presupuesto?: boolean; }
+export interface PresupuestoResult {
+  escalon: Escalon;
+  techoEurM: number | null;
+  enRanking: boolean;
+  // Una entrada por cada cupo de composición que no encontró NINGÚN
+  // candidato accesible dentro del techo — la UI la usa para mostrar
+  // "sin candidatos accesibles" en vez de dejar el cupo vacío o mostrar
+  // a alguien fuera de rango.
+  missingPositions: RMPosition[];
+}
+
+export async function recommend(
+  team: RMTeam, opts?: RecommendOptions,
+): Promise<{ picks: RMResult[]; composition: RMPosition[]; presupuesto?: PresupuestoResult }> {
   const groups = await getTablaPosiciones(LEAGUE_SLUG);
   const composition = getComposition(team);
   const teamPositionById = new Map<string, number>();
@@ -827,6 +952,8 @@ export async function recommend(team: RMTeam): Promise<{ picks: RMResult[]; comp
 
   const franja = getFranja(team, computeDynamicFranjas(teamPositionById));
   const needFactors = computeNeedFactors(team);
+  const escalonInfo = opts?.presupuesto ? getEscalonEquipo(team) : null;
+  const ownClubTransfermarkt = PROMIEDOS_ID_TO_RANKING_TEAM[team.id];
 
   // Paso 3.2: no repetir siempre los mismos 4 al buscar el MISMO equipo
   // dos veces seguidas — se guarda en localStorage (sin TTL, se compara
@@ -838,9 +965,11 @@ export async function recommend(team: RMTeam): Promise<{ picks: RMResult[]; comp
   const lastNames = cacheGet<string[]>(lastKey) ?? [];
 
   let picks: RMResult[] = [];
+  let missingPositions: RMPosition[] = [];
   const MAX_ATTEMPTS = 6;
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
     picks = [];
+    missingPositions = [];
     for (const [position, count] of needByPosition) {
       const pool = await getCandidatePool(position);
       // Para arquero no hay teamId confiable siempre (el JSON no trae
@@ -856,20 +985,63 @@ export async function recommend(team: RMTeam): Promise<{ picks: RMResult[]; comp
       const grandTPoints = await getGrandTPointsBySurname(position);
       const withGrandT = eligible.map((c) => ({ ...c, grandTPoints: grandTPoints.get(normalize(c.surname)) ?? null }));
 
-      const scored = applyTeamQualityAdjustment(scoreCandidates(withGrandT, position, needFactors), teamPositionById, totalTeams);
-      const sorted = scored.sort((a, b) => b.fit.score - a.fit.score);
+      // Modo presupuesto (Paso 2): cruce por nombre contra el pool de
+      // valor de mercado, filtrado por techo del escalón del equipo
+      // buscador y excluido por club propio (comparando el mismo campo
+      // `club`, no el teamId de Promiedos). Sin valor conocido → afuera,
+      // nunca se asume "barato" sobre un dato que no existe.
+      const withValor = escalonInfo
+        ? withGrandT
+            .map((c) => {
+              const match = findValueMatch(c.name, position);
+              return { ...c, valorMercadoEUR: match?.valor_mercado_eur_millones ?? null, clubActual: match?.club ?? null };
+            })
+            .filter((c) => {
+              if (c.valorMercadoEUR == null || c.clubActual == null) return false;
+              if (escalonInfo.techoEurM != null && c.valorMercadoEUR > escalonInfo.techoEurM) return false;
+              if (ownClubTransfermarkt && normalize(c.clubActual) === normalize(ownClubTransfermarkt)) return false;
+              return true;
+            })
+        : withGrandT;
 
-      // Paso 1-2: la franja del equipo buscador decide QUÉ VENTANA del
-      // ranking está disponible (grande pelea arriba, chico solo abajo)
-      // — Paso 3.1: dentro de esa ventana, sorteo ponderado por fit, no
-      // siempre el de mayor puntaje.
-      const window = selectWindow(sorted, franja);
+      const scored = applyTeamQualityAdjustment(scoreCandidates(withValor, position, needFactors), teamPositionById, totalTeams);
+      let sorted = scored.sort((a, b) => b.fit.score - a.fit.score);
+
+      if (escalonInfo) {
+        // Paso 3: preferir candidatos cerca del techo del escalón, no
+        // siempre el más barato posible. Sin techo (escalón A) se usa el
+        // máximo valor real disponible en este pool ya filtrado como
+        // referencia — sigue premiando "el mejor que se puede pagar" en
+        // vez de un techo infinito sin sentido práctico para el score.
+        const techoEfectivo = escalonInfo.techoEurM ?? Math.max(1e-6, ...sorted.map((c) => c.valorMercadoEUR ?? 0));
+        sorted = sorted
+          .map((c) => {
+            const scoreValorRelativo = clamp((c.valorMercadoEUR ?? 0) / techoEfectivo, 0, 1);
+            const scoreFinal = clamp(c.fit.score * 0.7 + scoreValorRelativo * 100 * 0.3, 0, 100);
+            return { ...c, fit: { score: Math.round(scoreFinal) } };
+          })
+          .sort((a, b) => b.fit.score - a.fit.score);
+      }
+
+      // Paso 1-2: la franja heurística (poder económico simulado por lista
+      // fija + posición en tabla) decide qué ventana del ranking está
+      // disponible EN MODO CLÁSICO. En modo presupuesto ya hay un filtro
+      // de acceso económico real (Transfermarkt) más preciso — aplicar
+      // ADEMÁS la franja heurística encima solo achicaría el pool sin
+      // sentido, así que se sortea sobre TODO el pool ya filtrado por
+      // techo. Paso 3.1 (sorteo ponderado, no siempre el de mayor puntaje)
+      // aplica igual en los dos modos.
+      const window = escalonInfo ? sorted : selectWindow(sorted, franja);
       const chosen = weightedSampleWithoutReplacement(
         window.map((c) => ({ item: c, weight: Math.max(1, c.fit.score) })),
         count,
       );
       const top = ensureDistinctScores(chosen.sort((a, b) => b.fit.score - a.fit.score));
       picks.push(...top);
+
+      if (escalonInfo && top.length < count) {
+        for (let i = 0; i < count - top.length; i++) missingPositions.push(position);
+      }
     }
 
     const currentNames = picks.map((p) => p.name);
@@ -880,5 +1052,8 @@ export async function recommend(team: RMTeam): Promise<{ picks: RMResult[]; comp
 
   const teams = await getTeams();
   const enriched = await enrichWithBio(picks, teams);
-  return { picks: enriched, composition };
+  const presupuesto: PresupuestoResult | undefined = escalonInfo
+    ? { escalon: escalonInfo.escalon, techoEurM: escalonInfo.techoEurM, enRanking: escalonInfo.enRanking, missingPositions }
+    : undefined;
+  return { picks: enriched, composition, presupuesto };
 }
