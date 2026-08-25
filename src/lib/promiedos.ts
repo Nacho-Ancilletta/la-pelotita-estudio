@@ -96,6 +96,13 @@ export interface PromiedosGame {
   awayTeam: PromiedosTeam;
   startTime: string; // "DD-MM-YYYY HH:mm", formato propio de Promiedos
   statusName: string;
+  // Jornada real del torneo (ej. "Fecha 6") — confirmado a mano que el
+  // filterKey "latest" es una VENTANA que puede traer partidos de 2
+  // jornadas distintas mezclados en la misma respuesta (ej. quedan
+  // partidos de "Fecha 6" sin jugar todavía junto con "Fecha 7" ya
+  // empezando) — este campo es la única forma confiable de agrupar por
+  // jornada real, no por rango de días calendario.
+  roundName: string;
   // Resultado — presente solo si el partido ya se jugó (confirmado a mano:
   // "scores" no viene en absoluto en partidos todavía programados).
   homeScore: number | null;
@@ -244,6 +251,7 @@ export async function getFixtureLiga(league: PromiedosLeagueSlug, filterKey = "l
     awayTeam: { id: g.teams?.[1]?.id ?? "", name: g.teams?.[1]?.name ?? "", shortName: g.teams?.[1]?.short_name ?? "" },
     startTime: g.start_time ?? "",
     statusName: g.status?.short_name ?? g.status?.name ?? "",
+    roundName: g.stage_round_name ?? "",
     homeScore: typeof g.scores?.[0] === "number" ? g.scores[0] : null,
     awayScore: typeof g.scores?.[1] === "number" ? g.scores[1] : null,
   }));

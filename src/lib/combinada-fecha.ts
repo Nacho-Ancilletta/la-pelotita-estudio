@@ -359,6 +359,7 @@ export interface ComboMatch {
   awayTeam: ComboTeam;
   startTime: string; // "DD-MM-YYYY HH:mm", formato Promiedos
   statusName: string;
+  roundName: string; // "Fecha 6" — ver nota en PromiedosGame.roundName
   homeScore: number | null;
   awayScore: number | null;
   analysis: MatchAnalysis | null;
@@ -386,6 +387,7 @@ export async function getCombinadaFechaMatches(): Promise<ComboMatch[]> {
       awayTeam: toComboTeam(g.awayTeam, logos),
       startTime: g.startTime,
       statusName: g.statusName,
+      roundName: g.roundName,
       homeScore: g.homeScore,
       awayScore: g.awayScore,
       analysis,

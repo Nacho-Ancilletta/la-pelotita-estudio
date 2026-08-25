@@ -583,6 +583,25 @@ export default function CombinadaFechaTab() {
     });
   }, [matches]);
 
+  // Agrupado por jornada REAL del torneo (roundName, ej. "Fecha 6"), no por
+  // rango de días calendario — el filterKey "latest" de Promiedos es una
+  // ventana que puede mezclar partidos de 2 jornadas distintas en la misma
+  // respuesta (confirmado a mano: se vieron partidos de "Fecha 6" sin jugar
+  // todavía junto con "Fecha 7" arrancando). `sorted` ya viene ordenado por
+  // fecha/hora — el Map preserva el orden de inserción, así que cada grupo
+  // queda en el orden cronológico de la primera aparición de esa jornada
+  // (jornada más próxima primero), y los partidos DENTRO de cada grupo
+  // siguen en orden cronológico entre sí.
+  const groupedByRound = useMemo(() => {
+    const map = new Map<string, ComboMatch[]>();
+    for (const m of sorted) {
+      const key = m.roundName || "";
+      const group = map.get(key);
+      if (group) group.push(m); else map.set(key, [m]);
+    }
+    return [...map.entries()];
+  }, [sorted]);
+
   const picksByMatch = useMemo(() => {
     const m = new Map<string, SelectedPick[]>();
     for (const p of picks) m.set(p.matchId, [...(m.get(p.matchId) ?? []), p]);
@@ -610,9 +629,18 @@ export default function CombinadaFechaTab() {
         )}
 
         {!loading && !error && sorted.length > 0 && (
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-            {sorted.map((m) => (
-              <MatchCard key={m.id} match={m} matchPicks={picksByMatch.get(m.id) ?? []} onTogglePick={togglePick} />
+          <div className="space-y-6">
+            {groupedByRound.map(([roundName, roundMatches]) => (
+              <div key={roundName || "sin-jornada"}>
+                <div className="font-mono text-[11px] text-orange tracking-widest mb-3">
+                  {roundName ? roundName.toUpperCase() : "FECHA"}
+                </div>
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                  {roundMatches.map((m) => (
+                    <MatchCard key={m.id} match={m} matchPicks={picksByMatch.get(m.id) ?? []} onTogglePick={togglePick} />
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         )}
