@@ -599,7 +599,13 @@ export default function CombinadaFechaTab() {
       const group = map.get(key);
       if (group) group.push(m); else map.set(key, [m]);
     }
-    return [...map.entries()];
+    // No acumular fechas viejas: una jornada con TODOS sus partidos ya
+    // jugados (mismo criterio "played" que ya usa MatchCard, resultado
+    // final presente) deja de mostrarse. "Mi combinada" no depende de este
+    // filtro — sigue leyendo de `matches`/`matchesById` sin recortar, así
+    // que un pick de un partido recién terminado no pierde su resultado
+    // acá aunque su jornada ya no se vea arriba.
+    return [...map.entries()].filter(([, ms]) => ms.some((m) => m.homeScore == null || m.awayScore == null));
   }, [sorted]);
 
   const picksByMatch = useMemo(() => {
@@ -627,8 +633,17 @@ export default function CombinadaFechaTab() {
         {!loading && !error && matches && matches.length === 0 && (
           <div className="text-cream/20 font-mono text-xs py-10 text-center">sin fixture cargado para la fecha actual</div>
         )}
+        {/* Los partidos que trajo la ventana "latest" existen pero TODAS sus
+            jornadas ya terminaron — pasa cuando la fuente todavía no
+            actualizó a la fecha siguiente. Distinto del caso de arriba
+            (sin fixture en absoluto). */}
+        {!loading && !error && matches && matches.length > 0 && groupedByRound.length === 0 && (
+          <div className="text-cream/20 font-mono text-xs py-10 text-center">
+            La jornada actual ya terminó — todavía no se cargó la fecha siguiente.
+          </div>
+        )}
 
-        {!loading && !error && sorted.length > 0 && (
+        {!loading && !error && groupedByRound.length > 0 && (
           <div className="space-y-6">
             {groupedByRound.map(([roundName, roundMatches]) => (
               <div key={roundName || "sin-jornada"}>
