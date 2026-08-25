@@ -131,6 +131,7 @@ const STANDINGS_TTL_MS = 5 * 60 * 1000;        // cambia seguido durante la fech
 const PLAYER_STATS_TTL_MS = 24 * 60 * 60 * 1000; // goleadores/asistencias se actualizan ~1 vez por fecha
 const GAMES_TTL_MS = 5 * 60 * 1000;
 const SQUAD_TTL_MS = 30 * 24 * 60 * 60 * 1000; // edad/altura de un jugador casi no cambia
+const FILTERS_TTL_MS = 60 * 60 * 1000; // la lista de fechas/filterKeys de una liga no cambia en el día
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function valuesMap(values: any[] | undefined): Record<string, unknown> {
@@ -257,6 +258,106 @@ export async function getFixtureLiga(league: PromiedosLeagueSlug, filterKey = "l
   }));
   cacheSet(key, games, GAMES_TTL_MS);
   return games;
+}
+
+export interface FixtureFilter { name: string; key: string; selected: boolean; }
+
+// Lista real de jornadas/filterKeys de una liga (ej. {name:"Fecha 7",
+// key:"72_228_8_7"}) — sale de games.filters en el mismo payload SSR que
+// ya usa getLeagueData (endpoint=data), separado de getFixtureLiga porque
+// esa función solo devuelve los PARTIDOS de un filterKey puntual, no la
+// lista de filterKeys disponibles.
+//
+// OJO — nombres de fecha REPETIDOS entre etapas de la misma competencia:
+// confirmado a mano (ago 2026) que esta lista trae "Fecha 1".."Fecha 16"
+// DOS VECES para Liga Profesional Argentina (Apertura y Clausura, cada
+// una con su propio prefijo de key — ej. "72_228_3_7" de una etapa ya
+// jugada hace meses vs "72_228_8_7" de la etapa actual) — buscar un
+// filterKey solo por nombre ("Fecha 7") puede traer la ronda de la etapa
+// VIEJA sin ningún error, con resultados ya cargados que parecen válidos
+// pero no son los partidos que corresponden ahora. `selected` (el filter
+// que el propio sitio marca como vigente) es la única señal confiable
+// para saber a qué etapa pertenece la "Fecha" que hay que buscar — ver
+// cómo se usa en getCurrentRoundGames.
+export async function getFixtureFilters(league: PromiedosLeagueSlug): Promise<FixtureFilter[]> {
+  const key = `pelotita_promiedos_filters_${league}`;
+  const cached = cacheGet<FixtureFilter[]>(key);
+  if (cached) return cached;
+  const data = await getLeagueData(league);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const filters: FixtureFilter[] = (data.games?.filters ?? []).map((f: any) => ({ name: f.name ?? "", key: f.key ?? "", selected: !!f.selected }));
+  cacheSet(key, filters, FILTERS_TTL_MS);
+  return filters;
+}
+
+// El filterKey tiene forma "{comp}_{x}_{etapa}_{ronda}" — todo menos el
+// último segmento identifica la etapa/torneo (ej. Apertura vs Clausura).
+function stagePrefix(filterKey: string): string {
+  return filterKey.replace(/_[^_]+$/, "");
+}
+
+// "Fecha 7" → 7. Fases sin numerito (Octavos de Final, etc.) devuelven
+// null — se tratan como la fase "más actual" (van al final al ordenar).
+function parseRoundNumber(roundName: string): number | null {
+  const m = roundName.match(/Fecha\s+(\d+)/i);
+  return m ? Number(m[1]) : null;
+}
+
+// getFixtureLiga(league, "latest") es una VENTANA DE DÍAS alrededor de
+// "ahora", NO una jornada completa — bug real confirmado a mano (ago
+// 2026): en un momento dado devolvía los 13 partidos de "Fecha 6" (ya
+// jugados) + apenas 2 de "Fecha 7" (que en realidad tiene 15), porque los
+// otros 13 de Fecha 7 caían en días fuera de esa ventana. Esta función
+// arma la jornada COMPLETA que corresponde mostrar:
+// 1. Usa "latest" solo para DETECTAR qué jornada(s) hay dando vueltas
+//    ahora mismo (no para los partidos en sí).
+// 2. Si alguna de esas jornadas todavía no está 100% jugada, esa es la
+//    target (la más numerosa/reciente de las no terminadas).
+// 3. Si TODAS las vistas en "latest" ya terminaron, la target es la
+//    siguiente por número ("Fecha N+1"), buscada en la lista real de
+//    filterKeys — no se asume que "latest" ya la muestre.
+// 4. Se pide esa jornada target por su filterKey REAL (getFixtureFilters)
+//    para traer TODOS sus partidos, nunca los que hayan caído en la
+//    ventana de "latest".
+export async function getCurrentRoundGames(league: PromiedosLeagueSlug): Promise<PromiedosGame[]> {
+  const latest = await getFixtureLiga(league, "latest");
+  if (latest.length === 0) return latest;
+
+  const byRound = new Map<string, PromiedosGame[]>();
+  for (const g of latest) {
+    const list = byRound.get(g.roundName);
+    if (list) list.push(g); else byRound.set(g.roundName, [g]);
+  }
+  const isFullyPlayed = (games: PromiedosGame[]) => games.every((g) => g.homeScore != null && g.awayScore != null);
+
+  const roundsSeen = [...byRound.entries()]
+    .map(([name, games]) => ({ name, games, num: parseRoundNumber(name) }))
+    .sort((a, b) => (a.num ?? Infinity) - (b.num ?? Infinity));
+
+  const notFullyPlayed = [...roundsSeen].reverse().find((r) => !isFullyPlayed(r.games));
+  const target = notFullyPlayed ?? roundsSeen[roundsSeen.length - 1];
+  if (!target) return latest;
+
+  // Fase sin numerito (playoffs) — no hay forma segura de calcular "la
+  // siguiente", se usa lo que ya trajo "latest" tal cual.
+  if (target.num == null) return target.games;
+
+  const wantedName = notFullyPlayed ? target.name : `Fecha ${target.num + 1}`;
+  const filters = await getFixtureFilters(league);
+  // Restringir a la MISMA etapa que el filter marcado `selected` (ver nota
+  // en getFixtureFilters) — sin esto, buscar solo por nombre puede traer
+  // "Fecha N" de una etapa vieja ya jugada (confirmado a mano: existían
+  // 2 "Fecha 7" con prefijos de key distintos, una de una etapa anterior
+  // ya terminada). Si por lo que sea no hay ningún filter `selected`
+  // (no debería pasar), se busca en toda la lista sin filtrar por etapa
+  // — degrada a un riesgo ya conocido en vez de romper la carga.
+  const selected = filters.find((f) => f.selected);
+  const sameStage = selected ? filters.filter((f) => stagePrefix(f.key) === stagePrefix(selected.key)) : filters;
+  const match = sameStage.find((f) => f.name === wantedName);
+  if (!match) return target.games; // no está en la lista de filtros (fin de temporada/torneo) — se muestra lo último visto
+
+  const full = await getFixtureLiga(league, match.key);
+  return full.length > 0 ? full : target.games;
 }
 
 // ── Plantel por equipo — /team/{urlName}/{id} (investigado a mano, ago

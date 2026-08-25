@@ -4,10 +4,14 @@
 // fecha-data-2026.json (FootyStats, captura manual que Ignacio actualiza a
 // mano y redeploya — mismo patrón que refuerzo-magico-data-2026.json).
 //
-// Fixture: getFixtureLiga("arg.1", "latest") de lib/promiedos.ts — misma
-// fuente que ya usa Gran DT/Fantasy para "próximos partidos" ("fecha" acá es
-// jornada/matchday, no día calendario, por eso "latest" y no el scoreboard
-// ESPN de un día puntual). El cruce de nombre de equipo Promiedos → nombre
+// Fixture: getCurrentRoundGames("arg.1") de lib/promiedos.ts — misma fuente
+// que ya usa Gran DT/Fantasy para "próximos partidos" ("fecha" acá es
+// jornada/matchday, no día calendario). NO usa getFixtureLiga(..., "latest")
+// directo: "latest" es una ventana de DÍAS, no una jornada completa (bug
+// real confirmado ago 2026 — traía 2/15 partidos de una fecha porque el
+// resto caía fuera de esa ventana) — getCurrentRoundGames arma la jornada
+// completa por su filterKey real, ver esa función para el detalle. El
+// cruce de nombre de equipo Promiedos → nombre
 // del JSON (FootyStats, ej. "CA River Plate") reusa PROMIEDOS_ID_TO_JSON_TEAM
 // de lib/refuerzo-magico.ts (mapeo de los 30 equipos ya validado a mano) en
 // vez de duplicarlo — es un dato, no lógica de otro tab.
@@ -16,7 +20,7 @@
 // desfavorable/parejo) por mercado, la UI se limita a mostrarlo. El usuario
 // arma su propia combinada seleccionando partidos a mano.
 
-import { getFixtureLiga, type PromiedosGame } from "@/lib/promiedos";
+import { getCurrentRoundGames, type PromiedosGame } from "@/lib/promiedos";
 import { PROMIEDOS_ID_TO_JSON_TEAM, PROMIEDOS_ID_TO_RANKING_TEAM } from "@/lib/refuerzo-magico";
 import { getStandings, espnTeamLogoUrl } from "@/lib/espn";
 import COMBINADA_DATA_RAW from "@/data/combinada-fecha-data-2026.json";
@@ -372,7 +376,7 @@ function toComboTeam(t: PromiedosGame["homeTeam"], logos: EspnTeamLite[]): Combo
 // Todos los partidos de la fecha (jornada) actual de Liga Profesional
 // Argentina, con el análisis de los 2 mercados ya calculado por partido.
 export async function getCombinadaFechaMatches(): Promise<ComboMatch[]> {
-  const [games, logos] = await Promise.all([getFixtureLiga("arg.1", "latest"), getEspnLogos()]);
+  const [games, logos] = await Promise.all([getCurrentRoundGames("arg.1"), getEspnLogos()]);
   return games.map((g) => {
     const homeJsonTeam = PROMIEDOS_ID_TO_JSON_TEAM[g.homeTeam.id];
     const awayJsonTeam = PROMIEDOS_ID_TO_JSON_TEAM[g.awayTeam.id];

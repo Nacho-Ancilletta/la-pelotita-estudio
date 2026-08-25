@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { getGrandTRanking, getLatestGrandTSheet, GRANDT_POSITIONS, type GrandTPosition, type GrandTPlayer } from "@/lib/grandt";
 import {
-  getGoleadores, getAsistencias, getFixtureLiga, getTablaPosiciones,
+  getGoleadores, getAsistencias, getCurrentRoundGames, getTablaPosiciones,
   type PromiedosPlayerStat, type PromiedosGame, type PromiedosStandingGroup, type PromiedosStandingRow,
 } from "@/lib/promiedos";
 
@@ -190,13 +190,15 @@ function StandingsColumn({ zoneName, rows, recommendedNames }: {
 
 // ── Próximos partidos, versión compacta (debajo de los 4 paneles) ──
 // No es el fixture grande del tab Fixture — mismos `games` que ya se piden
-// para el próximo rival del recomendado (getFixtureLiga, filterKey "latest"
-// por default), mismo estilo compacto que el panel homólogo de Fantasy
-// Premier. Nota: "latest"/"Partidos actuales" de Promiedos puede devolver
-// la fecha más reciente ya jugada en vez de la próxima sin jugar todavía
-// (comportamiento de la fuente, no de este código) — por eso cada partido
-// se resuelve por separado: si ya tiene resultado (homeScore/awayScore) se
-// muestra el marcador, si no la fecha/hora programada.
+// para el próximo rival del recomendado (getCurrentRoundGames, arma la
+// jornada completa por su filterKey real en vez de confiar en la ventana
+// de días de "latest" — ver esa función en lib/promiedos.ts; bug real
+// confirmado ago 2026: "latest" llegó a traer solo 2 de 15 partidos de una
+// fecha, lo que rompía tanto este panel como nextOpponentFor() para
+// cualquier equipo cuyo partido hubiera quedado afuera de esa ventana),
+// mismo estilo compacto que el panel homólogo de Fantasy Premier. Cada
+// partido se resuelve por separado: si ya tiene resultado (homeScore/
+// awayScore) se muestra el marcador, si no la fecha/hora programada.
 
 // "DD-MM-YYYY HH:mm" (formato propio de Promiedos) → "Vie 22/08 · 21:00hs".
 function formatKickoff(startTime: string): string {
@@ -394,7 +396,7 @@ export default function GrandTTab() {
     getGoleadores(GRANDT_LEAGUE).then(setGoleadores).catch(() => setGoleadores([]));
     getAsistencias(GRANDT_LEAGUE).then(setAsistencias).catch(() => setAsistencias([]));
     getTablaPosiciones(GRANDT_LEAGUE).then(setStandingGroups).catch(() => setStandingGroups([]));
-    getFixtureLiga(GRANDT_LEAGUE).then(setGames).catch(() => setGames([]));
+    getCurrentRoundGames(GRANDT_LEAGUE).then(setGames).catch(() => setGames([]));
   }, []);
 
   const teams = flattenTeams(standingGroups);
