@@ -298,7 +298,9 @@ function stagePrefix(filterKey: string): string {
 
 // "Fecha 7" → 7. Fases sin numerito (Octavos de Final, etc.) devuelven
 // null — se tratan como la fase "más actual" (van al final al ordenar).
-function parseRoundNumber(roundName: string): number | null {
+// Exportada para GrandTTab.tsx (compara la fecha de la planilla de Gran DT
+// contra la última jornada realmente completada, ver nota ahí).
+export function parseRoundNumber(roundName: string): number | null {
   const m = roundName.match(/Fecha\s+(\d+)/i);
   return m ? Number(m[1]) : null;
 }

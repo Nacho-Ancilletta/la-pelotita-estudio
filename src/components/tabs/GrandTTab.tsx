@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { getGrandTRanking, getLatestGrandTSheet, GRANDT_POSITIONS, type GrandTPosition, type GrandTPlayer } from "@/lib/grandt";
 import {
-  getGoleadores, getAsistencias, getCurrentRoundGames, getTablaPosiciones,
+  getGoleadores, getAsistencias, getCurrentRoundGames, getTablaPosiciones, parseRoundNumber,
   type PromiedosPlayerStat, type PromiedosGame, type PromiedosStandingGroup, type PromiedosStandingRow,
 } from "@/lib/promiedos";
 
@@ -104,19 +104,66 @@ function recoKey(pos: GrandTPosition) {
   return `pelotita_grandt_reco_${pos}`;
 }
 
-// Resuelve la planilla de la fecha vigente: cache de 24hs primero, si no hay
-// (o venció) busca el post más reciente de "Estadísticas" en planetagrandt.
-// Si el descubrimiento falla por lo que sea (feed caído, post sin link),
-// cae al último valor hardcodeado conocido sin romper la carga del tab.
-async function resolveSheetUrl(): Promise<string> {
-  const cached = cacheGet<{ sheetUrl: string }>(LATEST_SHEET_KEY);
-  if (cached?.sheetUrl) return cached.sheetUrl;
+// "Estadísticas - A la Fecha 5 - Gran DT Torneo Clausura 2026" → 5.
+function parseSheetFechaNumber(title: string): number | null {
+  const m = title.match(/Fecha\s+(\d+)/i);
+  return m ? Number(m[1]) : null;
+}
+
+// Última jornada REALMENTE completada según Promiedos (fuente en vivo,
+// resultados reales) — `games` es la jornada target que ya devuelve
+// getCurrentRoundGames (la próxima sin jugar, o la última si ninguna lo
+// está). Si esa jornada todavía no está 100% jugada, la última completa es
+// la anterior (num-1); si por algún motivo SÍ está completa (games vacío o
+// fin de temporada), es ella misma.
+function lastCompletedRoundNumber(games: PromiedosGame[]): number | null {
+  if (games.length === 0) return null;
+  const num = parseRoundNumber(games[0].roundName);
+  if (num == null) return null;
+  const allPlayed = games.every((g) => g.homeScore != null && g.awayScore != null);
+  return allPlayed ? num : num - 1;
+}
+
+// ── Causa raíz del bug "los puntajes de Gran DT no se actualizan" (ago
+// 2026) ──────────────────────────────────────────────────────────────
+// Investigado a mano contra la fuente real (planetagrandt.com.ar): el
+// fetch/parseo NO falla — el feed RSS y la planilla de Google Sheets
+// responden bien y sin cambios de estructura. La causa es que
+// planetagrandt.com.ar (sitio de un tercero, no nuestro) publica la
+// planilla de cada fecha con DÍAS de atraso respecto a que se jueguen los
+// partidos — confirmado en vivo que su último post seguía siendo "A la
+// Fecha 5" (publicado 18/08) varios días después de que la Fecha 6 ya
+// había terminado (21-24/08) según Promiedos. No hay "puntaje de Fecha 6"
+// en ningún lado todavía para traer.
+//
+// Encima de esa demora real de la fuente, SÍ había una imprecisión de
+// nuestro lado que valía la pena corregir: `resolveSheetUrl` confiaba
+// ciegamente en un cache de 24hs para decidir cuándo volver a buscar un
+// post nuevo — si el usuario abría el tab bastante seguido, el cache
+// nunca se sentía "vencido" en el momento justo en que el sitio SÍ publica
+// la fecha nueva, atrasando hasta 24hs más la actualización real. Fix:
+// además del TTL de 24hs, se compara el número de fecha que dice el
+// título de la planilla cacheada contra la última jornada REALMENTE
+// completada según Promiedos (dato en vivo, ya confiable después del fix
+// de getCurrentRoundGames) — si Promiedos dice que ya se jugó una fecha
+// más nueva que la que la planilla cacheada dice cubrir, se vuelve a
+// buscar el post más reciente al toque, sin esperar el TTL. No cambia el
+// resultado de HOY (planetagrandt.com.ar sigue sin publicar Fecha 6), pero
+// hace que la app la levante apenas el sitio la publique, en vez de hasta
+// 24hs después.
+async function resolveSheetUrl(games: PromiedosGame[]): Promise<string> {
+  const completed = lastCompletedRoundNumber(games);
+  const cached = cacheGet<{ sheetUrl: string; fecha: number | null }>(LATEST_SHEET_KEY);
+  const cacheIsBehind = cached?.fecha != null && completed != null && cached.fecha < completed;
+  if (cached?.sheetUrl && !cacheIsBehind) return cached.sheetUrl;
+
   const latest = await getLatestGrandTSheet();
   if (latest?.sheetUrl) {
-    cacheSet(LATEST_SHEET_KEY, latest, LATEST_SHEET_TTL_MS);
+    const fecha = parseSheetFechaNumber(latest.title);
+    cacheSet(LATEST_SHEET_KEY, { sheetUrl: latest.sheetUrl, fecha }, LATEST_SHEET_TTL_MS);
     return latest.sheetUrl;
   }
-  return FALLBACK_SHEET_URL;
+  return cached?.sheetUrl ?? FALLBACK_SHEET_URL;
 }
 
 // ── Columna lateral: Goleadores / Asistidores (Promiedos) ──────
@@ -265,7 +312,7 @@ function PositionPanel({
     setLoading(true);
     setError(null);
     try {
-      const sheetUrl = await resolveSheetUrl();
+      const sheetUrl = await resolveSheetUrl(games);
       const key = rankingKey(posKey, sheetUrl);
       let list = cacheGet<GrandTPlayer[]>(key);
       if (!list) {
