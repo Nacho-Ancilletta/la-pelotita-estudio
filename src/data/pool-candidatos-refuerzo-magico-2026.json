@@ -1,2818 +1,3039 @@
 {
-  "meta": {
-    "fuente": "Transfermarkt.com.ar, torneo Clausura/Final ARGC 2026",
-    "fecha_captura": "2026-08-24",
-    "moneda": "EUR millones",
-    "nota_club": "El campo 'club' se completo cruzando planteles oficiales de Transfermarkt (nombre del club confirmado por URL/titulo de pagina). confianza_club='alta' = confirmado por plantel oficial o escudo inconfundible. club=null = no encontrado en ningun plantel capturado.",
-    "total_jugadores": 350
+ "meta": {
+  "fuente": "Transfermarkt.com.ar, torneo Clausura/Final ARGC 2026",
+  "fecha_captura": "2026-08-24",
+  "moneda": "EUR millones",
+  "nota_club": "El campo 'club' se completo cruzando planteles oficiales de Transfermarkt (nombre del club confirmado por URL/titulo de pagina). confianza_club='alta' = confirmado por plantel oficial o escudo inconfundible. club=null = no encontrado en ningun plantel capturado.",
+  "total_jugadores": 350
+ },
+ "porteros": [
+  {
+   "nombre": "Santiago Beltrán",
+   "posicion": "Portero",
+   "edad": 21,
+   "valor_mercado_eur_millones": 9.0,
+   "club": "River Plate",
+   "confianza_club": "alta"
   },
-  "porteros": [
-    {
-      "nombre": "Santiago Beltrán",
-      "posicion": "Portero",
-      "edad": 21,
-      "valor_mercado_eur_millones": 9.0,
-      "club": "River Plate",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Orlando Gill",
-      "posicion": "Portero",
-      "edad": 26,
-      "valor_mercado_eur_millones": 7.5,
-      "club": "San Lorenzo de Almagro",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Facundo Cambeses",
-      "posicion": "Portero",
-      "edad": 29,
-      "valor_mercado_eur_millones": 5.0,
-      "club": "Racing Club",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Felipe Zenobio",
-      "posicion": "Portero",
-      "edad": 26,
-      "valor_mercado_eur_millones": 3.5,
-      "club": "Tigre",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Thiago Cardozo",
-      "posicion": "Portero",
-      "edad": 30,
-      "valor_mercado_eur_millones": 3.2,
-      "club": "Belgrano",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Juan Pablo Cozzani",
-      "posicion": "Portero",
-      "edad": 27,
-      "valor_mercado_eur_millones": 3.2,
-      "club": "Platense",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Nahuel Losada",
-      "posicion": "Portero",
-      "edad": 33,
-      "valor_mercado_eur_millones": 3.0,
-      "club": "Lanús",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Matías Borgogno",
-      "posicion": "Portero",
-      "edad": 28,
-      "valor_mercado_eur_millones": 2.8,
-      "club": "Defensa y Justicia",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Álvaro Montero",
-      "posicion": "Portero",
-      "edad": 31,
-      "valor_mercado_eur_millones": 2.5,
-      "club": "Boca Juniors",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Matías Mansilla",
-      "posicion": "Portero",
-      "edad": 30,
-      "valor_mercado_eur_millones": 2.5,
-      "club": "Unión de Santa Fe",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Facundo Sanguinetti",
-      "posicion": "Portero",
-      "edad": 25,
-      "valor_mercado_eur_millones": 2.5,
-      "club": "Vélez Sarsfield",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Nicolás Bolcato",
-      "posicion": "Portero",
-      "edad": 22,
-      "valor_mercado_eur_millones": 2.2,
-      "club": "Independiente Rivadavia",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Nelson Insfrán",
-      "posicion": "Portero",
-      "edad": 31,
-      "valor_mercado_eur_millones": 2.0,
-      "club": "Gimnasia y Esgrima La Plata",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Ezequiel Unsain",
-      "posicion": "Portero",
-      "edad": 31,
-      "valor_mercado_eur_millones": 2.0,
-      "club": "Talleres",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Santiago Mele",
-      "posicion": "Portero",
-      "edad": 28,
-      "valor_mercado_eur_millones": 2.0,
-      "club": "Independiente",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Brayan Cortés",
-      "posicion": "Portero",
-      "edad": 31,
-      "valor_mercado_eur_millones": 2.0,
-      "club": "Argentinos Juniors",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Tomás Marchiori",
-      "posicion": "Portero",
-      "edad": 31,
-      "valor_mercado_eur_millones": 2.0,
-      "club": "Vélez Sarsfield",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Franco Petroli",
-      "posicion": "Portero",
-      "edad": 28,
-      "valor_mercado_eur_millones": 1.8,
-      "club": "Lanús",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Leandro Brey",
-      "posicion": "Portero",
-      "edad": 23,
-      "valor_mercado_eur_millones": 1.5,
-      "club": "Boca Juniors",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Ezequiel Centurión",
-      "posicion": "Portero",
-      "edad": 29,
-      "valor_mercado_eur_millones": 1.5,
-      "club": "River Plate",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Matías Tagliamonte",
-      "posicion": "Portero",
-      "edad": 28,
-      "valor_mercado_eur_millones": 1.5,
-      "club": "Racing Club",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Conan Ledesma",
-      "posicion": "Portero",
-      "edad": 33,
-      "valor_mercado_eur_millones": 1.5,
-      "club": "Rosario Central",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Josué Reinatti",
-      "posicion": "Portero",
-      "edad": 23,
-      "valor_mercado_eur_millones": 1.2,
-      "club": "Newell's Old Boys",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Luis Ingolotti",
-      "posicion": "Portero",
-      "edad": 26,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "Atlético Tucumán",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Rodrigo Rey",
-      "posicion": "Portero",
-      "edad": 35,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "Independiente",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Ignacio Arce",
-      "posicion": "Portero",
-      "edad": 34,
-      "valor_mercado_eur_millones": 0.8,
-      "club": "Deportivo Riestra",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Marcos Ledesma",
-      "posicion": "Portero",
-      "edad": 29,
-      "valor_mercado_eur_millones": 0.8,
-      "club": "Instituto ACC",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Gino Santilli",
-      "posicion": "Portero",
-      "edad": 24,
-      "valor_mercado_eur_millones": 0.8,
-      "club": "Banfield",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Juan Espínola",
-      "posicion": "Portero",
-      "edad": 31,
-      "valor_mercado_eur_millones": 0.7,
-      "club": "Barracas Central",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Fernando Muslera",
-      "posicion": "Portero",
-      "edad": 40,
-      "valor_mercado_eur_millones": 0.7,
-      "club": "Estudiantes de La Plata",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Tomás Durso",
-      "posicion": "Portero",
-      "edad": 27,
-      "valor_mercado_eur_millones": 0.65,
-      "club": "Atlético Tucumán",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Lucas Acosta",
-      "posicion": "Portero",
-      "edad": 31,
-      "valor_mercado_eur_millones": 0.6,
-      "club": "Aldosivi",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Lautaro Morales",
-      "posicion": "Portero",
-      "edad": 26,
-      "valor_mercado_eur_millones": 0.55,
-      "club": "Tigre",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Brian Bustos",
-      "posicion": "Portero",
-      "edad": 30,
-      "valor_mercado_eur_millones": 0.5,
-      "club": "Platense",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Fabricio Iacovich",
-      "posicion": "Portero",
-      "edad": 24,
-      "valor_mercado_eur_millones": 0.5,
-      "club": "Estudiantes de La Plata",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Agustín Marchesín",
-      "posicion": "Portero",
-      "edad": 38,
-      "valor_mercado_eur_millones": 0.5,
-      "club": "Boca Juniors",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Ramiro Macagno",
-      "posicion": "Portero",
-      "edad": 29,
-      "valor_mercado_eur_millones": 0.45,
-      "club": "Independiente Rivadavia",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Sebastián Meza",
-      "posicion": "Portero",
-      "edad": 26,
-      "valor_mercado_eur_millones": 0.45,
-      "club": "Huracán",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Lucas Bruera",
-      "posicion": "Portero",
-      "edad": 28,
-      "valor_mercado_eur_millones": 0.45,
-      "club": "Barracas Central",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Axel Werner",
-      "posicion": "Portero",
-      "edad": 30,
-      "valor_mercado_eur_millones": 0.4,
-      "club": "Rosario Central",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "José Devecchi",
-      "posicion": "Portero",
-      "edad": 31,
-      "valor_mercado_eur_millones": 0.4,
-      "club": "San Lorenzo de Almagro",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Nicolás Sumavil",
-      "posicion": "Portero",
-      "edad": 28,
-      "valor_mercado_eur_millones": 0.4,
-      "club": "Platense",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Facundo Altamirano",
-      "posicion": "Portero",
-      "edad": 30,
-      "valor_mercado_eur_millones": 0.375,
-      "club": "San Lorenzo de Almagro",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Marcelo Miño",
-      "posicion": "Portero",
-      "edad": 29,
-      "valor_mercado_eur_millones": 0.35,
-      "club": "Barracas Central",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Harlen Castillo",
-      "posicion": "Portero",
-      "edad": 33,
-      "valor_mercado_eur_millones": 0.35,
-      "club": "Gimnasia y Esgrima La Plata",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Lautaro Amadé",
-      "posicion": "Portero",
-      "edad": 26,
-      "valor_mercado_eur_millones": 0.3,
-      "club": "Defensa y Justicia",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Hernán Galíndez",
-      "posicion": "Portero",
-      "edad": 39,
-      "valor_mercado_eur_millones": 0.3,
-      "club": "Huracán",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Iván Arboleda",
-      "posicion": "Portero",
-      "edad": 30,
-      "valor_mercado_eur_millones": 0.3,
-      "club": "Sarmiento (Junín)",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Gonzalo Siri",
-      "posicion": "Portero",
-      "edad": 23,
-      "valor_mercado_eur_millones": 0.25,
-      "club": "Argentinos Juniors",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Ignacio Chicco",
-      "posicion": "Portero",
-      "edad": 30,
-      "valor_mercado_eur_millones": 0.25,
-      "club": "Aldosivi",
-      "confianza_club": "alta"
-    }
-  ],
-  "defensas": [
-    {
-      "nombre": "Kevin Lomónaco",
-      "posicion": "Defensa central",
-      "edad": 24,
-      "valor_mercado_eur_millones": 8.0,
-      "club": "Independiente",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Lautaro Di Lollo",
-      "posicion": "Defensa central",
-      "edad": 22,
-      "valor_mercado_eur_millones": 7.0,
-      "club": "Boca Juniors",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Francisco Ortega",
-      "posicion": "Lateral izquierdo",
-      "edad": 27,
-      "valor_mercado_eur_millones": 7.0,
-      "club": "River Plate",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Lautaro Rivero",
-      "posicion": "Defensa central",
-      "edad": 22,
-      "valor_mercado_eur_millones": 7.0,
-      "club": "River Plate",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Sheyko Studer",
-      "posicion": "Defensa central",
-      "edad": 23,
-      "valor_mercado_eur_millones": 6.0,
-      "club": "Independiente Rivadavia",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Tomás Palacios",
-      "posicion": "Defensa central",
-      "edad": 23,
-      "valor_mercado_eur_millones": 6.0,
-      "club": "Estudiantes de La Plata",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Marco Di Césare",
-      "posicion": "Defensa central",
-      "edad": 24,
-      "valor_mercado_eur_millones": 6.0,
-      "club": "Racing Club",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Ignacio Ovando",
-      "posicion": "Defensa central",
-      "edad": 19,
-      "valor_mercado_eur_millones": 6.0,
-      "club": "Rosario Central",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Ayrton Costa",
-      "posicion": "Defensa central",
-      "edad": 27,
-      "valor_mercado_eur_millones": 5.0,
-      "club": "Boca Juniors",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Lucas Martínez Quarta",
-      "posicion": "Defensa central",
-      "edad": 30,
-      "valor_mercado_eur_millones": 4.5,
-      "club": "River Plate",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Gonzalo Montiel",
-      "posicion": "Lateral derecho",
-      "edad": 29,
-      "valor_mercado_eur_millones": 4.5,
-      "club": "River Plate",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Santiago Fernández",
-      "posicion": "Defensa central",
-      "edad": 21,
-      "valor_mercado_eur_millones": 4.5,
-      "club": "Talleres",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Francisco Álvarez",
-      "posicion": "Defensa central",
-      "edad": 26,
-      "valor_mercado_eur_millones": 4.5,
-      "club": "Argentinos Juniors",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Leandro Lozano",
-      "posicion": "Lateral derecho",
-      "edad": 27,
-      "valor_mercado_eur_millones": 4.0,
-      "club": "Boca Juniors",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Lautaro Blanco",
-      "posicion": "Lateral izquierdo",
-      "edad": 27,
-      "valor_mercado_eur_millones": 4.0,
-      "club": "Boca Juniors",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Gastón Martirena",
-      "posicion": "Lateral derecho",
-      "edad": 26,
-      "valor_mercado_eur_millones": 4.0,
-      "club": "Belgrano",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Marco Pellegrino",
-      "posicion": "Defensa central",
-      "edad": 24,
-      "valor_mercado_eur_millones": 3.5,
-      "club": "Boca Juniors",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Matías Viña",
-      "posicion": "Lateral izquierdo",
-      "edad": 28,
-      "valor_mercado_eur_millones": 3.5,
-      "club": "River Plate",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Lautaro Vargas",
-      "posicion": "Lateral derecho",
-      "edad": 21,
-      "valor_mercado_eur_millones": 3.5,
-      "club": "Unión de Santa Fe",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Tobías Ramírez",
-      "posicion": "Defensa central",
-      "edad": 19,
-      "valor_mercado_eur_millones": 3.5,
-      "club": "River Plate",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Gastón Hernández",
-      "posicion": "Defensa central",
-      "edad": 28,
-      "valor_mercado_eur_millones": 3.5,
-      "club": "Tigre",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Gastón Ávila",
-      "posicion": "Defensa central",
-      "edad": 24,
-      "valor_mercado_eur_millones": 3.5,
-      "club": "Rosario Central",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Juan Carlos Portillo",
-      "posicion": "Defensa central",
-      "edad": 26,
-      "valor_mercado_eur_millones": 3.2,
-      "club": "River Plate",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Eros Mancuso",
-      "posicion": "Lateral derecho",
-      "edad": 27,
-      "valor_mercado_eur_millones": 3.0,
-      "club": "Estudiantes de La Plata",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Sasha Marcich",
-      "posicion": "Lateral izquierdo",
-      "edad": 28,
-      "valor_mercado_eur_millones": 3.0,
-      "club": "Vélez Sarsfield",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Ezequiel Cannavo",
-      "posicion": "Lateral derecho",
-      "edad": 24,
-      "valor_mercado_eur_millones": 3.0,
-      "club": "Talleres",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Joaquín García",
-      "posicion": "Lateral derecho",
-      "edad": 25,
-      "valor_mercado_eur_millones": 3.0,
-      "club": "Vélez Sarsfield",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Juan Barinaga",
-      "posicion": "Lateral derecho",
-      "edad": 25,
-      "valor_mercado_eur_millones": 2.8,
-      "club": "Boca Juniors",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Nazareno Colombo",
-      "posicion": "Defensa central",
-      "edad": 27,
-      "valor_mercado_eur_millones": 2.8,
-      "club": "Talleres",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Emanuel Coronel",
-      "posicion": "Lateral derecho",
-      "edad": 29,
-      "valor_mercado_eur_millones": 2.7,
-      "club": "Rosario Central",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Malcom Braida",
-      "posicion": "Lateral izquierdo",
-      "edad": 29,
-      "valor_mercado_eur_millones": 2.5,
-      "club": "Boca Juniors",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Eric Meza",
-      "posicion": "Lateral derecho",
-      "edad": 27,
-      "valor_mercado_eur_millones": 2.5,
-      "club": "Estudiantes de La Plata",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Alexandro Maidana",
-      "posicion": "Lateral izquierdo",
-      "edad": 21,
-      "valor_mercado_eur_millones": 2.5,
-      "club": "Talleres",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "César Ibáñez",
-      "posicion": "Lateral derecho",
-      "edad": 27,
-      "valor_mercado_eur_millones": 2.5,
-      "club": "Huracán",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Ezequiel Herrera",
-      "posicion": "Lateral derecho",
-      "edad": 23,
-      "valor_mercado_eur_millones": 2.5,
-      "club": "San Lorenzo de Almagro",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Ignacio Vázquez",
-      "posicion": "Defensa central",
-      "edad": 29,
-      "valor_mercado_eur_millones": 2.5,
-      "club": "Lanús",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Agustín Sández",
-      "posicion": "Lateral izquierdo",
-      "edad": 25,
-      "valor_mercado_eur_millones": 2.5,
-      "club": "Rosario Central",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Emanuel Mammana",
-      "posicion": "Defensa central",
-      "edad": 30,
-      "valor_mercado_eur_millones": 2.5,
-      "club": "Vélez Sarsfield",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Santiago Arzamendia",
-      "posicion": "Lateral izquierdo",
-      "edad": 28,
-      "valor_mercado_eur_millones": 2.3,
-      "club": "Estudiantes de La Plata",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Kevin Jappert",
-      "posicion": "Defensa central",
-      "edad": 22,
-      "valor_mercado_eur_millones": 2.3,
-      "club": "Barracas Central",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "José Canale",
-      "posicion": "Defensa central",
-      "edad": 30,
-      "valor_mercado_eur_millones": 2.2,
-      "club": "Lanús",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Alexis Steimbach",
-      "posicion": "Lateral derecho",
-      "edad": 24,
-      "valor_mercado_eur_millones": 2.2,
-      "club": "Gimnasia y Esgrima La Plata",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Fabricio Bustos",
-      "posicion": "Lateral derecho",
-      "edad": 30,
-      "valor_mercado_eur_millones": 2.0,
-      "club": "River Plate",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Giovanni González",
-      "posicion": "Lateral derecho",
-      "edad": 31,
-      "valor_mercado_eur_millones": 2.0,
-      "club": "River Plate",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Maizon Rodríguez",
-      "posicion": "Defensa central",
-      "edad": 23,
-      "valor_mercado_eur_millones": 2.0,
-      "club": "Unión de Santa Fe",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Gastón Benedetti",
-      "posicion": "Lateral izquierdo",
-      "edad": 25,
-      "valor_mercado_eur_millones": 2.0,
-      "club": "Estudiantes de La Plata",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Santiago Núñez",
-      "posicion": "Defensa central",
-      "edad": 26,
-      "valor_mercado_eur_millones": 2.0,
-      "club": "Estudiantes de La Plata",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Rodrigo Insúa",
-      "posicion": "Lateral izquierdo",
-      "edad": 28,
-      "valor_mercado_eur_millones": 2.0,
-      "club": "Barracas Central",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Tomás Silva",
-      "posicion": "Lateral izquierdo",
-      "edad": 23,
-      "valor_mercado_eur_millones": 2.0,
-      "club": "Platense",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Juan Giménez",
-      "posicion": "Defensa central",
-      "edad": 20,
-      "valor_mercado_eur_millones": 2.0,
-      "club": "Rosario Central",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Renzo Giampaoli",
-      "posicion": "Defensa central",
-      "edad": 26,
-      "valor_mercado_eur_millones": 2.0,
-      "club": "Gimnasia y Esgrima La Plata",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Alan Barrionuevo",
-      "posicion": "Defensa central",
-      "edad": 29,
-      "valor_mercado_eur_millones": 1.8,
-      "club": "Tigre",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Alcides Benítez",
-      "posicion": "Lateral derecho",
-      "edad": 24,
-      "valor_mercado_eur_millones": 1.8,
-      "club": "Belgrano",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Damián Fernández",
-      "posicion": "Defensa central",
-      "edad": 25,
-      "valor_mercado_eur_millones": 1.8,
-      "club": "Rosario Central",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Facundo Zabala",
-      "posicion": "Lateral izquierdo",
-      "edad": 27,
-      "valor_mercado_eur_millones": 1.8,
-      "club": "Tigre",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Román Riquelme",
-      "posicion": "Defensa central",
-      "edad": 24,
-      "valor_mercado_eur_millones": 1.7,
-      "club": "Talleres",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Juan Velázquez",
-      "posicion": "Lateral izquierdo",
-      "edad": 21,
-      "valor_mercado_eur_millones": 1.7,
-      "club": "Belgrano",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Juan Ignacio Saborido",
-      "posicion": "Lateral derecho",
-      "edad": 28,
-      "valor_mercado_eur_millones": 1.7,
-      "club": "Lanús",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Lucas Blondel",
-      "posicion": "Lateral derecho",
-      "edad": 29,
-      "valor_mercado_eur_millones": 1.5,
-      "club": "Tigre",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Ignacio Abraham",
-      "posicion": "Lateral izquierdo",
-      "edad": 28,
-      "valor_mercado_eur_millones": 1.5,
-      "club": "Banfield",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Oscar Salomón",
-      "posicion": "Defensa central",
-      "edad": 27,
-      "valor_mercado_eur_millones": 1.5,
-      "club": "Independiente",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Sebastián Valdez",
-      "posicion": "Defensa central",
-      "edad": 30,
-      "valor_mercado_eur_millones": 1.5,
-      "club": "Independiente",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Juan Pablo Ludueña",
-      "posicion": "Defensa central",
-      "edad": 23,
-      "valor_mercado_eur_millones": 1.3,
-      "club": "Unión de Santa Fe",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Valentín Fascendini",
-      "posicion": "Defensa central",
-      "edad": 23,
-      "valor_mercado_eur_millones": 1.3,
-      "club": "Talleres",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Ronaldo Dejesús",
-      "posicion": "Defensa central",
-      "edad": 25,
-      "valor_mercado_eur_millones": 1.3,
-      "club": "Independiente",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Fernando Alarcón",
-      "posicion": "Defensa central",
-      "edad": 32,
-      "valor_mercado_eur_millones": 1.3,
-      "club": "Instituto ACC",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Enzo Martínez",
-      "posicion": "Defensa central",
-      "edad": 28,
-      "valor_mercado_eur_millones": 1.3,
-      "club": "Gimnasia y Esgrima La Plata",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Braian Cufré",
-      "posicion": "Lateral izquierdo",
-      "edad": 29,
-      "valor_mercado_eur_millones": 1.2,
-      "club": "Aldosivi",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Alejo Osella",
-      "posicion": "Defensa central",
-      "edad": 25,
-      "valor_mercado_eur_millones": 1.2,
-      "club": "Independiente Rivadavia",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Gonzalo Requena",
-      "posicion": "Defensa central",
-      "edad": 23,
-      "valor_mercado_eur_millones": 1.2,
-      "club": "Tigre",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Augusto Schott",
-      "posicion": "Lateral derecho",
-      "edad": 26,
-      "valor_mercado_eur_millones": 1.2,
-      "club": "Talleres",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Giuliano Cerato",
-      "posicion": "Lateral derecho",
-      "edad": 28,
-      "valor_mercado_eur_millones": 1.2,
-      "club": "Instituto ACC",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Alexis Soto",
-      "posicion": "Lateral izquierdo",
-      "edad": 32,
-      "valor_mercado_eur_millones": 1.2,
-      "club": "Gimnasia y Esgrima (Mendoza)",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Ian Glavinovich",
-      "posicion": "Defensa central",
-      "edad": 24,
-      "valor_mercado_eur_millones": 1.2,
-      "club": "Independiente",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Lautaro Giannetti",
-      "posicion": "Defensa central",
-      "edad": 32,
-      "valor_mercado_eur_millones": 1.2,
-      "club": "Independiente",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Franco Calderón",
-      "posicion": "Defensa central",
-      "edad": 28,
-      "valor_mercado_eur_millones": 1.2,
-      "club": "Independiente",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Leonardo Godoy",
-      "posicion": "Lateral derecho",
-      "edad": 31,
-      "valor_mercado_eur_millones": 1.2,
-      "club": "Independiente",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Santiago Arias",
-      "posicion": "Lateral derecho",
-      "edad": 34,
-      "valor_mercado_eur_millones": 1.2,
-      "club": "Independiente",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Tomás Guidara",
-      "posicion": "Defensa central",
-      "edad": 30,
-      "valor_mercado_eur_millones": 1.2,
-      "club": "Lanús",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Elías Gómez",
-      "posicion": "Lateral izquierdo",
-      "edad": 32,
-      "valor_mercado_eur_millones": 1.2,
-      "club": "Vélez Sarsfield",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Gonzalo Pérez",
-      "posicion": "Defensa central",
-      "edad": 25,
-      "valor_mercado_eur_millones": 1.2,
-      "club": "Instituto ACC",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Eugenio Raggio",
-      "posicion": "Defensa central",
-      "edad": 24,
-      "valor_mercado_eur_millones": 1.2,
-      "club": "Platense",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Pedro Silva Torrejón",
-      "posicion": "Lateral izquierdo",
-      "edad": 29,
-      "valor_mercado_eur_millones": 1.2,
-      "club": "Gimnasia y Esgrima La Plata",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Juan Pintado",
-      "posicion": "Lateral izquierdo",
-      "edad": 29,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "Unión de Santa Fe",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Lisandro Magallán",
-      "posicion": "Defensa central",
-      "edad": 32,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "Vélez Sarsfield",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Facundo Mallo",
-      "posicion": "Defensa central",
-      "edad": 31,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "Rosario Central",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Jeronimo Russo",
-      "posicion": "Lateral izquierdo",
-      "edad": 21,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "Independiente",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Jano Gordon",
-      "posicion": "Lateral derecho",
-      "edad": 22,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "Vélez Sarsfield",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Nicolás Otamendi",
-      "posicion": "Defensa central",
-      "edad": 38,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "River Plate",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Leonard Costa",
-      "posicion": "Defensa central",
-      "edad": 28,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "Independiente Rivadavia",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Martín Ortega",
-      "posicion": "Lateral derecho",
-      "edad": 27,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "Independiente",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Clever Ferreira",
-      "posicion": "Defensa central",
-      "edad": 23,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "Atlético Tucumán",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Saúl Salcedo",
-      "posicion": "Defensa central",
-      "edad": 28,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "Independiente",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Mathías De Ritis",
-      "posicion": "Lateral izquierdo",
-      "edad": 23,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "San Lorenzo de Almagro",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Nicolás Demartini",
-      "posicion": "Defensa central",
-      "edad": 26,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "Barracas Central",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Alan Núñez",
-      "posicion": "Lateral derecho",
-      "edad": 21,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "Argentinos Juniors",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Ayrton Portillo",
-      "posicion": "Lateral derecho",
-      "edad": 26,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "Defensa y Justicia",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Federico Vera",
-      "posicion": "Lateral derecho",
-      "edad": 28,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "Huracán",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Marcos Acuña",
-      "posicion": "Lateral izquierdo",
-      "edad": 34,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "River Plate",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Alexis Maldonado",
-      "posicion": "Defensa central",
-      "edad": 28,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "Belgrano",
-      "confianza_club": "alta"
-    }
-  ],
-  "mediocampistas": [
-    {
-      "nombre": "Thiago Almada",
-      "posicion": "Mediocentro ofensivo",
-      "edad": 25,
-      "valor_mercado_eur_millones": 20.0,
-      "club": "River Plate",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Milton Delgado",
-      "posicion": "Pivote",
-      "edad": 21,
-      "valor_mercado_eur_millones": 10.0,
-      "club": "Boca Juniors",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Tomás Aranda",
-      "posicion": "Mediocentro ofensivo",
-      "edad": 19,
-      "valor_mercado_eur_millones": 9.0,
-      "club": "Boca Juniors",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Tobías Andrada",
-      "posicion": "Mediocentro",
-      "edad": 19,
-      "valor_mercado_eur_millones": 9.0,
-      "club": "River Plate",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Mauro Arambarri",
-      "posicion": "Mediocentro",
-      "edad": 30,
-      "valor_mercado_eur_millones": 8.0,
-      "club": "River Plate",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Aníbal Moreno",
-      "posicion": "Pivote",
-      "edad": 27,
-      "valor_mercado_eur_millones": 8.0,
-      "club": "River Plate",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Kendry Páez",
-      "posicion": "Mediocentro ofensivo",
-      "edad": 19,
-      "valor_mercado_eur_millones": 8.0,
-      "club": "River Plate",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Valentín Carboni",
-      "posicion": "Mediocentro ofensivo",
-      "edad": 21,
-      "valor_mercado_eur_millones": 7.5,
-      "club": "Talleres",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Alan Lescano",
-      "posicion": "Mediocentro ofensivo",
-      "edad": 24,
-      "valor_mercado_eur_millones": 7.5,
-      "club": "Independiente",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Leonel Pérez",
-      "posicion": "Pivote",
-      "edad": 22,
-      "valor_mercado_eur_millones": 6.0,
-      "club": "Talleres",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Franco Ibarra",
-      "posicion": "Pivote",
-      "edad": 25,
-      "valor_mercado_eur_millones": 6.0,
-      "club": "Rosario Central",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Nicolás Barros Schelotto",
-      "posicion": "Pivote",
-      "edad": 19,
-      "valor_mercado_eur_millones": 6.0,
-      "club": "Gimnasia y Esgrima La Plata",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Matías Galarza",
-      "posicion": "Pivote",
-      "edad": 24,
-      "valor_mercado_eur_millones": 5.5,
-      "club": "Talleres",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Santiago Ascacibar",
-      "posicion": "Pivote",
-      "edad": 29,
-      "valor_mercado_eur_millones": 5.5,
-      "club": "Boca Juniors",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Leandro Paredes",
-      "posicion": "Pivote",
-      "edad": 32,
-      "valor_mercado_eur_millones": 5.0,
-      "club": "Boca Juniors",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Hernán López Muñoz",
-      "posicion": "Mediocentro ofensivo",
-      "edad": 25,
-      "valor_mercado_eur_millones": 5.0,
-      "club": "Independiente",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Vicente Pizarro",
-      "posicion": "Pivote",
-      "edad": 23,
-      "valor_mercado_eur_millones": 4.5,
-      "club": "Rosario Central",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Fausto Vera",
-      "posicion": "Pivote",
-      "edad": 26,
-      "valor_mercado_eur_millones": 4.5,
-      "club": "River Plate",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Agustín Medina",
-      "posicion": "Pivote",
-      "edad": 19,
-      "valor_mercado_eur_millones": 4.5,
-      "club": "Independiente",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Marcelino Moreno",
-      "posicion": "Mediocentro ofensivo",
-      "edad": 31,
-      "valor_mercado_eur_millones": 4.5,
-      "club": "Independiente",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Alex Luna",
-      "posicion": "Mediocentro ofensivo",
-      "edad": 22,
-      "valor_mercado_eur_millones": 4.0,
-      "club": "Instituto ACC",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Matko Miljevic",
-      "posicion": "Mediocentro ofensivo",
-      "edad": 25,
-      "valor_mercado_eur_millones": 4.0,
-      "club": "Talleres",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Baltasar Rodríguez",
-      "posicion": "Mediocentro ofensivo",
-      "edad": 23,
-      "valor_mercado_eur_millones": 4.0,
-      "club": "Estudiantes de La Plata",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Tomás Galván",
-      "posicion": "Mediocentro ofensivo",
-      "edad": 26,
-      "valor_mercado_eur_millones": 4.0,
-      "club": "River Plate",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Matías Galarza",
-      "posicion": "Mediocentro",
-      "edad": 24,
-      "valor_mercado_eur_millones": 4.0,
-      "club": "Talleres",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Gastón Lodico",
-      "posicion": "Mediocentro",
-      "edad": 28,
-      "valor_mercado_eur_millones": 3.8,
-      "club": "Talleres",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Franco Cristaldo",
-      "posicion": "Mediocentro ofensivo",
-      "edad": 30,
-      "valor_mercado_eur_millones": 3.5,
-      "club": "Talleres",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Aarón Molinas",
-      "posicion": "Mediocentro ofensivo",
-      "edad": 26,
-      "valor_mercado_eur_millones": 3.5,
-      "club": "Defensa y Justicia",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Giuliano Galoppo",
-      "posicion": "Mediocentro",
-      "edad": 27,
-      "valor_mercado_eur_millones": 3.5,
-      "club": "River Plate",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Matías Zaracho",
-      "posicion": "Mediocentro ofensivo",
-      "edad": 28,
-      "valor_mercado_eur_millones": 3.5,
-      "club": "Talleres",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Matías Fernández",
-      "posicion": "Mediocentro ofensivo",
-      "edad": 25,
-      "valor_mercado_eur_millones": 3.0,
-      "club": "Independiente Rivadavia",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Jabes Saralegui",
-      "posicion": "Mediocentro",
-      "edad": 23,
-      "valor_mercado_eur_millones": 3.0,
-      "club": "Instituto ACC",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Adrián Sánchez",
-      "posicion": "Mediocentro",
-      "edad": 27,
-      "valor_mercado_eur_millones": 3.0,
-      "club": "Atlético Tucumán",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "César Pérez",
-      "posicion": "Mediocentro",
-      "edad": 23,
-      "valor_mercado_eur_millones": 3.0,
-      "club": "Defensa y Justicia",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Kevin Gutiérrez",
-      "posicion": "Pivote",
-      "edad": 29,
-      "valor_mercado_eur_millones": 3.0,
-      "club": "Independiente",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Tomás Belmonte",
-      "posicion": "Pivote",
-      "edad": 28,
-      "valor_mercado_eur_millones": 3.0,
-      "club": "Boca Juniors",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Carlos Palacios",
-      "posicion": "Mediocentro ofensivo",
-      "edad": 26,
-      "valor_mercado_eur_millones": 3.0,
-      "club": "Boca Juniors",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Williams Alarcón",
-      "posicion": "Mediocentro",
-      "edad": 25,
-      "valor_mercado_eur_millones": 3.0,
-      "club": "Boca Juniors",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Diego Valdés",
-      "posicion": "Mediocentro ofensivo",
-      "edad": 32,
-      "valor_mercado_eur_millones": 2.8,
-      "club": "Vélez Sarsfield",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Lucas Zelarrayán",
-      "posicion": "Mediocentro ofensivo",
-      "edad": 34,
-      "valor_mercado_eur_millones": 2.8,
-      "club": "Atlético Tucumán",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Facundo Farías",
-      "posicion": "Mediocentro ofensivo",
-      "edad": 23,
-      "valor_mercado_eur_millones": 2.5,
-      "club": "Estudiantes de La Plata",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Agustín Cardozo",
-      "posicion": "Pivote",
-      "edad": 29,
-      "valor_mercado_eur_millones": 2.5,
-      "club": "Independiente",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Julián Palacios",
-      "posicion": "Mediocentro ofensivo",
-      "edad": 27,
-      "valor_mercado_eur_millones": 2.5,
-      "club": "Unión de Santa Fe",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Giovanni Baroni",
-      "posicion": "Mediocentro ofensivo",
-      "edad": 17,
-      "valor_mercado_eur_millones": 2.5,
-      "club": "Talleres",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Santiago Longo",
-      "posicion": "Pivote",
-      "edad": 28,
-      "valor_mercado_eur_millones": 2.5,
-      "club": "Atlético Tucumán",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Ignacio Perruzzi",
-      "posicion": "Pivote",
-      "edad": 21,
-      "valor_mercado_eur_millones": 2.5,
-      "club": "San Lorenzo de Almagro",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Facundo Gulli",
-      "posicion": "Mediocentro ofensivo",
-      "edad": 20,
-      "valor_mercado_eur_millones": 2.5,
-      "club": "San Lorenzo de Almagro",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Lautaro Millán",
-      "posicion": "Mediocentro ofensivo",
-      "edad": 21,
-      "valor_mercado_eur_millones": 2.5,
-      "club": "Independiente",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Mauricio Benítez",
-      "posicion": "Pivote",
-      "edad": 22,
-      "valor_mercado_eur_millones": 2.5,
-      "club": "Boca Juniors",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Santiago González",
-      "posicion": "Mediocentro",
-      "edad": 23,
-      "valor_mercado_eur_millones": 2.3,
-      "club": "Instituto ACC",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Bruno Leyes",
-      "posicion": "Pivote",
-      "edad": 24,
-      "valor_mercado_eur_millones": 2.3,
-      "club": "Instituto ACC",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Alan Rodríguez",
-      "posicion": "Mediocentro",
-      "edad": 26,
-      "valor_mercado_eur_millones": 2.3,
-      "club": "Sarmiento (Junín)",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "José Florentín",
-      "posicion": "Mediocentro",
-      "edad": 30,
-      "valor_mercado_eur_millones": 2.2,
-      "club": "Independiente Rivadavia",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Gonzalo Maroni",
-      "posicion": "Mediocentro ofensivo",
-      "edad": 27,
-      "valor_mercado_eur_millones": 2.0,
-      "club": "Barracas Central",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Gonzalo Ríos",
-      "posicion": "Mediocentro ofensivo",
-      "edad": 27,
-      "valor_mercado_eur_millones": 2.0,
-      "club": "Independiente Rivadavia",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Maximiliano Amarfil",
-      "posicion": "Pivote",
-      "edad": 24,
-      "valor_mercado_eur_millones": 2.0,
-      "club": "Platense",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Francisco González Metilli",
-      "posicion": "Mediocentro ofensivo",
-      "edad": 29,
-      "valor_mercado_eur_millones": 2.0,
-      "club": "Atlético Tucumán",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Lucas Robertone",
-      "posicion": "Mediocentro",
-      "edad": 29,
-      "valor_mercado_eur_millones": 2.0,
-      "club": "Vélez Sarsfield",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Santiago Sosa",
-      "posicion": "Mediocentro",
-      "edad": 21,
-      "valor_mercado_eur_millones": 2.0,
-      "club": "Defensa y Justicia",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Nicolás Tripichio",
-      "posicion": "Pivote",
-      "edad": 30,
-      "valor_mercado_eur_millones": 2.0,
-      "club": "San Lorenzo de Almagro",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Federico Navarro",
-      "posicion": "Pivote",
-      "edad": 26,
-      "valor_mercado_eur_millones": 2.0,
-      "club": "Rosario Central",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Jerónimo Gómez Mattar",
-      "posicion": "Mediocentro ofensivo",
-      "edad": 18,
-      "valor_mercado_eur_millones": 2.0,
-      "club": "Independiente",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Tomás Bottari",
-      "posicion": "Mediocentro",
-      "edad": 23,
-      "valor_mercado_eur_millones": 1.8,
-      "club": "Independiente Rivadavia",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Juan Cruz Meza",
-      "posicion": "Mediocentro ofensivo",
-      "edad": 18,
-      "valor_mercado_eur_millones": 1.8,
-      "club": "River Plate",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Santiago López García",
-      "posicion": "Interior derecho",
-      "edad": 28,
-      "valor_mercado_eur_millones": 1.8,
-      "club": "Banfield",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Jalil Elías",
-      "posicion": "Pivote",
-      "edad": 30,
-      "valor_mercado_eur_millones": 1.8,
-      "club": "Instituto ACC",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Joaquín Gho",
-      "posicion": "Interior derecho",
-      "edad": 23,
-      "valor_mercado_eur_millones": 1.8,
-      "club": "Estudiantes de La Plata",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Martín Río",
-      "posicion": "Mediocentro",
-      "edad": 25,
-      "valor_mercado_eur_millones": 1.8,
-      "club": "San Lorenzo de Almagro",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Ulises Ortegoza",
-      "posicion": "Pivote",
-      "edad": 29,
-      "valor_mercado_eur_millones": 1.8,
-      "club": "Racing Club",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Felipe Peña Biafore",
-      "posicion": "Pivote",
-      "edad": 23,
-      "valor_mercado_eur_millones": 1.7,
-      "club": "Lanús",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Tiago Serrago",
-      "posicion": "Mediocentro",
-      "edad": 22,
-      "valor_mercado_eur_millones": 1.7,
-      "club": "Instituto ACC",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Facundo Weller",
-      "posicion": "Interior izquierdo",
-      "edad": 29,
-      "valor_mercado_eur_millones": 1.7,
-      "club": "Huracán",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Facundo Guch",
-      "posicion": "Mediocentro ofensivo",
-      "edad": 19,
-      "valor_mercado_eur_millones": 1.7,
-      "club": "Independiente",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Luca Regiardo",
-      "posicion": "Pivote",
-      "edad": 19,
-      "valor_mercado_eur_millones": 1.7,
-      "club": "Independiente",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Claudio Baeza",
-      "posicion": "Pivote",
-      "edad": 32,
-      "valor_mercado_eur_millones": 1.6,
-      "club": "Vélez Sarsfield",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Nicolás Dubersarsky",
-      "posicion": "Mediocentro",
-      "edad": 21,
-      "valor_mercado_eur_millones": 1.5,
-      "club": "Instituto ACC",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Franco Zapiola",
-      "posicion": "Mediocentro",
-      "edad": 25,
-      "valor_mercado_eur_millones": 1.5,
-      "club": "Platense",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Gonzalo Abrego",
-      "posicion": "Mediocentro",
-      "edad": 28,
-      "valor_mercado_eur_millones": 1.5,
-      "club": "San Lorenzo de Almagro",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Ignacio Miramón",
-      "posicion": "Pivote",
-      "edad": 23,
-      "valor_mercado_eur_millones": 1.5,
-      "club": "Gimnasia y Esgrima La Plata",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Rodrigo Herrera",
-      "posicion": "Pivote",
-      "edad": 26,
-      "valor_mercado_eur_millones": 1.5,
-      "club": "Newell's Old Boys",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Valentino Acuña",
-      "posicion": "Pivote",
-      "edad": 20,
-      "valor_mercado_eur_millones": 1.5,
-      "club": "Defensa y Justicia",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Gabriel Neves",
-      "posicion": "Pivote",
-      "edad": 29,
-      "valor_mercado_eur_millones": 1.3,
-      "club": "Estudiantes de La Plata",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Lucas González",
-      "posicion": "Mediocentro",
-      "edad": 26,
-      "valor_mercado_eur_millones": 1.3,
-      "club": "Central Córdoba (SdE)",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Kevin Ortiz",
-      "posicion": "Pivote",
-      "edad": 25,
-      "valor_mercado_eur_millones": 1.3,
-      "club": "Atlético Tucumán",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Juan Sforza",
-      "posicion": "Pivote",
-      "edad": 24,
-      "valor_mercado_eur_millones": 1.3,
-      "club": "Talleres",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Alexis Castro",
-      "posicion": "Mediocentro",
-      "edad": 31,
-      "valor_mercado_eur_millones": 1.2,
-      "club": "Estudiantes de La Plata",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Tomás Porra",
-      "posicion": "Mediocentro ofensivo",
-      "edad": 22,
-      "valor_mercado_eur_millones": 1.2,
-      "club": "Barracas Central",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Iván Tapia",
-      "posicion": "Mediocentro ofensivo",
-      "edad": 27,
-      "valor_mercado_eur_millones": 1.2,
-      "club": "Barracas Central",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Matías Sepúlveda",
-      "posicion": "Interior izquierdo",
-      "edad": 27,
-      "valor_mercado_eur_millones": 1.2,
-      "club": "Lanús",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Joaquín Mosqueira",
-      "posicion": "Pivote",
-      "edad": 21,
-      "valor_mercado_eur_millones": 1.2,
-      "club": "Unión de Santa Fe",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Leonardo Heredia",
-      "posicion": "Mediocentro ofensivo",
-      "edad": 30,
-      "valor_mercado_eur_millones": 1.2,
-      "club": "Platense",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "David Martínez",
-      "posicion": "Pivote",
-      "edad": 22,
-      "valor_mercado_eur_millones": 1.2,
-      "club": "Independiente",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Thaiel Peralta",
-      "posicion": "Mediocentro ofensivo",
-      "edad": 17,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "Huracán",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Renzo Tesuri",
-      "posicion": "Interior derecho",
-      "edad": 30,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "Atlético Tucumán",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Manuel Insaurralde",
-      "posicion": "Mediocentro",
-      "edad": 27,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "San Lorenzo de Almagro",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Ignacio Rodríguez",
-      "posicion": "Interior izquierdo",
-      "edad": 24,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "Talleres",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Ramiro Carrera",
-      "posicion": "Interior derecho",
-      "edad": 32,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "Lanús",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Nicolás Oroz",
-      "posicion": "Mediocentro ofensivo",
-      "edad": 32,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "Independiente",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Luciano Cabral",
-      "posicion": "Mediocentro ofensivo",
-      "edad": 31,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "Independiente",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Iván Gómez",
-      "posicion": "Pivote",
-      "edad": 29,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "Platense",
-      "confianza_club": "alta"
-    }
-  ],
-  "delanteros": [
-    {
-      "nombre": "Ángel Correa",
-      "posicion": "Mediapunta",
-      "edad": 31,
-      "valor_mercado_eur_millones": 8.0,
-      "club": "River Plate",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Lucas Beltrán",
-      "posicion": "Delantero centro",
-      "edad": 25,
-      "valor_mercado_eur_millones": 8.0,
-      "club": "River Plate",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Exequiel Zeballos",
-      "posicion": "Extremo derecho",
-      "edad": 24,
-      "valor_mercado_eur_millones": 7.0,
-      "club": "Boca Juniors",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Sebastián Villa",
-      "posicion": "Extremo izquierdo",
-      "edad": 30,
-      "valor_mercado_eur_millones": 6.0,
-      "club": "Boca Juniors",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Jáminton Campaz",
-      "posicion": "Extremo izquierdo",
-      "edad": 26,
-      "valor_mercado_eur_millones": 5.5,
-      "club": "Rosario Central",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Alexis Cuello",
-      "posicion": "Delantero centro",
-      "edad": 26,
-      "valor_mercado_eur_millones": 5.0,
-      "club": "Barracas Central",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Matías Abaldo",
-      "posicion": "Extremo izquierdo",
-      "edad": 22,
-      "valor_mercado_eur_millones": 5.0,
-      "club": "Independiente",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Miguel Merentiel",
-      "posicion": "Delantero centro",
-      "edad": 30,
-      "valor_mercado_eur_millones": 4.5,
-      "club": "Boca Juniors",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Sebastián Driussi",
-      "posicion": "Delantero centro",
-      "edad": 30,
-      "valor_mercado_eur_millones": 4.5,
-      "club": "River Plate",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Maximiliano Salas",
-      "posicion": "Delantero centro",
-      "edad": 28,
-      "valor_mercado_eur_millones": 4.5,
-      "club": "Independiente Rivadavia",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Tiago Palacios",
-      "posicion": "Extremo derecho",
-      "edad": 25,
-      "valor_mercado_eur_millones": 4.5,
-      "club": "Estudiantes de La Plata",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Ignacio Russo",
-      "posicion": "Delantero centro",
-      "edad": 25,
-      "valor_mercado_eur_millones": 4.0,
-      "club": "Tigre",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Adam Bareiro",
-      "posicion": "Delantero centro",
-      "edad": 30,
-      "valor_mercado_eur_millones": 4.0,
-      "club": "Boca Juniors",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Ronaldo Martínez",
-      "posicion": "Delantero centro",
-      "edad": 30,
-      "valor_mercado_eur_millones": 4.0,
-      "club": "Talleres",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Tomás Badaloni",
-      "posicion": "Delantero centro",
-      "edad": 26,
-      "valor_mercado_eur_millones": 4.0,
-      "club": "Rosario Central",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Matías Vargas",
-      "posicion": "Extremo izquierdo",
-      "edad": 29,
-      "valor_mercado_eur_millones": 4.0,
-      "club": "Instituto ACC",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Julián Fernández",
-      "posicion": "Extremo derecho",
-      "edad": 22,
-      "valor_mercado_eur_millones": 3.8,
-      "club": "Rosario Central",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Santiago Montiel",
-      "posicion": "Extremo derecho",
-      "edad": 25,
-      "valor_mercado_eur_millones": 3.8,
-      "club": "Independiente",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Ian Subiabre",
-      "posicion": "Extremo derecho",
-      "edad": 19,
-      "valor_mercado_eur_millones": 3.5,
-      "club": "Tigre",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Kevin Zenón",
-      "posicion": "Extremo izquierdo",
-      "edad": 25,
-      "valor_mercado_eur_millones": 3.5,
-      "club": "Boca Juniors",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Rafael Santos Borré",
-      "posicion": "Delantero centro",
-      "edad": 30,
-      "valor_mercado_eur_millones": 3.5,
-      "club": "River Plate",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Álex Arce",
-      "posicion": "Delantero centro",
-      "edad": 31,
-      "valor_mercado_eur_millones": 3.5,
-      "club": "Independiente Rivadavia",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Fabrizio Sartori",
-      "posicion": "Delantero centro",
-      "edad": 24,
-      "valor_mercado_eur_millones": 3.5,
-      "club": "Independiente Rivadavia",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Edwuin Cetré",
-      "posicion": "Extremo izquierdo",
-      "edad": 28,
-      "valor_mercado_eur_millones": 3.5,
-      "club": "Estudiantes de La Plata",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Brian Aguirre",
-      "posicion": "Extremo izquierdo",
-      "edad": 23,
-      "valor_mercado_eur_millones": 3.5,
-      "club": "Estudiantes de La Plata",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Dylan Aquino",
-      "posicion": "Extremo izquierdo",
-      "edad": 21,
-      "valor_mercado_eur_millones": 3.5,
-      "club": "Lanús",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Santiago Solari",
-      "posicion": "Extremo derecho",
-      "edad": 28,
-      "valor_mercado_eur_millones": 3.2,
-      "club": "Racing Club",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Nicolás Fernández",
-      "posicion": "Delantero centro",
-      "edad": 30,
-      "valor_mercado_eur_millones": 3.0,
-      "club": "Atlético Tucumán",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Rodrigo Auzmendi",
-      "posicion": "Delantero centro",
-      "edad": 25,
-      "valor_mercado_eur_millones": 3.0,
-      "club": "San Lorenzo de Almagro",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Maximiliano Gutiérrez",
-      "posicion": "Extremo derecho",
-      "edad": 22,
-      "valor_mercado_eur_millones": 3.0,
-      "club": "Independiente",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Alan Velasco",
-      "posicion": "Extremo izquierdo",
-      "edad": 24,
-      "valor_mercado_eur_millones": 2.8,
-      "club": "Boca Juniors",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Adrián Martínez",
-      "posicion": "Delantero centro",
-      "edad": 34,
-      "valor_mercado_eur_millones": 2.8,
-      "club": "Talleres",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Marcelo Torres",
-      "posicion": "Delantero centro",
-      "edad": 28,
-      "valor_mercado_eur_millones": 2.8,
-      "club": "Gimnasia y Esgrima La Plata",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Mauro Méndez",
-      "posicion": "Delantero centro",
-      "edad": 27,
-      "valor_mercado_eur_millones": 2.5,
-      "club": "Tigre",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Óscar Cortés",
-      "posicion": "Extremo izquierdo",
-      "edad": 22,
-      "valor_mercado_eur_millones": 2.5,
-      "club": "Huracán",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Tomás Conechny",
-      "posicion": "Extremo izquierdo",
-      "edad": 28,
-      "valor_mercado_eur_millones": 2.5,
-      "club": "Talleres",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Enzo Copetti",
-      "posicion": "Delantero centro",
-      "edad": 30,
-      "valor_mercado_eur_millones": 2.5,
-      "club": "Rosario Central",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Tomás Molina",
-      "posicion": "Delantero centro",
-      "edad": 31,
-      "valor_mercado_eur_millones": 2.5,
-      "club": "Independiente",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Milton Giménez",
-      "posicion": "Delantero centro",
-      "edad": 30,
-      "valor_mercado_eur_millones": 2.5,
-      "club": "Boca Juniors",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Duván Vergara",
-      "posicion": "Extremo izquierdo",
-      "edad": 29,
-      "valor_mercado_eur_millones": 2.3,
-      "club": "Talleres",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Junior Marabel",
-      "posicion": "Delantero centro",
-      "edad": 28,
-      "valor_mercado_eur_millones": 2.2,
-      "club": "Sarmiento (Junín)",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Rick",
-      "posicion": "Extremo izquierdo",
-      "edad": 26,
-      "valor_mercado_eur_millones": 2.2,
-      "club": "Talleres",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Walter Mazzantti",
-      "posicion": "Extremo derecho",
-      "edad": 29,
-      "valor_mercado_eur_millones": 2.2,
-      "club": "Independiente",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Fabricio Pérez",
-      "posicion": "Extremo derecho",
-      "edad": 20,
-      "valor_mercado_eur_millones": 2.0,
-      "club": "Estudiantes de La Plata",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Santiago López",
-      "posicion": "Delantero centro",
-      "edad": 20,
-      "valor_mercado_eur_millones": 2.0,
-      "club": "Tigre",
-      "confianza_club": "alta",
-      "nota": "A préstamo en Tigre, pertenece a Independiente"
-    },
-    {
-      "nombre": "Guido Mainero",
-      "posicion": "Extremo izquierdo",
-      "edad": 31,
-      "valor_mercado_eur_millones": 2.0,
-      "club": "Platense",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Gastón Togni",
-      "posicion": "Extremo izquierdo",
-      "edad": 28,
-      "valor_mercado_eur_millones": 2.0,
-      "club": "Platense",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Agustín Álvarez",
-      "posicion": "Delantero centro",
-      "edad": 25,
-      "valor_mercado_eur_millones": 2.0,
-      "club": "Talleres",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Bruno Barbicciotto",
-      "posicion": "Delantero centro",
-      "edad": 25,
-      "valor_mercado_eur_millones": 2.0,
-      "club": "Talleres",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Andrés Vombergar",
-      "posicion": "Delantero centro",
-      "edad": 31,
-      "valor_mercado_eur_millones": 2.0,
-      "club": "Aldosivi",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Facundo Lencioni",
-      "posicion": "Extremo izquierdo",
-      "edad": 25,
-      "valor_mercado_eur_millones": 2.0,
-      "club": "Instituto ACC",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Matías Cóccaro",
-      "posicion": "Delantero centro",
-      "edad": 28,
-      "valor_mercado_eur_millones": 2.0,
-      "club": "Independiente",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Rodrigo Atencio",
-      "posicion": "Extremo derecho",
-      "edad": 24,
-      "valor_mercado_eur_millones": 2.0,
-      "club": "Independiente Rivadavia",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Tiziano Perrotta",
-      "posicion": "Delantero centro",
-      "edad": 19,
-      "valor_mercado_eur_millones": 2.0,
-      "club": "Defensa y Justicia",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Juan Gutiérrez",
-      "posicion": "Delantero centro",
-      "edad": 24,
-      "valor_mercado_eur_millones": 2.0,
-      "club": "Defensa y Justicia",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Jordy Caicedo",
-      "posicion": "Delantero centro",
-      "edad": 28,
-      "valor_mercado_eur_millones": 2.0,
-      "club": "Huracán",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Manuel Panaro",
-      "posicion": "Extremo derecho",
-      "edad": 23,
-      "valor_mercado_eur_millones": 2.0,
-      "club": "Gimnasia y Esgrima La Plata",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Ulises Sánchez",
-      "posicion": "Delantero centro",
-      "edad": 28,
-      "valor_mercado_eur_millones": 1.8,
-      "club": "Instituto ACC",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Joaquín Tobio Burgos",
-      "posicion": "Extremo izquierdo",
-      "edad": 21,
-      "valor_mercado_eur_millones": 1.8,
-      "club": "Estudiantes de La Plata",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Ángel Di María",
-      "posicion": "Extremo derecho",
-      "edad": 38,
-      "valor_mercado_eur_millones": 1.8,
-      "club": "Central Córdoba (SdE)",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Facundo Bruera",
-      "posicion": "Delantero centro",
-      "edad": 27,
-      "valor_mercado_eur_millones": 1.8,
-      "club": "Barracas Central",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Matías Pellegrini",
-      "posicion": "Extremo derecho",
-      "edad": 28,
-      "valor_mercado_eur_millones": 1.7,
-      "club": "Vélez Sarsfield",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Matías Giménez",
-      "posicion": "Delantero centro",
-      "edad": 27,
-      "valor_mercado_eur_millones": 1.7,
-      "club": "Independiente",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Agustín Ruberto",
-      "posicion": "Delantero centro",
-      "edad": 20,
-      "valor_mercado_eur_millones": 1.7,
-      "club": "River Plate",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Juan Bisanz",
-      "posicion": "Extremo derecho",
-      "edad": 24,
-      "valor_mercado_eur_millones": 1.5,
-      "club": "Huracán",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Lautaro Díaz",
-      "posicion": "Delantero centro",
-      "edad": 28,
-      "valor_mercado_eur_millones": 1.5,
-      "club": "Talleres",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Ignacio Ramírez",
-      "posicion": "Delantero centro",
-      "edad": 29,
-      "valor_mercado_eur_millones": 1.5,
-      "club": "Independiente",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Matías Reali",
-      "posicion": "Extremo izquierdo",
-      "edad": 28,
-      "valor_mercado_eur_millones": 1.5,
-      "club": "San Lorenzo de Almagro",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Agustín Módica",
-      "posicion": "Delantero centro",
-      "edad": 23,
-      "valor_mercado_eur_millones": 1.5,
-      "club": "Talleres",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Joaquín Correa",
-      "posicion": "Mediapunta",
-      "edad": 32,
-      "valor_mercado_eur_millones": 1.5,
-      "club": "Estudiantes de La Plata",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Lucas Passerini",
-      "posicion": "Delantero centro",
-      "edad": 32,
-      "valor_mercado_eur_millones": 1.5,
-      "club": "Atlético Tucumán",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Diego Valoyes",
-      "posicion": "Extremo derecho",
-      "edad": 29,
-      "valor_mercado_eur_millones": 1.5,
-      "club": "Talleres",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Valentín Dávila",
-      "posicion": "Delantero centro",
-      "edad": 19,
-      "valor_mercado_eur_millones": 1.5,
-      "club": "Talleres",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Ignacio Pussetto",
-      "posicion": "Delantero centro",
-      "edad": 30,
-      "valor_mercado_eur_millones": 1.3,
-      "club": "Independiente",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Yoshan Valois",
-      "posicion": "Delantero centro",
-      "edad": 21,
-      "valor_mercado_eur_millones": 1.3,
-      "club": "Central Córdoba (SdE)",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Chimy Ávila",
-      "posicion": "Delantero centro",
-      "edad": 32,
-      "valor_mercado_eur_millones": 1.2,
-      "club": "Independiente",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Jhon Córdoba",
-      "posicion": "Extremo derecho",
-      "edad": 26,
-      "valor_mercado_eur_millones": 1.2,
-      "club": "Instituto ACC",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Agustín Auzmendi",
-      "posicion": "Delantero centro",
-      "edad": 29,
-      "valor_mercado_eur_millones": 1.2,
-      "club": "Gimnasia y Esgrima La Plata",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Facundo Jainikoski",
-      "posicion": "Delantero centro",
-      "edad": 18,
-      "valor_mercado_eur_millones": 1.2,
-      "club": "Argentinos Juniors",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Mateo García",
-      "posicion": "Extremo derecho",
-      "edad": 29,
-      "valor_mercado_eur_millones": 1.2,
-      "club": "Newell's Old Boys",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Tomás Nasif",
-      "posicion": "Delantero centro",
-      "edad": 22,
-      "valor_mercado_eur_millones": 1.2,
-      "club": "Platense",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Domingo Blanco",
-      "posicion": "Extremo derecho",
-      "edad": 31,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "Defensa y Justicia",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Marcelo Estigarribia",
-      "posicion": "Delantero centro",
-      "edad": 31,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "Unión de Santa Fe",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Emiliano Rigoni",
-      "posicion": "Extremo derecho",
-      "edad": 33,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "Atlético Tucumán",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Joaquín Freitas",
-      "posicion": "Delantero centro",
-      "edad": 19,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "River Plate",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Adolfo Gaich",
-      "posicion": "Delantero centro",
-      "edad": 27,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "Estudiantes de La Plata",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Elías Torres",
-      "posicion": "Delantero centro",
-      "edad": 25,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "Racing Club",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Gastón Verón",
-      "posicion": "Delantero centro",
-      "edad": 25,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "Argentinos Juniors",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Iván Morales",
-      "posicion": "Delantero centro",
-      "edad": 27,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "Argentinos Juniors",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Juan Carlos Gauto",
-      "posicion": "Extremo derecho",
-      "edad": 22,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "Platense",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Enner Valencia",
-      "posicion": "Delantero centro",
-      "edad": 36,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "Boca Juniors",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Antony Alonso",
-      "posicion": "Delantero centro",
-      "edad": 28,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "Deportivo Riestra",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Allan Wik",
-      "posicion": "Delantero centro",
-      "edad": 23,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "Lanús",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Giovanni Cantizano",
-      "posicion": "Extremo izquierdo",
-      "edad": 19,
-      "valor_mercado_eur_millones": 1.0,
-      "club": "Rosario Central",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Walter Núñez",
-      "posicion": "Extremo izquierdo",
-      "edad": 23,
-      "valor_mercado_eur_millones": 0.9,
-      "club": "Newell's Old Boys",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Nahuel Barrios",
-      "posicion": "Extremo izquierdo",
-      "edad": 28,
-      "valor_mercado_eur_millones": 0.9,
-      "club": "Tigre",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Gaspar Duarte",
-      "posicion": "Extremo derecho",
-      "edad": 23,
-      "valor_mercado_eur_millones": 0.9,
-      "club": "Rosario Central",
-      "confianza_club": "alta"
-    },
-    {
-      "nombre": "Gastón González",
-      "posicion": "Extremo izquierdo",
-      "edad": 25,
-      "valor_mercado_eur_millones": 0.9,
-      "club": "Sarmiento (Junín)",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Gustavo del Prete",
-      "posicion": "Delantero centro",
-      "edad": 30,
-      "valor_mercado_eur_millones": 0.9,
-      "club": "Tigre",
-      "confianza_club": "media"
-    },
-    {
-      "nombre": "Gonzalo Morales",
-      "posicion": "Delantero centro",
-      "edad": 23,
-      "valor_mercado_eur_millones": 0.9,
-      "club": "Barracas Central",
-      "confianza_club": "alta"
-    }
-  ]
+  {
+   "nombre": "Orlando Gill",
+   "posicion": "Portero",
+   "edad": 26,
+   "valor_mercado_eur_millones": 7.5,
+   "club": "San Lorenzo de Almagro",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Facundo Cambeses",
+   "posicion": "Portero",
+   "edad": 29,
+   "valor_mercado_eur_millones": 5.0,
+   "club": "Racing Club",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Felipe Zenobio",
+   "posicion": "Portero",
+   "edad": 26,
+   "valor_mercado_eur_millones": 3.5,
+   "club": "Tigre",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Thiago Cardozo",
+   "posicion": "Portero",
+   "edad": 30,
+   "valor_mercado_eur_millones": 3.2,
+   "club": "Belgrano",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Juan Pablo Cozzani",
+   "posicion": "Portero",
+   "edad": 27,
+   "valor_mercado_eur_millones": 3.2,
+   "club": "Platense",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Nahuel Losada",
+   "posicion": "Portero",
+   "edad": 33,
+   "valor_mercado_eur_millones": 3.0,
+   "club": "Lanús",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Matías Borgogno",
+   "posicion": "Portero",
+   "edad": 28,
+   "valor_mercado_eur_millones": 2.8,
+   "club": "Defensa y Justicia",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Álvaro Montero",
+   "posicion": "Portero",
+   "edad": 31,
+   "valor_mercado_eur_millones": 2.5,
+   "club": "Boca Juniors",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Matías Mansilla",
+   "posicion": "Portero",
+   "edad": 30,
+   "valor_mercado_eur_millones": 2.5,
+   "club": "Unión de Santa Fe",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Facundo Sanguinetti",
+   "posicion": "Portero",
+   "edad": 25,
+   "valor_mercado_eur_millones": 2.5,
+   "club": "Vélez Sarsfield",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Nicolás Bolcato",
+   "posicion": "Portero",
+   "edad": 22,
+   "valor_mercado_eur_millones": 2.2,
+   "club": "Independiente Rivadavia",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Nelson Insfrán",
+   "posicion": "Portero",
+   "edad": 31,
+   "valor_mercado_eur_millones": 2.0,
+   "club": "Gimnasia y Esgrima La Plata",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Ezequiel Unsain",
+   "posicion": "Portero",
+   "edad": 31,
+   "valor_mercado_eur_millones": 2.0,
+   "club": "Talleres",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Santiago Mele",
+   "posicion": "Portero",
+   "edad": 28,
+   "valor_mercado_eur_millones": 2.0,
+   "club": "Independiente",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Brayan Cortés",
+   "posicion": "Portero",
+   "edad": 31,
+   "valor_mercado_eur_millones": 2.0,
+   "club": "Argentinos Juniors",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Tomás Marchiori",
+   "posicion": "Portero",
+   "edad": 31,
+   "valor_mercado_eur_millones": 2.0,
+   "club": "Vélez Sarsfield",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Franco Petroli",
+   "posicion": "Portero",
+   "edad": 28,
+   "valor_mercado_eur_millones": 1.8,
+   "club": "Lanús",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Leandro Brey",
+   "posicion": "Portero",
+   "edad": 23,
+   "valor_mercado_eur_millones": 1.5,
+   "club": "Boca Juniors",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Ezequiel Centurión",
+   "posicion": "Portero",
+   "edad": 29,
+   "valor_mercado_eur_millones": 1.5,
+   "club": "River Plate",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Matías Tagliamonte",
+   "posicion": "Portero",
+   "edad": 28,
+   "valor_mercado_eur_millones": 1.5,
+   "club": "Racing Club",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Conan Ledesma",
+   "posicion": "Portero",
+   "edad": 33,
+   "valor_mercado_eur_millones": 1.5,
+   "club": "Rosario Central",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Josué Reinatti",
+   "posicion": "Portero",
+   "edad": 23,
+   "valor_mercado_eur_millones": 1.2,
+   "club": "Newell's Old Boys",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Luis Ingolotti",
+   "posicion": "Portero",
+   "edad": 26,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "Atlético Tucumán",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Rodrigo Rey",
+   "posicion": "Portero",
+   "edad": 35,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "Independiente",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Ignacio Arce",
+   "posicion": "Portero",
+   "edad": 34,
+   "valor_mercado_eur_millones": 0.8,
+   "club": "Deportivo Riestra",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Marcos Ledesma",
+   "posicion": "Portero",
+   "edad": 29,
+   "valor_mercado_eur_millones": 0.8,
+   "club": "Instituto ACC",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Gino Santilli",
+   "posicion": "Portero",
+   "edad": 24,
+   "valor_mercado_eur_millones": 0.8,
+   "club": "Banfield",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Juan Espínola",
+   "posicion": "Portero",
+   "edad": 31,
+   "valor_mercado_eur_millones": 0.7,
+   "club": "Barracas Central",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Fernando Muslera",
+   "posicion": "Portero",
+   "edad": 40,
+   "valor_mercado_eur_millones": 0.7,
+   "club": "Estudiantes de La Plata",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Tomás Durso",
+   "posicion": "Portero",
+   "edad": 27,
+   "valor_mercado_eur_millones": 0.65,
+   "club": "Atlético Tucumán",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Lucas Acosta",
+   "posicion": "Portero",
+   "edad": 31,
+   "valor_mercado_eur_millones": 0.6,
+   "club": "Aldosivi",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Lautaro Morales",
+   "posicion": "Portero",
+   "edad": 26,
+   "valor_mercado_eur_millones": 0.55,
+   "club": "Tigre",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Brian Bustos",
+   "posicion": "Portero",
+   "edad": 30,
+   "valor_mercado_eur_millones": 0.5,
+   "club": "Platense",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Fabricio Iacovich",
+   "posicion": "Portero",
+   "edad": 24,
+   "valor_mercado_eur_millones": 0.5,
+   "club": "Estudiantes de La Plata",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Agustín Marchesín",
+   "posicion": "Portero",
+   "edad": 38,
+   "valor_mercado_eur_millones": 0.5,
+   "club": "Boca Juniors",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Ramiro Macagno",
+   "posicion": "Portero",
+   "edad": 29,
+   "valor_mercado_eur_millones": 0.45,
+   "club": "Independiente Rivadavia",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Sebastián Meza",
+   "posicion": "Portero",
+   "edad": 26,
+   "valor_mercado_eur_millones": 0.45,
+   "club": "Huracán",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Lucas Bruera",
+   "posicion": "Portero",
+   "edad": 28,
+   "valor_mercado_eur_millones": 0.45,
+   "club": "Barracas Central",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Axel Werner",
+   "posicion": "Portero",
+   "edad": 30,
+   "valor_mercado_eur_millones": 0.4,
+   "club": "Rosario Central",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "José Devecchi",
+   "posicion": "Portero",
+   "edad": 31,
+   "valor_mercado_eur_millones": 0.4,
+   "club": "San Lorenzo de Almagro",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Nicolás Sumavil",
+   "posicion": "Portero",
+   "edad": 28,
+   "valor_mercado_eur_millones": 0.4,
+   "club": "Platense",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Facundo Altamirano",
+   "posicion": "Portero",
+   "edad": 30,
+   "valor_mercado_eur_millones": 0.375,
+   "club": "San Lorenzo de Almagro",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Marcelo Miño",
+   "posicion": "Portero",
+   "edad": 29,
+   "valor_mercado_eur_millones": 0.35,
+   "club": "Barracas Central",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Harlen Castillo",
+   "posicion": "Portero",
+   "edad": 33,
+   "valor_mercado_eur_millones": 0.35,
+   "club": "Gimnasia y Esgrima La Plata",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Lautaro Amadé",
+   "posicion": "Portero",
+   "edad": 26,
+   "valor_mercado_eur_millones": 0.3,
+   "club": "Defensa y Justicia",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Hernán Galíndez",
+   "posicion": "Portero",
+   "edad": 39,
+   "valor_mercado_eur_millones": 0.3,
+   "club": "Huracán",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Iván Arboleda",
+   "posicion": "Portero",
+   "edad": 30,
+   "valor_mercado_eur_millones": 0.3,
+   "club": "Sarmiento (Junín)",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Gonzalo Siri",
+   "posicion": "Portero",
+   "edad": 23,
+   "valor_mercado_eur_millones": 0.25,
+   "club": "Argentinos Juniors",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Ignacio Chicco",
+   "posicion": "Portero",
+   "edad": 30,
+   "valor_mercado_eur_millones": 0.25,
+   "club": "Aldosivi",
+   "confianza_club": "alta"
+  }
+ ],
+ "defensas": [
+  {
+   "nombre": "Kevin Lomónaco",
+   "posicion": "Defensa central",
+   "edad": 24,
+   "valor_mercado_eur_millones": 8.0,
+   "club": "Independiente",
+   "confianza_club": "alta",
+   "rating": 6.85
+  },
+  {
+   "nombre": "Lautaro Di Lollo",
+   "posicion": "Defensa central",
+   "edad": 22,
+   "valor_mercado_eur_millones": 7.0,
+   "club": "Boca Juniors",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Francisco Ortega",
+   "posicion": "Lateral izquierdo",
+   "edad": 27,
+   "valor_mercado_eur_millones": 7.0,
+   "club": "River Plate",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Lautaro Rivero",
+   "posicion": "Defensa central",
+   "edad": 22,
+   "valor_mercado_eur_millones": 7.0,
+   "club": "River Plate",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Sheyko Studer",
+   "posicion": "Defensa central",
+   "edad": 23,
+   "valor_mercado_eur_millones": 6.0,
+   "club": "Independiente Rivadavia",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Tomás Palacios",
+   "posicion": "Defensa central",
+   "edad": 23,
+   "valor_mercado_eur_millones": 6.0,
+   "club": "Estudiantes de La Plata",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Marco Di Césare",
+   "posicion": "Defensa central",
+   "edad": 24,
+   "valor_mercado_eur_millones": 6.0,
+   "club": "Racing Club",
+   "confianza_club": "media",
+   "rating": 6.82,
+   "goles_temporada": 2
+  },
+  {
+   "nombre": "Ignacio Ovando",
+   "posicion": "Defensa central",
+   "edad": 19,
+   "valor_mercado_eur_millones": 6.0,
+   "club": "Rosario Central",
+   "confianza_club": "alta",
+   "rating": 6.69,
+   "goles_temporada": 0
+  },
+  {
+   "nombre": "Ayrton Costa",
+   "posicion": "Defensa central",
+   "edad": 27,
+   "valor_mercado_eur_millones": 5.0,
+   "club": "Boca Juniors",
+   "confianza_club": "alta",
+   "rating": 6.76
+  },
+  {
+   "nombre": "Lucas Martínez Quarta",
+   "posicion": "Defensa central",
+   "edad": 30,
+   "valor_mercado_eur_millones": 4.5,
+   "club": "River Plate",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Gonzalo Montiel",
+   "posicion": "Lateral derecho",
+   "edad": 29,
+   "valor_mercado_eur_millones": 4.5,
+   "club": "River Plate",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Santiago Fernández",
+   "posicion": "Defensa central",
+   "edad": 21,
+   "valor_mercado_eur_millones": 4.5,
+   "club": "Talleres",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Francisco Álvarez",
+   "posicion": "Defensa central",
+   "edad": 26,
+   "valor_mercado_eur_millones": 4.5,
+   "club": "Argentinos Juniors",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Leandro Lozano",
+   "posicion": "Lateral derecho",
+   "edad": 27,
+   "valor_mercado_eur_millones": 4.0,
+   "club": "Boca Juniors",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Lautaro Blanco",
+   "posicion": "Lateral izquierdo",
+   "edad": 27,
+   "valor_mercado_eur_millones": 4.0,
+   "club": "Boca Juniors",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Gastón Martirena",
+   "posicion": "Lateral derecho",
+   "edad": 26,
+   "valor_mercado_eur_millones": 4.0,
+   "club": "Belgrano",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Marco Pellegrino",
+   "posicion": "Defensa central",
+   "edad": 24,
+   "valor_mercado_eur_millones": 3.5,
+   "club": "Boca Juniors",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Matías Viña",
+   "posicion": "Lateral izquierdo",
+   "edad": 28,
+   "valor_mercado_eur_millones": 3.5,
+   "club": "River Plate",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Lautaro Vargas",
+   "posicion": "Lateral derecho",
+   "edad": 21,
+   "valor_mercado_eur_millones": 3.5,
+   "club": "Unión de Santa Fe",
+   "confianza_club": "alta",
+   "rating": 6.69,
+   "goles_temporada": 0
+  },
+  {
+   "nombre": "Tobías Ramírez",
+   "posicion": "Defensa central",
+   "edad": 19,
+   "valor_mercado_eur_millones": 3.5,
+   "club": "River Plate",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Gastón Hernández",
+   "posicion": "Defensa central",
+   "edad": 28,
+   "valor_mercado_eur_millones": 3.5,
+   "club": "Tigre",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Gastón Ávila",
+   "posicion": "Defensa central",
+   "edad": 24,
+   "valor_mercado_eur_millones": 3.5,
+   "club": "Rosario Central",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Juan Carlos Portillo",
+   "posicion": "Defensa central",
+   "edad": 26,
+   "valor_mercado_eur_millones": 3.2,
+   "club": "River Plate",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Eros Mancuso",
+   "posicion": "Lateral derecho",
+   "edad": 27,
+   "valor_mercado_eur_millones": 3.0,
+   "club": "Estudiantes de La Plata",
+   "confianza_club": "alta",
+   "rating": 6.93,
+   "goles_temporada": 1
+  },
+  {
+   "nombre": "Sasha Marcich",
+   "posicion": "Lateral izquierdo",
+   "edad": 28,
+   "valor_mercado_eur_millones": 3.0,
+   "club": "Vélez Sarsfield",
+   "confianza_club": "media",
+   "rating": 6.77,
+   "goles_temporada": 1
+  },
+  {
+   "nombre": "Ezequiel Cannavo",
+   "posicion": "Lateral derecho",
+   "edad": 24,
+   "valor_mercado_eur_millones": 3.0,
+   "club": "Talleres",
+   "confianza_club": "media",
+   "rating": 6.7,
+   "goles_temporada": 1
+  },
+  {
+   "nombre": "Joaquín García",
+   "posicion": "Lateral derecho",
+   "edad": 25,
+   "valor_mercado_eur_millones": 3.0,
+   "club": "Vélez Sarsfield",
+   "confianza_club": "media",
+   "rating": 6.95,
+   "goles_temporada": 2
+  },
+  {
+   "nombre": "Juan Barinaga",
+   "posicion": "Lateral derecho",
+   "edad": 25,
+   "valor_mercado_eur_millones": 2.8,
+   "club": "Boca Juniors",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Nazareno Colombo",
+   "posicion": "Defensa central",
+   "edad": 27,
+   "valor_mercado_eur_millones": 2.8,
+   "club": "Talleres",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Emanuel Coronel",
+   "posicion": "Lateral derecho",
+   "edad": 29,
+   "valor_mercado_eur_millones": 2.7,
+   "club": "Rosario Central",
+   "confianza_club": "alta",
+   "rating": 6.75
+  },
+  {
+   "nombre": "Malcom Braida",
+   "posicion": "Lateral izquierdo",
+   "edad": 29,
+   "valor_mercado_eur_millones": 2.5,
+   "club": "Boca Juniors",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Eric Meza",
+   "posicion": "Lateral derecho",
+   "edad": 27,
+   "valor_mercado_eur_millones": 2.5,
+   "club": "Estudiantes de La Plata",
+   "confianza_club": "alta",
+   "rating": 6.84,
+   "goles_temporada": 0
+  },
+  {
+   "nombre": "Alexandro Maidana",
+   "posicion": "Lateral izquierdo",
+   "edad": 21,
+   "valor_mercado_eur_millones": 2.5,
+   "club": "Talleres",
+   "confianza_club": "alta",
+   "rating": 6.84,
+   "goles_temporada": 2
+  },
+  {
+   "nombre": "César Ibáñez",
+   "posicion": "Lateral derecho",
+   "edad": 27,
+   "valor_mercado_eur_millones": 2.5,
+   "club": "Huracán",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Ezequiel Herrera",
+   "posicion": "Lateral derecho",
+   "edad": 23,
+   "valor_mercado_eur_millones": 2.5,
+   "club": "San Lorenzo de Almagro",
+   "confianza_club": "alta",
+   "rating": 6.84,
+   "goles_temporada": 1
+  },
+  {
+   "nombre": "Ignacio Vázquez",
+   "posicion": "Defensa central",
+   "edad": 29,
+   "valor_mercado_eur_millones": 2.5,
+   "club": "Lanús",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Agustín Sández",
+   "posicion": "Lateral izquierdo",
+   "edad": 25,
+   "valor_mercado_eur_millones": 2.5,
+   "club": "Rosario Central",
+   "confianza_club": "alta",
+   "rating": 6.55
+  },
+  {
+   "nombre": "Emanuel Mammana",
+   "posicion": "Defensa central",
+   "edad": 30,
+   "valor_mercado_eur_millones": 2.5,
+   "club": "Vélez Sarsfield",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Santiago Arzamendia",
+   "posicion": "Lateral izquierdo",
+   "edad": 28,
+   "valor_mercado_eur_millones": 2.3,
+   "club": "Estudiantes de La Plata",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Kevin Jappert",
+   "posicion": "Defensa central",
+   "edad": 22,
+   "valor_mercado_eur_millones": 2.3,
+   "club": "Barracas Central",
+   "confianza_club": "alta",
+   "rating": 6.91,
+   "goles_temporada": 1
+  },
+  {
+   "nombre": "José Canale",
+   "posicion": "Defensa central",
+   "edad": 30,
+   "valor_mercado_eur_millones": 2.2,
+   "club": "Lanús",
+   "confianza_club": "alta",
+   "rating": 6.9
+  },
+  {
+   "nombre": "Alexis Steimbach",
+   "posicion": "Lateral derecho",
+   "edad": 24,
+   "valor_mercado_eur_millones": 2.2,
+   "club": "Gimnasia y Esgrima La Plata",
+   "confianza_club": "alta",
+   "rating": 6.87,
+   "goles_temporada": 1
+  },
+  {
+   "nombre": "Fabricio Bustos",
+   "posicion": "Lateral derecho",
+   "edad": 30,
+   "valor_mercado_eur_millones": 2.0,
+   "club": "River Plate",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Giovanni González",
+   "posicion": "Lateral derecho",
+   "edad": 31,
+   "valor_mercado_eur_millones": 2.0,
+   "club": "River Plate",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Maizon Rodríguez",
+   "posicion": "Defensa central",
+   "edad": 23,
+   "valor_mercado_eur_millones": 2.0,
+   "club": "Unión de Santa Fe",
+   "confianza_club": "alta",
+   "rating": 6.93,
+   "goles_temporada": 1
+  },
+  {
+   "nombre": "Gastón Benedetti",
+   "posicion": "Lateral izquierdo",
+   "edad": 25,
+   "valor_mercado_eur_millones": 2.0,
+   "club": "Estudiantes de La Plata",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Santiago Núñez",
+   "posicion": "Defensa central",
+   "edad": 26,
+   "valor_mercado_eur_millones": 2.0,
+   "club": "Estudiantes de La Plata",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Rodrigo Insúa",
+   "posicion": "Lateral izquierdo",
+   "edad": 28,
+   "valor_mercado_eur_millones": 2.0,
+   "club": "Barracas Central",
+   "confianza_club": "alta",
+   "rating": 6.69,
+   "goles_temporada": 3
+  },
+  {
+   "nombre": "Tomás Silva",
+   "posicion": "Lateral izquierdo",
+   "edad": 23,
+   "valor_mercado_eur_millones": 2.0,
+   "club": "Platense",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Juan Giménez",
+   "posicion": "Defensa central",
+   "edad": 20,
+   "valor_mercado_eur_millones": 2.0,
+   "club": "Rosario Central",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Renzo Giampaoli",
+   "posicion": "Defensa central",
+   "edad": 26,
+   "valor_mercado_eur_millones": 2.0,
+   "club": "Gimnasia y Esgrima La Plata",
+   "confianza_club": "alta",
+   "rating": 6.85
+  },
+  {
+   "nombre": "Alan Barrionuevo",
+   "posicion": "Defensa central",
+   "edad": 29,
+   "valor_mercado_eur_millones": 1.8,
+   "club": "Tigre",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Alcides Benítez",
+   "posicion": "Lateral derecho",
+   "edad": 24,
+   "valor_mercado_eur_millones": 1.8,
+   "club": "Belgrano",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Damián Fernández",
+   "posicion": "Defensa central",
+   "edad": 25,
+   "valor_mercado_eur_millones": 1.8,
+   "club": "Rosario Central",
+   "confianza_club": "alta",
+   "rating": 6.49,
+   "goles_temporada": 1
+  },
+  {
+   "nombre": "Facundo Zabala",
+   "posicion": "Lateral izquierdo",
+   "edad": 27,
+   "valor_mercado_eur_millones": 1.8,
+   "club": "Tigre",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Román Riquelme",
+   "posicion": "Defensa central",
+   "edad": 24,
+   "valor_mercado_eur_millones": 1.7,
+   "club": "Talleres",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Juan Velázquez",
+   "posicion": "Lateral izquierdo",
+   "edad": 21,
+   "valor_mercado_eur_millones": 1.7,
+   "club": "Belgrano",
+   "confianza_club": "alta",
+   "rating": 6.62
+  },
+  {
+   "nombre": "Juan Ignacio Saborido",
+   "posicion": "Lateral derecho",
+   "edad": 28,
+   "valor_mercado_eur_millones": 1.7,
+   "club": "Lanús",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Lucas Blondel",
+   "posicion": "Lateral derecho",
+   "edad": 29,
+   "valor_mercado_eur_millones": 1.5,
+   "club": "Tigre",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Ignacio Abraham",
+   "posicion": "Lateral izquierdo",
+   "edad": 28,
+   "valor_mercado_eur_millones": 1.5,
+   "club": "Banfield",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Oscar Salomón",
+   "posicion": "Defensa central",
+   "edad": 27,
+   "valor_mercado_eur_millones": 1.5,
+   "club": "Independiente",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Sebastián Valdez",
+   "posicion": "Defensa central",
+   "edad": 30,
+   "valor_mercado_eur_millones": 1.5,
+   "club": "Independiente",
+   "confianza_club": "media",
+   "rating": 6.81
+  },
+  {
+   "nombre": "Juan Pablo Ludueña",
+   "posicion": "Defensa central",
+   "edad": 23,
+   "valor_mercado_eur_millones": 1.3,
+   "club": "Unión de Santa Fe",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Valentín Fascendini",
+   "posicion": "Defensa central",
+   "edad": 23,
+   "valor_mercado_eur_millones": 1.3,
+   "club": "Talleres",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Ronaldo Dejesús",
+   "posicion": "Defensa central",
+   "edad": 25,
+   "valor_mercado_eur_millones": 1.3,
+   "club": "Independiente",
+   "confianza_club": "media",
+   "rating": 6.92
+  },
+  {
+   "nombre": "Fernando Alarcón",
+   "posicion": "Defensa central",
+   "edad": 32,
+   "valor_mercado_eur_millones": 1.3,
+   "club": "Instituto ACC",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Enzo Martínez",
+   "posicion": "Defensa central",
+   "edad": 28,
+   "valor_mercado_eur_millones": 1.3,
+   "club": "Gimnasia y Esgrima La Plata",
+   "confianza_club": "alta",
+   "rating": 6.94,
+   "goles_temporada": 2
+  },
+  {
+   "nombre": "Braian Cufré",
+   "posicion": "Lateral izquierdo",
+   "edad": 29,
+   "valor_mercado_eur_millones": 1.2,
+   "club": "Aldosivi",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Alejo Osella",
+   "posicion": "Defensa central",
+   "edad": 25,
+   "valor_mercado_eur_millones": 1.2,
+   "club": "Independiente Rivadavia",
+   "confianza_club": "alta",
+   "rating": 6.93,
+   "goles_temporada": 4
+  },
+  {
+   "nombre": "Gonzalo Requena",
+   "posicion": "Defensa central",
+   "edad": 23,
+   "valor_mercado_eur_millones": 1.2,
+   "club": "Tigre",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Augusto Schott",
+   "posicion": "Lateral derecho",
+   "edad": 26,
+   "valor_mercado_eur_millones": 1.2,
+   "club": "Talleres",
+   "confianza_club": "alta",
+   "rating": 6.63,
+   "goles_temporada": 3
+  },
+  {
+   "nombre": "Giuliano Cerato",
+   "posicion": "Lateral derecho",
+   "edad": 28,
+   "valor_mercado_eur_millones": 1.2,
+   "club": "Instituto ACC",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Alexis Soto",
+   "posicion": "Lateral izquierdo",
+   "edad": 32,
+   "valor_mercado_eur_millones": 1.2,
+   "club": "Gimnasia y Esgrima (Mendoza)",
+   "confianza_club": "alta",
+   "rating": 6.82,
+   "goles_temporada": 1
+  },
+  {
+   "nombre": "Ian Glavinovich",
+   "posicion": "Defensa central",
+   "edad": 24,
+   "valor_mercado_eur_millones": 1.2,
+   "club": "Independiente",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Lautaro Giannetti",
+   "posicion": "Defensa central",
+   "edad": 32,
+   "valor_mercado_eur_millones": 1.2,
+   "club": "Independiente",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Franco Calderón",
+   "posicion": "Defensa central",
+   "edad": 28,
+   "valor_mercado_eur_millones": 1.2,
+   "club": "Independiente",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Leonardo Godoy",
+   "posicion": "Lateral derecho",
+   "edad": 31,
+   "valor_mercado_eur_millones": 1.2,
+   "club": "Independiente",
+   "confianza_club": "media",
+   "rating": 6.75
+  },
+  {
+   "nombre": "Santiago Arias",
+   "posicion": "Lateral derecho",
+   "edad": 34,
+   "valor_mercado_eur_millones": 1.2,
+   "club": "Independiente",
+   "confianza_club": "media",
+   "rating": 6.75
+  },
+  {
+   "nombre": "Tomás Guidara",
+   "posicion": "Defensa central",
+   "edad": 30,
+   "valor_mercado_eur_millones": 1.2,
+   "club": "Lanús",
+   "confianza_club": "alta",
+   "rating": 6.72
+  },
+  {
+   "nombre": "Elías Gómez",
+   "posicion": "Lateral izquierdo",
+   "edad": 32,
+   "valor_mercado_eur_millones": 1.2,
+   "club": "Vélez Sarsfield",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Gonzalo Pérez",
+   "posicion": "Defensa central",
+   "edad": 25,
+   "valor_mercado_eur_millones": 1.2,
+   "club": "Instituto ACC",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Eugenio Raggio",
+   "posicion": "Defensa central",
+   "edad": 24,
+   "valor_mercado_eur_millones": 1.2,
+   "club": "Platense",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Pedro Silva Torrejón",
+   "posicion": "Lateral izquierdo",
+   "edad": 29,
+   "valor_mercado_eur_millones": 1.2,
+   "club": "Gimnasia y Esgrima La Plata",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Juan Pintado",
+   "posicion": "Lateral izquierdo",
+   "edad": 29,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "Unión de Santa Fe",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Lisandro Magallán",
+   "posicion": "Defensa central",
+   "edad": 32,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "Vélez Sarsfield",
+   "confianza_club": "media",
+   "rating": 6.84
+  },
+  {
+   "nombre": "Facundo Mallo",
+   "posicion": "Defensa central",
+   "edad": 31,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "Rosario Central",
+   "confianza_club": "alta",
+   "rating": 6.72,
+   "goles_temporada": 2
+  },
+  {
+   "nombre": "Jeronimo Russo",
+   "posicion": "Lateral izquierdo",
+   "edad": 21,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "Independiente",
+   "confianza_club": "media",
+   "rating": 6.9,
+   "goles_temporada": 1
+  },
+  {
+   "nombre": "Jano Gordon",
+   "posicion": "Lateral derecho",
+   "edad": 22,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "Vélez Sarsfield",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Nicolás Otamendi",
+   "posicion": "Defensa central",
+   "edad": 38,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "River Plate",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Leonard Costa",
+   "posicion": "Defensa central",
+   "edad": 28,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "Independiente Rivadavia",
+   "confianza_club": "alta",
+   "rating": 6.72,
+   "goles_temporada": 1
+  },
+  {
+   "nombre": "Martín Ortega",
+   "posicion": "Lateral derecho",
+   "edad": 27,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "Independiente",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Clever Ferreira",
+   "posicion": "Defensa central",
+   "edad": 23,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "Atlético Tucumán",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Saúl Salcedo",
+   "posicion": "Defensa central",
+   "edad": 28,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "Independiente",
+   "confianza_club": "media",
+   "rating": 6.76,
+   "goles_temporada": 0
+  },
+  {
+   "nombre": "Mathías De Ritis",
+   "posicion": "Lateral izquierdo",
+   "edad": 23,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "San Lorenzo de Almagro",
+   "confianza_club": "alta",
+   "rating": 6.76
+  },
+  {
+   "nombre": "Nicolás Demartini",
+   "posicion": "Defensa central",
+   "edad": 26,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "Barracas Central",
+   "confianza_club": "alta",
+   "rating": 6.76
+  },
+  {
+   "nombre": "Alan Núñez",
+   "posicion": "Lateral derecho",
+   "edad": 21,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "Argentinos Juniors",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Ayrton Portillo",
+   "posicion": "Lateral derecho",
+   "edad": 26,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "Defensa y Justicia",
+   "confianza_club": "alta",
+   "rating": 6.76,
+   "goles_temporada": 3
+  },
+  {
+   "nombre": "Federico Vera",
+   "posicion": "Lateral derecho",
+   "edad": 28,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "Huracán",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Marcos Acuña",
+   "posicion": "Lateral izquierdo",
+   "edad": 34,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "River Plate",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Alexis Maldonado",
+   "posicion": "Defensa central",
+   "edad": 28,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "Belgrano",
+   "confianza_club": "alta",
+   "rating": 6.69,
+   "goles_temporada": 0
+  }
+ ],
+ "mediocampistas": [
+  {
+   "nombre": "Thiago Almada",
+   "posicion": "Mediocentro ofensivo",
+   "edad": 25,
+   "valor_mercado_eur_millones": 20.0,
+   "club": "River Plate",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Milton Delgado",
+   "posicion": "Pivote",
+   "edad": 21,
+   "valor_mercado_eur_millones": 10.0,
+   "club": "Boca Juniors",
+   "confianza_club": "alta",
+   "rating": 6.86,
+   "goles_temporada": 0
+  },
+  {
+   "nombre": "Tomás Aranda",
+   "posicion": "Mediocentro ofensivo",
+   "edad": 19,
+   "valor_mercado_eur_millones": 9.0,
+   "club": "Boca Juniors",
+   "confianza_club": "alta",
+   "rating": 6.86,
+   "goles_temporada": 0
+  },
+  {
+   "nombre": "Tobías Andrada",
+   "posicion": "Mediocentro",
+   "edad": 19,
+   "valor_mercado_eur_millones": 9.0,
+   "club": "River Plate",
+   "confianza_club": "alta",
+   "rating": 6.89,
+   "goles_temporada": 1
+  },
+  {
+   "nombre": "Mauro Arambarri",
+   "posicion": "Mediocentro",
+   "edad": 30,
+   "valor_mercado_eur_millones": 8.0,
+   "club": "River Plate",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Aníbal Moreno",
+   "posicion": "Pivote",
+   "edad": 27,
+   "valor_mercado_eur_millones": 8.0,
+   "club": "River Plate",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Kendry Páez",
+   "posicion": "Mediocentro ofensivo",
+   "edad": 19,
+   "valor_mercado_eur_millones": 8.0,
+   "club": "River Plate",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Valentín Carboni",
+   "posicion": "Mediocentro ofensivo",
+   "edad": 21,
+   "valor_mercado_eur_millones": 7.5,
+   "club": "Talleres",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Alan Lescano",
+   "posicion": "Mediocentro ofensivo",
+   "edad": 24,
+   "valor_mercado_eur_millones": 7.5,
+   "club": "Independiente",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Leonel Pérez",
+   "posicion": "Pivote",
+   "edad": 22,
+   "valor_mercado_eur_millones": 6.0,
+   "club": "Talleres",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Franco Ibarra",
+   "posicion": "Pivote",
+   "edad": 25,
+   "valor_mercado_eur_millones": 6.0,
+   "club": "Rosario Central",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Nicolás Barros Schelotto",
+   "posicion": "Pivote",
+   "edad": 19,
+   "valor_mercado_eur_millones": 6.0,
+   "club": "Gimnasia y Esgrima La Plata",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Matías Galarza",
+   "posicion": "Pivote",
+   "edad": 24,
+   "valor_mercado_eur_millones": 5.5,
+   "club": "Talleres",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Santiago Ascacibar",
+   "posicion": "Pivote",
+   "edad": 29,
+   "valor_mercado_eur_millones": 5.5,
+   "club": "Boca Juniors",
+   "confianza_club": "alta",
+   "rating": 6.89,
+   "goles_temporada": 5
+  },
+  {
+   "nombre": "Leandro Paredes",
+   "posicion": "Pivote",
+   "edad": 32,
+   "valor_mercado_eur_millones": 5.0,
+   "club": "Boca Juniors",
+   "confianza_club": "alta",
+   "rating": 6.6,
+   "goles_temporada": 1
+  },
+  {
+   "nombre": "Hernán López Muñoz",
+   "posicion": "Mediocentro ofensivo",
+   "edad": 25,
+   "valor_mercado_eur_millones": 5.0,
+   "club": "Independiente",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Vicente Pizarro",
+   "posicion": "Pivote",
+   "edad": 23,
+   "valor_mercado_eur_millones": 4.5,
+   "club": "Rosario Central",
+   "confianza_club": "alta",
+   "rating": 6.86,
+   "goles_temporada": 1
+  },
+  {
+   "nombre": "Fausto Vera",
+   "posicion": "Pivote",
+   "edad": 26,
+   "valor_mercado_eur_millones": 4.5,
+   "club": "River Plate",
+   "confianza_club": "media",
+   "rating": 6.89
+  },
+  {
+   "nombre": "Agustín Medina",
+   "posicion": "Pivote",
+   "edad": 19,
+   "valor_mercado_eur_millones": 4.5,
+   "club": "Independiente",
+   "confianza_club": "media",
+   "rating": 6.64
+  },
+  {
+   "nombre": "Marcelino Moreno",
+   "posicion": "Mediocentro ofensivo",
+   "edad": 31,
+   "valor_mercado_eur_millones": 4.5,
+   "club": "Independiente",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Alex Luna",
+   "posicion": "Mediocentro ofensivo",
+   "edad": 22,
+   "valor_mercado_eur_millones": 4.0,
+   "club": "Instituto ACC",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Matko Miljevic",
+   "posicion": "Mediocentro ofensivo",
+   "edad": 25,
+   "valor_mercado_eur_millones": 4.0,
+   "club": "Talleres",
+   "confianza_club": "media",
+   "rating": 6.68,
+   "goles_temporada": 2
+  },
+  {
+   "nombre": "Baltasar Rodríguez",
+   "posicion": "Mediocentro ofensivo",
+   "edad": 23,
+   "valor_mercado_eur_millones": 4.0,
+   "club": "Estudiantes de La Plata",
+   "confianza_club": "alta",
+   "rating": 6.6
+  },
+  {
+   "nombre": "Tomás Galván",
+   "posicion": "Mediocentro ofensivo",
+   "edad": 26,
+   "valor_mercado_eur_millones": 4.0,
+   "club": "River Plate",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Matías Galarza",
+   "posicion": "Mediocentro",
+   "edad": 24,
+   "valor_mercado_eur_millones": 4.0,
+   "club": "Talleres",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Gastón Lodico",
+   "posicion": "Mediocentro",
+   "edad": 28,
+   "valor_mercado_eur_millones": 3.8,
+   "club": "Talleres",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Franco Cristaldo",
+   "posicion": "Mediocentro ofensivo",
+   "edad": 30,
+   "valor_mercado_eur_millones": 3.5,
+   "club": "Talleres",
+   "confianza_club": "alta",
+   "rating": 6.78,
+   "goles_temporada": 1
+  },
+  {
+   "nombre": "Aarón Molinas",
+   "posicion": "Mediocentro ofensivo",
+   "edad": 26,
+   "valor_mercado_eur_millones": 3.5,
+   "club": "Defensa y Justicia",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Giuliano Galoppo",
+   "posicion": "Mediocentro",
+   "edad": 27,
+   "valor_mercado_eur_millones": 3.5,
+   "club": "River Plate",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Matías Zaracho",
+   "posicion": "Mediocentro ofensivo",
+   "edad": 28,
+   "valor_mercado_eur_millones": 3.5,
+   "club": "Talleres",
+   "confianza_club": "media",
+   "rating": 6.7,
+   "goles_temporada": 3
+  },
+  {
+   "nombre": "Matías Fernández",
+   "posicion": "Mediocentro ofensivo",
+   "edad": 25,
+   "valor_mercado_eur_millones": 3.0,
+   "club": "Independiente Rivadavia",
+   "confianza_club": "alta",
+   "rating": 6.69,
+   "goles_temporada": 3
+  },
+  {
+   "nombre": "Jabes Saralegui",
+   "posicion": "Mediocentro",
+   "edad": 23,
+   "valor_mercado_eur_millones": 3.0,
+   "club": "Instituto ACC",
+   "confianza_club": "media",
+   "rating": 6.68,
+   "goles_temporada": 0
+  },
+  {
+   "nombre": "Adrián Sánchez",
+   "posicion": "Mediocentro",
+   "edad": 27,
+   "valor_mercado_eur_millones": 3.0,
+   "club": "Atlético Tucumán",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "César Pérez",
+   "posicion": "Mediocentro",
+   "edad": 23,
+   "valor_mercado_eur_millones": 3.0,
+   "club": "Defensa y Justicia",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Kevin Gutiérrez",
+   "posicion": "Pivote",
+   "edad": 29,
+   "valor_mercado_eur_millones": 3.0,
+   "club": "Independiente",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Tomás Belmonte",
+   "posicion": "Pivote",
+   "edad": 28,
+   "valor_mercado_eur_millones": 3.0,
+   "club": "Boca Juniors",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Carlos Palacios",
+   "posicion": "Mediocentro ofensivo",
+   "edad": 26,
+   "valor_mercado_eur_millones": 3.0,
+   "club": "Boca Juniors",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Williams Alarcón",
+   "posicion": "Mediocentro",
+   "edad": 25,
+   "valor_mercado_eur_millones": 3.0,
+   "club": "Boca Juniors",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Diego Valdés",
+   "posicion": "Mediocentro ofensivo",
+   "edad": 32,
+   "valor_mercado_eur_millones": 2.8,
+   "club": "Vélez Sarsfield",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Lucas Zelarrayán",
+   "posicion": "Mediocentro ofensivo",
+   "edad": 34,
+   "valor_mercado_eur_millones": 2.8,
+   "club": "Atlético Tucumán",
+   "confianza_club": "media",
+   "rating": 6.94,
+   "goles_temporada": 4
+  },
+  {
+   "nombre": "Facundo Farías",
+   "posicion": "Mediocentro ofensivo",
+   "edad": 23,
+   "valor_mercado_eur_millones": 2.5,
+   "club": "Estudiantes de La Plata",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Agustín Cardozo",
+   "posicion": "Pivote",
+   "edad": 29,
+   "valor_mercado_eur_millones": 2.5,
+   "club": "Independiente",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Julián Palacios",
+   "posicion": "Mediocentro ofensivo",
+   "edad": 27,
+   "valor_mercado_eur_millones": 2.5,
+   "club": "Unión de Santa Fe",
+   "confianza_club": "alta",
+   "rating": 6.94,
+   "goles_temporada": 3
+  },
+  {
+   "nombre": "Giovanni Baroni",
+   "posicion": "Mediocentro ofensivo",
+   "edad": 17,
+   "valor_mercado_eur_millones": 2.5,
+   "club": "Talleres",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Santiago Longo",
+   "posicion": "Pivote",
+   "edad": 28,
+   "valor_mercado_eur_millones": 2.5,
+   "club": "Atlético Tucumán",
+   "confianza_club": "media",
+   "rating": 6.71,
+   "goles_temporada": 0
+  },
+  {
+   "nombre": "Ignacio Perruzzi",
+   "posicion": "Pivote",
+   "edad": 21,
+   "valor_mercado_eur_millones": 2.5,
+   "club": "San Lorenzo de Almagro",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Facundo Gulli",
+   "posicion": "Mediocentro ofensivo",
+   "edad": 20,
+   "valor_mercado_eur_millones": 2.5,
+   "club": "San Lorenzo de Almagro",
+   "confianza_club": "alta",
+   "rating": 6.7,
+   "goles_temporada": 0
+  },
+  {
+   "nombre": "Lautaro Millán",
+   "posicion": "Mediocentro ofensivo",
+   "edad": 21,
+   "valor_mercado_eur_millones": 2.5,
+   "club": "Independiente",
+   "confianza_club": "media",
+   "rating": 6.85,
+   "goles_temporada": 3
+  },
+  {
+   "nombre": "Mauricio Benítez",
+   "posicion": "Pivote",
+   "edad": 22,
+   "valor_mercado_eur_millones": 2.5,
+   "club": "Boca Juniors",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Santiago González",
+   "posicion": "Mediocentro",
+   "edad": 23,
+   "valor_mercado_eur_millones": 2.3,
+   "club": "Instituto ACC",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Bruno Leyes",
+   "posicion": "Pivote",
+   "edad": 24,
+   "valor_mercado_eur_millones": 2.3,
+   "club": "Instituto ACC",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Alan Rodríguez",
+   "posicion": "Mediocentro",
+   "edad": 26,
+   "valor_mercado_eur_millones": 2.3,
+   "club": "Sarmiento (Junín)",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "José Florentín",
+   "posicion": "Mediocentro",
+   "edad": 30,
+   "valor_mercado_eur_millones": 2.2,
+   "club": "Independiente Rivadavia",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Gonzalo Maroni",
+   "posicion": "Mediocentro ofensivo",
+   "edad": 27,
+   "valor_mercado_eur_millones": 2.0,
+   "club": "Barracas Central",
+   "confianza_club": "alta",
+   "rating": 6.82,
+   "goles_temporada": 2
+  },
+  {
+   "nombre": "Gonzalo Ríos",
+   "posicion": "Mediocentro ofensivo",
+   "edad": 27,
+   "valor_mercado_eur_millones": 2.0,
+   "club": "Independiente Rivadavia",
+   "confianza_club": "alta",
+   "rating": 6.7,
+   "goles_temporada": 2
+  },
+  {
+   "nombre": "Maximiliano Amarfil",
+   "posicion": "Pivote",
+   "edad": 24,
+   "valor_mercado_eur_millones": 2.0,
+   "club": "Platense",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Francisco González Metilli",
+   "posicion": "Mediocentro ofensivo",
+   "edad": 29,
+   "valor_mercado_eur_millones": 2.0,
+   "club": "Atlético Tucumán",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Lucas Robertone",
+   "posicion": "Mediocentro",
+   "edad": 29,
+   "valor_mercado_eur_millones": 2.0,
+   "club": "Vélez Sarsfield",
+   "confianza_club": "media",
+   "rating": 6.88,
+   "goles_temporada": 1
+  },
+  {
+   "nombre": "Santiago Sosa",
+   "posicion": "Mediocentro",
+   "edad": 21,
+   "valor_mercado_eur_millones": 2.0,
+   "club": "Defensa y Justicia",
+   "confianza_club": "alta",
+   "rating": 6.72,
+   "goles_temporada": 0
+  },
+  {
+   "nombre": "Nicolás Tripichio",
+   "posicion": "Pivote",
+   "edad": 30,
+   "valor_mercado_eur_millones": 2.0,
+   "club": "San Lorenzo de Almagro",
+   "confianza_club": "alta",
+   "rating": 6.9,
+   "goles_temporada": 0
+  },
+  {
+   "nombre": "Federico Navarro",
+   "posicion": "Pivote",
+   "edad": 26,
+   "valor_mercado_eur_millones": 2.0,
+   "club": "Rosario Central",
+   "confianza_club": "alta",
+   "rating": 6.56
+  },
+  {
+   "nombre": "Jerónimo Gómez Mattar",
+   "posicion": "Mediocentro ofensivo",
+   "edad": 18,
+   "valor_mercado_eur_millones": 2.0,
+   "club": "Independiente",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Tomás Bottari",
+   "posicion": "Mediocentro",
+   "edad": 23,
+   "valor_mercado_eur_millones": 1.8,
+   "club": "Independiente Rivadavia",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Juan Cruz Meza",
+   "posicion": "Mediocentro ofensivo",
+   "edad": 18,
+   "valor_mercado_eur_millones": 1.8,
+   "club": "River Plate",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Santiago López García",
+   "posicion": "Interior derecho",
+   "edad": 28,
+   "valor_mercado_eur_millones": 1.8,
+   "club": "Banfield",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Jalil Elías",
+   "posicion": "Pivote",
+   "edad": 30,
+   "valor_mercado_eur_millones": 1.8,
+   "club": "Instituto ACC",
+   "confianza_club": "media",
+   "rating": 6.87,
+   "goles_temporada": 1
+  },
+  {
+   "nombre": "Joaquín Gho",
+   "posicion": "Interior derecho",
+   "edad": 23,
+   "valor_mercado_eur_millones": 1.8,
+   "club": "Estudiantes de La Plata",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Martín Río",
+   "posicion": "Mediocentro",
+   "edad": 25,
+   "valor_mercado_eur_millones": 1.8,
+   "club": "San Lorenzo de Almagro",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Ulises Ortegoza",
+   "posicion": "Pivote",
+   "edad": 29,
+   "valor_mercado_eur_millones": 1.8,
+   "club": "Racing Club",
+   "confianza_club": "alta",
+   "rating": 6.7,
+   "goles_temporada": 0
+  },
+  {
+   "nombre": "Felipe Peña Biafore",
+   "posicion": "Pivote",
+   "edad": 23,
+   "valor_mercado_eur_millones": 1.7,
+   "club": "Lanús",
+   "confianza_club": "alta",
+   "rating": 6.89,
+   "goles_temporada": 2
+  },
+  {
+   "nombre": "Tiago Serrago",
+   "posicion": "Mediocentro",
+   "edad": 22,
+   "valor_mercado_eur_millones": 1.7,
+   "club": "Instituto ACC",
+   "confianza_club": "media",
+   "rating": 6.62,
+   "goles_temporada": 1
+  },
+  {
+   "nombre": "Facundo Weller",
+   "posicion": "Interior izquierdo",
+   "edad": 29,
+   "valor_mercado_eur_millones": 1.7,
+   "club": "Huracán",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Facundo Guch",
+   "posicion": "Mediocentro ofensivo",
+   "edad": 19,
+   "valor_mercado_eur_millones": 1.7,
+   "club": "Independiente",
+   "confianza_club": "media",
+   "rating": 6.84,
+   "goles_temporada": 2
+  },
+  {
+   "nombre": "Luca Regiardo",
+   "posicion": "Pivote",
+   "edad": 19,
+   "valor_mercado_eur_millones": 1.7,
+   "club": "Independiente",
+   "confianza_club": "media",
+   "rating": 6.84,
+   "goles_temporada": 1
+  },
+  {
+   "nombre": "Claudio Baeza",
+   "posicion": "Pivote",
+   "edad": 32,
+   "valor_mercado_eur_millones": 1.6,
+   "club": "Vélez Sarsfield",
+   "confianza_club": "media",
+   "rating": 6.94,
+   "goles_temporada": 7
+  },
+  {
+   "nombre": "Nicolás Dubersarsky",
+   "posicion": "Mediocentro",
+   "edad": 21,
+   "valor_mercado_eur_millones": 1.5,
+   "club": "Instituto ACC",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Franco Zapiola",
+   "posicion": "Mediocentro",
+   "edad": 25,
+   "valor_mercado_eur_millones": 1.5,
+   "club": "Platense",
+   "confianza_club": "alta",
+   "rating": 6.7,
+   "goles_temporada": 2
+  },
+  {
+   "nombre": "Gonzalo Abrego",
+   "posicion": "Mediocentro",
+   "edad": 28,
+   "valor_mercado_eur_millones": 1.5,
+   "club": "San Lorenzo de Almagro",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Ignacio Miramón",
+   "posicion": "Pivote",
+   "edad": 23,
+   "valor_mercado_eur_millones": 1.5,
+   "club": "Gimnasia y Esgrima La Plata",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Rodrigo Herrera",
+   "posicion": "Pivote",
+   "edad": 26,
+   "valor_mercado_eur_millones": 1.5,
+   "club": "Newell's Old Boys",
+   "confianza_club": "alta",
+   "rating": 6.62
+  },
+  {
+   "nombre": "Valentino Acuña",
+   "posicion": "Pivote",
+   "edad": 20,
+   "valor_mercado_eur_millones": 1.5,
+   "club": "Defensa y Justicia",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Gabriel Neves",
+   "posicion": "Pivote",
+   "edad": 29,
+   "valor_mercado_eur_millones": 1.3,
+   "club": "Estudiantes de La Plata",
+   "confianza_club": "alta",
+   "rating": 6.92
+  },
+  {
+   "nombre": "Lucas González",
+   "posicion": "Mediocentro",
+   "edad": 26,
+   "valor_mercado_eur_millones": 1.3,
+   "club": "Central Córdoba (SdE)",
+   "confianza_club": "alta",
+   "rating": 6.75,
+   "goles_temporada": 3
+  },
+  {
+   "nombre": "Kevin Ortiz",
+   "posicion": "Pivote",
+   "edad": 25,
+   "valor_mercado_eur_millones": 1.3,
+   "club": "Atlético Tucumán",
+   "confianza_club": "alta",
+   "rating": 6.94,
+   "goles_temporada": 0
+  },
+  {
+   "nombre": "Juan Sforza",
+   "posicion": "Pivote",
+   "edad": 24,
+   "valor_mercado_eur_millones": 1.3,
+   "club": "Talleres",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Alexis Castro",
+   "posicion": "Mediocentro",
+   "edad": 31,
+   "valor_mercado_eur_millones": 1.2,
+   "club": "Estudiantes de La Plata",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Tomás Porra",
+   "posicion": "Mediocentro ofensivo",
+   "edad": 22,
+   "valor_mercado_eur_millones": 1.2,
+   "club": "Barracas Central",
+   "confianza_club": "alta",
+   "rating": 6.78,
+   "goles_temporada": 1
+  },
+  {
+   "nombre": "Iván Tapia",
+   "posicion": "Mediocentro ofensivo",
+   "edad": 27,
+   "valor_mercado_eur_millones": 1.2,
+   "club": "Barracas Central",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Matías Sepúlveda",
+   "posicion": "Interior izquierdo",
+   "edad": 27,
+   "valor_mercado_eur_millones": 1.2,
+   "club": "Lanús",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Joaquín Mosqueira",
+   "posicion": "Pivote",
+   "edad": 21,
+   "valor_mercado_eur_millones": 1.2,
+   "club": "Unión de Santa Fe",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Leonardo Heredia",
+   "posicion": "Mediocentro ofensivo",
+   "edad": 30,
+   "valor_mercado_eur_millones": 1.2,
+   "club": "Platense",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "David Martínez",
+   "posicion": "Pivote",
+   "edad": 22,
+   "valor_mercado_eur_millones": 1.2,
+   "club": "Independiente",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Thaiel Peralta",
+   "posicion": "Mediocentro ofensivo",
+   "edad": 17,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "Huracán",
+   "confianza_club": "alta",
+   "rating": 6.22,
+   "goles_temporada": 2
+  },
+  {
+   "nombre": "Renzo Tesuri",
+   "posicion": "Interior derecho",
+   "edad": 30,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "Atlético Tucumán",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Manuel Insaurralde",
+   "posicion": "Mediocentro",
+   "edad": 27,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "San Lorenzo de Almagro",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Ignacio Rodríguez",
+   "posicion": "Interior izquierdo",
+   "edad": 24,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "Talleres",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Ramiro Carrera",
+   "posicion": "Interior derecho",
+   "edad": 32,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "Lanús",
+   "confianza_club": "alta",
+   "rating": 6.78,
+   "goles_temporada": 2
+  },
+  {
+   "nombre": "Nicolás Oroz",
+   "posicion": "Mediocentro ofensivo",
+   "edad": 32,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "Independiente",
+   "confianza_club": "media",
+   "rating": 6.22,
+   "goles_temporada": 2
+  },
+  {
+   "nombre": "Luciano Cabral",
+   "posicion": "Mediocentro ofensivo",
+   "edad": 31,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "Independiente",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Iván Gómez",
+   "posicion": "Pivote",
+   "edad": 29,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "Platense",
+   "confianza_club": "alta"
+  }
+ ],
+ "delanteros": [
+  {
+   "nombre": "Ángel Correa",
+   "posicion": "Mediapunta",
+   "edad": 31,
+   "valor_mercado_eur_millones": 8.0,
+   "club": "River Plate",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Lucas Beltrán",
+   "posicion": "Delantero centro",
+   "edad": 25,
+   "valor_mercado_eur_millones": 8.0,
+   "club": "River Plate",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Exequiel Zeballos",
+   "posicion": "Extremo derecho",
+   "edad": 24,
+   "valor_mercado_eur_millones": 7.0,
+   "club": "Boca Juniors",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Sebastián Villa",
+   "posicion": "Extremo izquierdo",
+   "edad": 30,
+   "valor_mercado_eur_millones": 6.0,
+   "club": "Boca Juniors",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Jáminton Campaz",
+   "posicion": "Extremo izquierdo",
+   "edad": 26,
+   "valor_mercado_eur_millones": 5.5,
+   "club": "Rosario Central",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Alexis Cuello",
+   "posicion": "Delantero centro",
+   "edad": 26,
+   "valor_mercado_eur_millones": 5.0,
+   "club": "Barracas Central",
+   "confianza_club": "media",
+   "rating": 6.84,
+   "goles_temporada": 4
+  },
+  {
+   "nombre": "Matías Abaldo",
+   "posicion": "Extremo izquierdo",
+   "edad": 22,
+   "valor_mercado_eur_millones": 5.0,
+   "club": "Independiente",
+   "confianza_club": "media",
+   "rating": 6.65,
+   "goles_temporada": 5
+  },
+  {
+   "nombre": "Miguel Merentiel",
+   "posicion": "Delantero centro",
+   "edad": 30,
+   "valor_mercado_eur_millones": 4.5,
+   "club": "Boca Juniors",
+   "confianza_club": "alta",
+   "rating": 6.81,
+   "goles_temporada": 7
+  },
+  {
+   "nombre": "Sebastián Driussi",
+   "posicion": "Delantero centro",
+   "edad": 30,
+   "valor_mercado_eur_millones": 4.5,
+   "club": "River Plate",
+   "confianza_club": "alta",
+   "rating": 6.76,
+   "goles_temporada": 6
+  },
+  {
+   "nombre": "Maximiliano Salas",
+   "posicion": "Delantero centro",
+   "edad": 28,
+   "valor_mercado_eur_millones": 4.5,
+   "club": "Independiente Rivadavia",
+   "confianza_club": "alta",
+   "rating": 6.61,
+   "goles_temporada": 1
+  },
+  {
+   "nombre": "Tiago Palacios",
+   "posicion": "Extremo derecho",
+   "edad": 25,
+   "valor_mercado_eur_millones": 4.5,
+   "club": "Estudiantes de La Plata",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Ignacio Russo",
+   "posicion": "Delantero centro",
+   "edad": 25,
+   "valor_mercado_eur_millones": 4.0,
+   "club": "Tigre",
+   "confianza_club": "alta",
+   "rating": 6.78,
+   "goles_temporada": 6
+  },
+  {
+   "nombre": "Adam Bareiro",
+   "posicion": "Delantero centro",
+   "edad": 30,
+   "valor_mercado_eur_millones": 4.0,
+   "club": "Boca Juniors",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Ronaldo Martínez",
+   "posicion": "Delantero centro",
+   "edad": 30,
+   "valor_mercado_eur_millones": 4.0,
+   "club": "Talleres",
+   "confianza_club": "alta",
+   "rating": 6.65,
+   "goles_temporada": 1
+  },
+  {
+   "nombre": "Tomás Badaloni",
+   "posicion": "Delantero centro",
+   "edad": 26,
+   "valor_mercado_eur_millones": 4.0,
+   "club": "Rosario Central",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Matías Vargas",
+   "posicion": "Extremo izquierdo",
+   "edad": 29,
+   "valor_mercado_eur_millones": 4.0,
+   "club": "Instituto ACC",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Julián Fernández",
+   "posicion": "Extremo derecho",
+   "edad": 22,
+   "valor_mercado_eur_millones": 3.8,
+   "club": "Rosario Central",
+   "confianza_club": "alta",
+   "rating": 6.62,
+   "goles_temporada": 1
+  },
+  {
+   "nombre": "Santiago Montiel",
+   "posicion": "Extremo derecho",
+   "edad": 25,
+   "valor_mercado_eur_millones": 3.8,
+   "club": "Independiente",
+   "confianza_club": "media",
+   "rating": 6.85,
+   "goles_temporada": 3
+  },
+  {
+   "nombre": "Ian Subiabre",
+   "posicion": "Extremo derecho",
+   "edad": 19,
+   "valor_mercado_eur_millones": 3.5,
+   "club": "Tigre",
+   "confianza_club": "alta",
+   "rating": 6.52,
+   "goles_temporada": 1
+  },
+  {
+   "nombre": "Kevin Zenón",
+   "posicion": "Extremo izquierdo",
+   "edad": 25,
+   "valor_mercado_eur_millones": 3.5,
+   "club": "Boca Juniors",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Rafael Santos Borré",
+   "posicion": "Delantero centro",
+   "edad": 30,
+   "valor_mercado_eur_millones": 3.5,
+   "club": "River Plate",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Álex Arce",
+   "posicion": "Delantero centro",
+   "edad": 31,
+   "valor_mercado_eur_millones": 3.5,
+   "club": "Independiente Rivadavia",
+   "confianza_club": "alta",
+   "rating": 6.82,
+   "goles_temporada": 6
+  },
+  {
+   "nombre": "Fabrizio Sartori",
+   "posicion": "Delantero centro",
+   "edad": 24,
+   "valor_mercado_eur_millones": 3.5,
+   "club": "Independiente Rivadavia",
+   "confianza_club": "alta",
+   "rating": 6.22,
+   "goles_temporada": 8
+  },
+  {
+   "nombre": "Edwuin Cetré",
+   "posicion": "Extremo izquierdo",
+   "edad": 28,
+   "valor_mercado_eur_millones": 3.5,
+   "club": "Estudiantes de La Plata",
+   "confianza_club": "alta",
+   "rating": 6.76
+  },
+  {
+   "nombre": "Brian Aguirre",
+   "posicion": "Extremo izquierdo",
+   "edad": 23,
+   "valor_mercado_eur_millones": 3.5,
+   "club": "Estudiantes de La Plata",
+   "confianza_club": "alta",
+   "rating": 6.21,
+   "goles_temporada": 1
+  },
+  {
+   "nombre": "Dylan Aquino",
+   "posicion": "Extremo izquierdo",
+   "edad": 21,
+   "valor_mercado_eur_millones": 3.5,
+   "club": "Lanús",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Santiago Solari",
+   "posicion": "Extremo derecho",
+   "edad": 28,
+   "valor_mercado_eur_millones": 3.2,
+   "club": "Racing Club",
+   "confianza_club": "alta",
+   "rating": 6.78,
+   "goles_temporada": 2
+  },
+  {
+   "nombre": "Nicolás Fernández",
+   "posicion": "Delantero centro",
+   "edad": 30,
+   "valor_mercado_eur_millones": 3.0,
+   "club": "Atlético Tucumán",
+   "confianza_club": "media",
+   "rating": 6.58,
+   "goles_temporada": 5
+  },
+  {
+   "nombre": "Rodrigo Auzmendi",
+   "posicion": "Delantero centro",
+   "edad": 25,
+   "valor_mercado_eur_millones": 3.0,
+   "club": "San Lorenzo de Almagro",
+   "confianza_club": "alta",
+   "rating": 6.76,
+   "goles_temporada": 6
+  },
+  {
+   "nombre": "Maximiliano Gutiérrez",
+   "posicion": "Extremo derecho",
+   "edad": 22,
+   "valor_mercado_eur_millones": 3.0,
+   "club": "Independiente",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Alan Velasco",
+   "posicion": "Extremo izquierdo",
+   "edad": 24,
+   "valor_mercado_eur_millones": 2.8,
+   "club": "Boca Juniors",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Adrián Martínez",
+   "posicion": "Delantero centro",
+   "edad": 34,
+   "valor_mercado_eur_millones": 2.8,
+   "club": "Talleres",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Marcelo Torres",
+   "posicion": "Delantero centro",
+   "edad": 28,
+   "valor_mercado_eur_millones": 2.8,
+   "club": "Gimnasia y Esgrima La Plata",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Mauro Méndez",
+   "posicion": "Delantero centro",
+   "edad": 27,
+   "valor_mercado_eur_millones": 2.5,
+   "club": "Tigre",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Óscar Cortés",
+   "posicion": "Extremo izquierdo",
+   "edad": 22,
+   "valor_mercado_eur_millones": 2.5,
+   "club": "Huracán",
+   "confianza_club": "alta",
+   "rating": 6.75,
+   "goles_temporada": 2
+  },
+  {
+   "nombre": "Tomás Conechny",
+   "posicion": "Extremo izquierdo",
+   "edad": 28,
+   "valor_mercado_eur_millones": 2.5,
+   "club": "Talleres",
+   "confianza_club": "media",
+   "rating": 6.56,
+   "goles_temporada": 3
+  },
+  {
+   "nombre": "Enzo Copetti",
+   "posicion": "Delantero centro",
+   "edad": 30,
+   "valor_mercado_eur_millones": 2.5,
+   "club": "Rosario Central",
+   "confianza_club": "alta",
+   "rating": 6.56,
+   "goles_temporada": 5
+  },
+  {
+   "nombre": "Tomás Molina",
+   "posicion": "Delantero centro",
+   "edad": 31,
+   "valor_mercado_eur_millones": 2.5,
+   "club": "Independiente",
+   "confianza_club": "media",
+   "rating": 6.21,
+   "goles_temporada": 5
+  },
+  {
+   "nombre": "Milton Giménez",
+   "posicion": "Delantero centro",
+   "edad": 30,
+   "valor_mercado_eur_millones": 2.5,
+   "club": "Boca Juniors",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Duván Vergara",
+   "posicion": "Extremo izquierdo",
+   "edad": 29,
+   "valor_mercado_eur_millones": 2.3,
+   "club": "Talleres",
+   "confianza_club": "media",
+   "rating": 6.73,
+   "goles_temporada": 3
+  },
+  {
+   "nombre": "Junior Marabel",
+   "posicion": "Delantero centro",
+   "edad": 28,
+   "valor_mercado_eur_millones": 2.2,
+   "club": "Sarmiento (Junín)",
+   "confianza_club": "media",
+   "rating": 6.75,
+   "goles_temporada": 10
+  },
+  {
+   "nombre": "Rick",
+   "posicion": "Extremo izquierdo",
+   "edad": 26,
+   "valor_mercado_eur_millones": 2.2,
+   "club": "Talleres",
+   "confianza_club": "alta",
+   "rating": 6.88,
+   "goles_temporada": 4
+  },
+  {
+   "nombre": "Walter Mazzantti",
+   "posicion": "Extremo derecho",
+   "edad": 29,
+   "valor_mercado_eur_millones": 2.2,
+   "club": "Independiente",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Fabricio Pérez",
+   "posicion": "Extremo derecho",
+   "edad": 20,
+   "valor_mercado_eur_millones": 2.0,
+   "club": "Estudiantes de La Plata",
+   "confianza_club": "alta",
+   "rating": 6.22,
+   "goles_temporada": 3
+  },
+  {
+   "nombre": "Santiago López",
+   "posicion": "Delantero centro",
+   "edad": 20,
+   "valor_mercado_eur_millones": 2.0,
+   "club": "Tigre",
+   "confianza_club": "alta",
+   "nota": "A préstamo en Tigre, pertenece a Independiente",
+   "rating": 6.7,
+   "goles_temporada": 1
+  },
+  {
+   "nombre": "Guido Mainero",
+   "posicion": "Extremo izquierdo",
+   "edad": 31,
+   "valor_mercado_eur_millones": 2.0,
+   "club": "Platense",
+   "confianza_club": "alta",
+   "rating": 6.62,
+   "goles_temporada": 1
+  },
+  {
+   "nombre": "Gastón Togni",
+   "posicion": "Extremo izquierdo",
+   "edad": 28,
+   "valor_mercado_eur_millones": 2.0,
+   "club": "Platense",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Agustín Álvarez",
+   "posicion": "Delantero centro",
+   "edad": 25,
+   "valor_mercado_eur_millones": 2.0,
+   "club": "Talleres",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Bruno Barbicciotto",
+   "posicion": "Delantero centro",
+   "edad": 25,
+   "valor_mercado_eur_millones": 2.0,
+   "club": "Talleres",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Andrés Vombergar",
+   "posicion": "Delantero centro",
+   "edad": 31,
+   "valor_mercado_eur_millones": 2.0,
+   "club": "Aldosivi",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Facundo Lencioni",
+   "posicion": "Extremo izquierdo",
+   "edad": 25,
+   "valor_mercado_eur_millones": 2.0,
+   "club": "Instituto ACC",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Matías Cóccaro",
+   "posicion": "Delantero centro",
+   "edad": 28,
+   "valor_mercado_eur_millones": 2.0,
+   "club": "Independiente",
+   "confianza_club": "media",
+   "rating": 6.74,
+   "goles_temporada": 5
+  },
+  {
+   "nombre": "Rodrigo Atencio",
+   "posicion": "Extremo derecho",
+   "edad": 24,
+   "valor_mercado_eur_millones": 2.0,
+   "club": "Independiente Rivadavia",
+   "confianza_club": "alta",
+   "rating": 6.64
+  },
+  {
+   "nombre": "Tiziano Perrotta",
+   "posicion": "Delantero centro",
+   "edad": 19,
+   "valor_mercado_eur_millones": 2.0,
+   "club": "Defensa y Justicia",
+   "confianza_club": "alta",
+   "rating": 6.95,
+   "goles_temporada": 6
+  },
+  {
+   "nombre": "Juan Gutiérrez",
+   "posicion": "Delantero centro",
+   "edad": 24,
+   "valor_mercado_eur_millones": 2.0,
+   "club": "Defensa y Justicia",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Jordy Caicedo",
+   "posicion": "Delantero centro",
+   "edad": 28,
+   "valor_mercado_eur_millones": 2.0,
+   "club": "Huracán",
+   "confianza_club": "alta",
+   "rating": 6.76
+  },
+  {
+   "nombre": "Manuel Panaro",
+   "posicion": "Extremo derecho",
+   "edad": 23,
+   "valor_mercado_eur_millones": 2.0,
+   "club": "Gimnasia y Esgrima La Plata",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Ulises Sánchez",
+   "posicion": "Delantero centro",
+   "edad": 28,
+   "valor_mercado_eur_millones": 1.8,
+   "club": "Instituto ACC",
+   "confianza_club": "media",
+   "rating": 6.7
+  },
+  {
+   "nombre": "Joaquín Tobio Burgos",
+   "posicion": "Extremo izquierdo",
+   "edad": 21,
+   "valor_mercado_eur_millones": 1.8,
+   "club": "Estudiantes de La Plata",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Ángel Di María",
+   "posicion": "Extremo derecho",
+   "edad": 38,
+   "valor_mercado_eur_millones": 1.8,
+   "club": "Central Córdoba (SdE)",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Facundo Bruera",
+   "posicion": "Delantero centro",
+   "edad": 27,
+   "valor_mercado_eur_millones": 1.8,
+   "club": "Barracas Central",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Matías Pellegrini",
+   "posicion": "Extremo derecho",
+   "edad": 28,
+   "valor_mercado_eur_millones": 1.7,
+   "club": "Vélez Sarsfield",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Matías Giménez",
+   "posicion": "Delantero centro",
+   "edad": 27,
+   "valor_mercado_eur_millones": 1.7,
+   "club": "Independiente",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Agustín Ruberto",
+   "posicion": "Delantero centro",
+   "edad": 20,
+   "valor_mercado_eur_millones": 1.7,
+   "club": "River Plate",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Juan Bisanz",
+   "posicion": "Extremo derecho",
+   "edad": 24,
+   "valor_mercado_eur_millones": 1.5,
+   "club": "Huracán",
+   "confianza_club": "alta",
+   "rating": 6.72,
+   "goles_temporada": 2
+  },
+  {
+   "nombre": "Lautaro Díaz",
+   "posicion": "Delantero centro",
+   "edad": 28,
+   "valor_mercado_eur_millones": 1.5,
+   "club": "Talleres",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Ignacio Ramírez",
+   "posicion": "Delantero centro",
+   "edad": 29,
+   "valor_mercado_eur_millones": 1.5,
+   "club": "Independiente",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Matías Reali",
+   "posicion": "Extremo izquierdo",
+   "edad": 28,
+   "valor_mercado_eur_millones": 1.5,
+   "club": "San Lorenzo de Almagro",
+   "confianza_club": "alta",
+   "rating": 6.73,
+   "goles_temporada": 0
+  },
+  {
+   "nombre": "Agustín Módica",
+   "posicion": "Delantero centro",
+   "edad": 23,
+   "valor_mercado_eur_millones": 1.5,
+   "club": "Talleres",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Joaquín Correa",
+   "posicion": "Mediapunta",
+   "edad": 32,
+   "valor_mercado_eur_millones": 1.5,
+   "club": "Estudiantes de La Plata",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Lucas Passerini",
+   "posicion": "Delantero centro",
+   "edad": 32,
+   "valor_mercado_eur_millones": 1.5,
+   "club": "Atlético Tucumán",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Diego Valoyes",
+   "posicion": "Extremo derecho",
+   "edad": 29,
+   "valor_mercado_eur_millones": 1.5,
+   "club": "Talleres",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Valentín Dávila",
+   "posicion": "Delantero centro",
+   "edad": 19,
+   "valor_mercado_eur_millones": 1.5,
+   "club": "Talleres",
+   "confianza_club": "alta",
+   "rating": 6.22,
+   "goles_temporada": 4
+  },
+  {
+   "nombre": "Ignacio Pussetto",
+   "posicion": "Delantero centro",
+   "edad": 30,
+   "valor_mercado_eur_millones": 1.3,
+   "club": "Independiente",
+   "confianza_club": "media",
+   "rating": 6.71,
+   "goles_temporada": 2
+  },
+  {
+   "nombre": "Yoshan Valois",
+   "posicion": "Delantero centro",
+   "edad": 21,
+   "valor_mercado_eur_millones": 1.3,
+   "club": "Central Córdoba (SdE)",
+   "confianza_club": "media",
+   "rating": 6.76,
+   "goles_temporada": 4
+  },
+  {
+   "nombre": "Chimy Ávila",
+   "posicion": "Delantero centro",
+   "edad": 32,
+   "valor_mercado_eur_millones": 1.2,
+   "club": "Independiente",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Jhon Córdoba",
+   "posicion": "Extremo derecho",
+   "edad": 26,
+   "valor_mercado_eur_millones": 1.2,
+   "club": "Instituto ACC",
+   "confianza_club": "alta",
+   "rating": 6.68,
+   "goles_temporada": 1
+  },
+  {
+   "nombre": "Agustín Auzmendi",
+   "posicion": "Delantero centro",
+   "edad": 29,
+   "valor_mercado_eur_millones": 1.2,
+   "club": "Gimnasia y Esgrima La Plata",
+   "confianza_club": "alta",
+   "rating": 6.73,
+   "goles_temporada": 4
+  },
+  {
+   "nombre": "Facundo Jainikoski",
+   "posicion": "Delantero centro",
+   "edad": 18,
+   "valor_mercado_eur_millones": 1.2,
+   "club": "Argentinos Juniors",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Mateo García",
+   "posicion": "Extremo derecho",
+   "edad": 29,
+   "valor_mercado_eur_millones": 1.2,
+   "club": "Newell's Old Boys",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Tomás Nasif",
+   "posicion": "Delantero centro",
+   "edad": 22,
+   "valor_mercado_eur_millones": 1.2,
+   "club": "Platense",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Domingo Blanco",
+   "posicion": "Extremo derecho",
+   "edad": 31,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "Defensa y Justicia",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Marcelo Estigarribia",
+   "posicion": "Delantero centro",
+   "edad": 31,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "Unión de Santa Fe",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Emiliano Rigoni",
+   "posicion": "Extremo derecho",
+   "edad": 33,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "Atlético Tucumán",
+   "confianza_club": "media",
+   "rating": 6.65,
+   "goles_temporada": 2
+  },
+  {
+   "nombre": "Joaquín Freitas",
+   "posicion": "Delantero centro",
+   "edad": 19,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "River Plate",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Adolfo Gaich",
+   "posicion": "Delantero centro",
+   "edad": 27,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "Estudiantes de La Plata",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Elías Torres",
+   "posicion": "Delantero centro",
+   "edad": 25,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "Racing Club",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Gastón Verón",
+   "posicion": "Delantero centro",
+   "edad": 25,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "Argentinos Juniors",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Iván Morales",
+   "posicion": "Delantero centro",
+   "edad": 27,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "Argentinos Juniors",
+   "confianza_club": "media",
+   "rating": 6.55,
+   "goles_temporada": 2
+  },
+  {
+   "nombre": "Juan Carlos Gauto",
+   "posicion": "Extremo derecho",
+   "edad": 22,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "Platense",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Enner Valencia",
+   "posicion": "Delantero centro",
+   "edad": 36,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "Boca Juniors",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Antony Alonso",
+   "posicion": "Delantero centro",
+   "edad": 28,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "Deportivo Riestra",
+   "confianza_club": "alta",
+   "rating": 6.55,
+   "goles_temporada": 4
+  },
+  {
+   "nombre": "Allan Wik",
+   "posicion": "Delantero centro",
+   "edad": 23,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "Lanús",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Giovanni Cantizano",
+   "posicion": "Extremo izquierdo",
+   "edad": 19,
+   "valor_mercado_eur_millones": 1.0,
+   "club": "Rosario Central",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Walter Núñez",
+   "posicion": "Extremo izquierdo",
+   "edad": 23,
+   "valor_mercado_eur_millones": 0.9,
+   "club": "Newell's Old Boys",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Nahuel Barrios",
+   "posicion": "Extremo izquierdo",
+   "edad": 28,
+   "valor_mercado_eur_millones": 0.9,
+   "club": "Tigre",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Gaspar Duarte",
+   "posicion": "Extremo derecho",
+   "edad": 23,
+   "valor_mercado_eur_millones": 0.9,
+   "club": "Rosario Central",
+   "confianza_club": "alta"
+  },
+  {
+   "nombre": "Gastón González",
+   "posicion": "Extremo izquierdo",
+   "edad": 25,
+   "valor_mercado_eur_millones": 0.9,
+   "club": "Sarmiento (Junín)",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Gustavo del Prete",
+   "posicion": "Delantero centro",
+   "edad": 30,
+   "valor_mercado_eur_millones": 0.9,
+   "club": "Tigre",
+   "confianza_club": "media"
+  },
+  {
+   "nombre": "Gonzalo Morales",
+   "posicion": "Delantero centro",
+   "edad": 23,
+   "valor_mercado_eur_millones": 0.9,
+   "club": "Barracas Central",
+   "confianza_club": "alta"
+  }
+ ]
 }

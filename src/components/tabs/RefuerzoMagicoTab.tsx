@@ -94,7 +94,16 @@ function statRows(c: RMResult): { label: string; value: string }[] {
   // Puntos Gran DT: dato estadístico más del jugador (no explica el
   // algoritmo, ya no filtra — ver nota del bug — solo suma bonus de
   // forma) — se agrega al final de la ficha en las 4 posiciones.
-  return [...byPosition[c.position], ...row("Puntos Gran DT", c.grandTPoints)];
+  // Rating + Goles (ago 2026, pool-candidatos-refuerzo-magico-2026.json):
+  // arqueros nunca lo tienen (la fuente no los puntúa igual) y no todos
+  // los jugadores de campo lo tienen todavía (se completa en tandas) —
+  // row() ya oculta la fila entera si no hay dato, no rompe la ficha.
+  return [
+    ...byPosition[c.position],
+    ...row("Puntos Gran DT", c.grandTPoints),
+    ...row("Rating", c.rating ?? null),
+    ...row("Goles", c.golesTemporada ?? null),
+  ];
 }
 
 function CandidateCard({ candidate, isOpen, onToggle }: {

@@ -125,6 +125,10 @@ const RANKING_VALOR_BY_EQUIPO = new Map(RANKING_VALOR.map((r) => [normalize(r.eq
 interface ValuePoolPlayer {
   nombre: string; posicion: string; edad: number;
   valor_mercado_eur_millones: number; club: string; confianza_club: string; nota?: string;
+  // Se completan en tandas, no todos los jugadores de campo los tienen
+  // todavía — arqueros nunca los tienen (la fuente no los puntúa igual).
+  rating?: number;
+  goles_temporada?: number;
 }
 interface ValuePoolFile {
   porteros: ValuePoolPlayer[]; defensas: ValuePoolPlayer[];
@@ -303,6 +307,14 @@ export interface RMCandidate {
   // secas" (buildPromiedosPool, getGoalkeeperPool) — ahí quedan undefined.
   valorMercadoEUR?: number | null;
   clubActual?: string | null;
+  // Rating + goles de temporada (ago 2026) — mismo cruce/misma fuente que
+  // valorMercadoEUR/clubActual (pool-candidatos-refuerzo-magico-2026.json),
+  // ver Paso 2 en recommend(). Sin equivalente en arqueros (la fuente no
+  // los puntúa igual) ni en todos los jugadores de campo (se completan en
+  // tandas) — null cuando el JSON no lo trae para ese jugador, la ficha
+  // simplemente no muestra la fila (ver row() en RefuerzoMagicoTab.tsx).
+  rating?: number | null;
+  golesTemporada?: number | null;
 }
 export interface FitResult { score: number; }
 export type RMResult = RMCandidate & { fit: FitResult };
@@ -852,36 +864,33 @@ function ensureDistinctScores(sorted: RMResult[]): RMResult[] {
   return out;
 }
 
-// Sorteo ponderado sin reemplazo (Paso 3.1) — mayor fit = más chance de
-// salir, pero NUNCA 100% determinístico. Nunca inventa candidatos: solo
-// cambia CUÁLES de los ya calculados con datos reales se eligen.
-//
-// Nota histórica: hasta ago 2026 esto se sorteaba dentro de una "ventana"
-// recortada por una franja heurística de poder económico (lista fija de
-// 10 clubes "grandes" + posición en tabla para el resto) — se sacó al
-// integrar el presupuesto real (ranking-valor-plantel-2026.json): la
-// franja heurística no coincidía siempre con el escalón económico real
-// (ej. Lanús estaba en la franja ALTA heurística pero es escalón B real;
-// Independiente Rivadavia es escalón A real y no estaba en la franja ALTA
-// heurística) — aplicar las dos cosas a la vez solo recortaba el pool sin
-// sentido. Ahora el filtro de presupuesto (ver recommend()) YA hace ese
-// trabajo con datos reales, así que se sortea sobre todo el pool elegible.
-function weightedSampleWithoutReplacement<T>(items: { item: T; weight: number }[], count: number): T[] {
-  const pool = [...items];
-  const result: T[] = [];
-  for (let i = 0; i < count && pool.length > 0; i++) {
-    const total = pool.reduce((s, p) => s + p.weight, 0);
-    let r = Math.random() * total;
-    let idx = 0;
-    for (; idx < pool.length - 1; idx++) {
-      r -= pool[idx].weight;
-      if (r <= 0) break;
-    }
-    result.push(pool[idx].item);
-    pool.splice(idx, 1);
+// ── Resultado estable por equipo (ago 2026) ─────────────────────────────
+// Antes se sorteaba ponderado (Math.random) entre los mejores candidatos
+// y encima se reintentaba el sorteo hasta 6 veces si pisaba demasiado la
+// búsqueda anterior del mismo equipo (guardada en localStorage) — a
+// propósito, para dar variedad entre búsquedas repetidas. Pedido explícito
+// (ago 2026): el resultado debe quedar FIJO por equipo mientras los datos
+// de origen (pool-candidatos, ranking de valor, diagnóstico de
+// necesidades) no cambien — se sacó todo el mecanismo de variedad y el
+// sorteo se reemplazó por selección determinística (top N por fit, ya
+// ordenado). El resultado final de cada equipo se cachea en localStorage
+// sin TTL, bajo una key que incluye un hash del contenido de esos 3 JSON
+// (INPUT_DATA_HASH) — mientras el hash no cambie, `recommend()` devuelve
+// siempre el mismo objeto ya calculado sin volver a correr el pipeline;
+// si Ignacio edita cualquiera de los 3 JSON y redeploya, el hash cambia
+// solo (recalculado desde el contenido bundleado) y se recalcula una sola
+// vez por equipo, sin tocar código.
+function fnv1aHash(str: string): string {
+  let hash = 0x811c9dc5;
+  for (let i = 0; i < str.length; i++) {
+    hash ^= str.charCodeAt(i);
+    hash = Math.imul(hash, 0x01000193);
   }
-  return result;
+  return (hash >>> 0).toString(16);
 }
+const INPUT_DATA_HASH = fnv1aHash(
+  JSON.stringify(RM_DATA_RAW) + JSON.stringify(RANKING_VALOR_RAW) + JSON.stringify(VALUE_POOL_RAW),
+);
 
 export interface PresupuestoResult {
   escalon: Escalon;
@@ -894,9 +903,16 @@ export interface PresupuestoResult {
   missingPositions: RMPosition[];
 }
 
-export async function recommend(
-  team: RMTeam,
-): Promise<{ picks: RMResult[]; composition: RMPosition[]; presupuesto: PresupuestoResult }> {
+type RecommendResult = { picks: RMResult[]; composition: RMPosition[]; presupuesto: PresupuestoResult };
+
+export async function recommend(team: RMTeam): Promise<RecommendResult> {
+  // Resultado fijo por equipo mientras INPUT_DATA_HASH no cambie — ver
+  // nota arriba. Sin TTL: solo se invalida solo cuando el hash cambia (key
+  // distinta), nunca por tiempo.
+  const cacheKey = `pelotita_rm_result_v1_${team.id}_${INPUT_DATA_HASH}`;
+  const cached = cacheGet<RecommendResult>(cacheKey);
+  if (cached) return cached;
+
   const groups = await getTablaPosiciones(LEAGUE_SLUG);
   const composition = getComposition(team);
   const teamPositionById = new Map<string, number>();
@@ -912,86 +928,72 @@ export async function recommend(
   const escalonInfo = getEscalonEquipo(team);
   const ownClubTransfermarkt = PROMIEDOS_ID_TO_RANKING_TEAM[team.id];
 
-  // Paso 3.2: no repetir siempre los mismos 4 al buscar el MISMO equipo
-  // dos veces seguidas — se guarda en localStorage (sin TTL, se compara
-  // siempre contra la última búsqueda real de ESE equipo puntual) y si
-  // el sorteo da 3 o 4 nombres iguales a la vez anterior, se vuelve a
-  // sortear (hasta 6 intentos, después se acepta lo que salga para no
-  // colgar la búsqueda).
-  const lastKey = `pelotita_rm_last_picks_${team.id}`;
-  const lastNames = cacheGet<string[]>(lastKey) ?? [];
+  const picks: RMResult[] = [];
+  const missingPositions: RMPosition[] = [];
+  for (const [position, count] of needByPosition) {
+    const pool = await getCandidatePool(position);
+    // Para arquero no hay teamId confiable siempre (el JSON no trae
+    // team_id de Promiedos) — se excluye por NOMBRE contra el equipo
+    // buscado en vez de por ID, best-effort.
+    const eligible = position === "ARQ"
+      ? pool.filter((c) => !c.teamName || normalize(c.teamName) !== normalize(team.shortName || team.name))
+      : pool.filter((c) => c.teamId !== team.id);
 
-  let picks: RMResult[] = [];
-  let missingPositions: RMPosition[] = [];
-  const MAX_ATTEMPTS = 6;
-  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-    picks = [];
-    missingPositions = [];
-    for (const [position, count] of needByPosition) {
-      const pool = await getCandidatePool(position);
-      // Para arquero no hay teamId confiable siempre (el JSON no trae
-      // team_id de Promiedos) — se excluye por NOMBRE contra el equipo
-      // buscado en vez de por ID, best-effort.
-      const eligible = position === "ARQ"
-        ? pool.filter((c) => !c.teamName || normalize(c.teamName) !== normalize(team.shortName || team.name))
-        : pool.filter((c) => c.teamId !== team.id);
+    // Gran DT ya NO filtra a nadie afuera (ver nota del bug al inicio
+    // del archivo) — solo se adjunta el puntaje real como dato,
+    // WEIGHTS lo usa como bonus de forma.
+    const grandTPoints = await getGrandTPointsBySurname(position);
+    const withGrandT = eligible.map((c) => ({ ...c, grandTPoints: grandTPoints.get(normalize(c.surname)) ?? null }));
 
-      // Gran DT ya NO filtra a nadie afuera (ver nota del bug al inicio
-      // del archivo) — solo se adjunta el puntaje real como dato,
-      // WEIGHTS lo usa como bonus de forma.
-      const grandTPoints = await getGrandTPointsBySurname(position);
-      const withGrandT = eligible.map((c) => ({ ...c, grandTPoints: grandTPoints.get(normalize(c.surname)) ?? null }));
+    // Paso 1: el ranking por fit/necesidad (WEIGHTS + computeNeedFactors,
+    // sin cambios) manda — se calcula ANTES de tocar nada de presupuesto.
+    const scoredAll = applyTeamQualityAdjustment(scoreCandidates(withGrandT, position, needFactors), teamPositionById, totalTeams);
+    const sortedByFit = scoredAll.sort((a, b) => b.fit.score - a.fit.score);
 
-      // Paso 1: el ranking por fit/necesidad (WEIGHTS + computeNeedFactors,
-      // sin cambios) manda — se calcula ANTES de tocar nada de presupuesto.
-      const scoredAll = applyTeamQualityAdjustment(scoreCandidates(withGrandT, position, needFactors), teamPositionById, totalTeams);
-      const sortedByFit = scoredAll.sort((a, b) => b.fit.score - a.fit.score);
+    // Paso 2: sobre ESE ranking por fit, cruce por nombre contra el pool
+    // de valor de mercado y filtro (no reordenar) por techo del escalón
+    // del equipo buscador + club propio (comparando el mismo campo
+    // `club`, no el teamId de Promiedos). Sin valor conocido → afuera,
+    // nunca se asume "barato" sobre un dato que no existe. El presupuesto
+    // es un filtro de elegibilidad, no un criterio de orden — el fit
+    // decide quién entra a la ventana, el precio solo decide si queda.
+    const sorted = sortedByFit
+      .map((c) => {
+        const match = findValueMatch(c.name, position);
+        return {
+          ...c,
+          valorMercadoEUR: match?.valor_mercado_eur_millones ?? null,
+          clubActual: match?.club ?? null,
+          rating: match?.rating ?? null,
+          golesTemporada: match?.goles_temporada ?? null,
+        };
+      })
+      .filter((c) => {
+        if (c.valorMercadoEUR == null || c.clubActual == null) return false;
+        if (escalonInfo.techoEurM != null && c.valorMercadoEUR > escalonInfo.techoEurM) return false;
+        if (ownClubTransfermarkt && normalize(c.clubActual) === normalize(ownClubTransfermarkt)) return false;
+        return true;
+      });
+    // El filter preserva el orden de sortedByFit — sigue ordenado por
+    // fit, no por precio.
 
-      // Paso 2: sobre ESE ranking por fit, cruce por nombre contra el pool
-      // de valor de mercado y filtro (no reordenar) por techo del escalón
-      // del equipo buscador + club propio (comparando el mismo campo
-      // `club`, no el teamId de Promiedos). Sin valor conocido → afuera,
-      // nunca se asume "barato" sobre un dato que no existe. El presupuesto
-      // es un filtro de elegibilidad, no un criterio de orden — el fit
-      // decide quién entra a la ventana, el precio solo decide si queda.
-      const sorted = sortedByFit
-        .map((c) => {
-          const match = findValueMatch(c.name, position);
-          return { ...c, valorMercadoEUR: match?.valor_mercado_eur_millones ?? null, clubActual: match?.club ?? null };
-        })
-        .filter((c) => {
-          if (c.valorMercadoEUR == null || c.clubActual == null) return false;
-          if (escalonInfo.techoEurM != null && c.valorMercadoEUR > escalonInfo.techoEurM) return false;
-          if (ownClubTransfermarkt && normalize(c.clubActual) === normalize(ownClubTransfermarkt)) return false;
-          return true;
-        });
-      // El filter preserva el orden de sortedByFit — sigue ordenado por
-      // fit, no por precio.
+    // Paso 3: determinístico — los `count` mejores por fit, ya ordenado.
+    // Sin sorteo (ver nota arriba de INPUT_DATA_HASH): mismo pool de
+    // entrada siempre da los mismos elegidos.
+    const top = ensureDistinctScores(sorted.slice(0, count));
+    picks.push(...top);
 
-      // Paso 3.1: sorteo ponderado por fit sobre TODO el pool ya filtrado
-      // por presupuesto — mayor fit = más chance, nunca 100% determinístico.
-      const chosen = weightedSampleWithoutReplacement(
-        sorted.map((c) => ({ item: c, weight: Math.max(1, c.fit.score) })),
-        count,
-      );
-      const top = ensureDistinctScores(chosen.sort((a, b) => b.fit.score - a.fit.score));
-      picks.push(...top);
-
-      if (top.length < count) {
-        for (let i = 0; i < count - top.length; i++) missingPositions.push(position);
-      }
+    if (top.length < count) {
+      for (let i = 0; i < count - top.length; i++) missingPositions.push(position);
     }
-
-    const currentNames = picks.map((p) => p.name);
-    const overlap = currentNames.filter((n) => lastNames.includes(n)).length;
-    if (lastNames.length === 0 || overlap <= 1 || attempt === MAX_ATTEMPTS - 1) break;
   }
-  cacheSet(lastKey, picks.map((p) => p.name));
 
   const teams = await getTeams();
   const enriched = await enrichWithBio(picks, teams);
   const presupuesto: PresupuestoResult = {
     escalon: escalonInfo.escalon, techoEurM: escalonInfo.techoEurM, enRanking: escalonInfo.enRanking, missingPositions,
   };
-  return { picks: enriched, composition, presupuesto };
+  const result: RecommendResult = { picks: enriched, composition, presupuesto };
+  cacheSet(cacheKey, result);
+  return result;
 }
