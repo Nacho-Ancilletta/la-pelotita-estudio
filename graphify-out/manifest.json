@@ -1,0 +1,218 @@
+{
+  "eslint.config.mjs": {
+    "mtime": 1782480725.350737,
+    "seen": 1788275801.4148915,
+    "ast_hash": "dfa1f5f6a7037bf39dc510f30b180002",
+    "semantic_hash": "dfa1f5f6a7037bf39dc510f30b180002"
+  },
+  "next.config.ts": {
+    "mtime": 1782480725.5643818,
+    "seen": 1788275801.4148915,
+    "ast_hash": "9b77af189a21a7a64e4bd7a426f64176",
+    "semantic_hash": "9b77af189a21a7a64e4bd7a426f64176"
+  },
+  "package.json": {
+    "mtime": 1782480725.992274,
+    "seen": 1788275801.4148915,
+    "ast_hash": "8d7b1308b13e41a0d27c1706a0c53ec4",
+    "semantic_hash": "8d7b1308b13e41a0d27c1706a0c53ec4"
+  },
+  "postcss.config.mjs": {
+    "mtime": 1782480725.4137692,
+    "seen": 1788275801.4148915,
+    "ast_hash": "239f3ebf717465dc636818a1a619398d",
+    "semantic_hash": "239f3ebf717465dc636818a1a619398d"
+  },
+  "src/app/api/espn/route.ts": {
+    "mtime": 1786645946.5572267,
+    "seen": 1788275801.4148915,
+    "ast_hash": "2c80568eb46ffaf6e746c8409b07e3e1",
+    "semantic_hash": "2c80568eb46ffaf6e746c8409b07e3e1"
+  },
+  "src/app/api/fichajes/route.ts": {
+    "mtime": 1787236230.4943123,
+    "seen": 1788275801.4148915,
+    "ast_hash": "b1431d8df2745e2f1f0c91745411a745",
+    "semantic_hash": "b1431d8df2745e2f1f0c91745411a745"
+  },
+  "src/app/api/fpl/route.ts": {
+    "mtime": 1787148649.9623854,
+    "seen": 1788275801.4148915,
+    "ast_hash": "31f4835f09c1b69687807a08b6a551e2",
+    "semantic_hash": "31f4835f09c1b69687807a08b6a551e2"
+  },
+  "src/app/api/grandt/route.ts": {
+    "mtime": 1787146275.0378084,
+    "seen": 1788275801.4148915,
+    "ast_hash": "5a86fb0f9e292ef42d92899272cbd784",
+    "semantic_hash": "5a86fb0f9e292ef42d92899272cbd784"
+  },
+  "src/app/api/promiedos/route.ts": {
+    "mtime": 1787269222.5578246,
+    "seen": 1788275801.4148915,
+    "ast_hash": "c7724b2eef29aa013be9878d5f574497",
+    "semantic_hash": "c7724b2eef29aa013be9878d5f574497"
+  },
+  "src/app/layout.tsx": {
+    "mtime": 1787340046.9020078,
+    "seen": 1788275801.4148915,
+    "ast_hash": "1d06bb3950a1b55480d5f34036c0bb58",
+    "semantic_hash": "1d06bb3950a1b55480d5f34036c0bb58"
+  },
+  "src/app/page.tsx": {
+    "mtime": 1787367515.7779808,
+    "seen": 1788275801.4148915,
+    "ast_hash": "523d66ffaea3334c957f4195812c83ec",
+    "semantic_hash": "523d66ffaea3334c957f4195812c83ec"
+  },
+  "src/components/EspnFixtures.tsx": {
+    "mtime": 1787573324.3330803,
+    "seen": 1788275801.4148915,
+    "ast_hash": "cab3c86ee32b910bffee08625e981ad0",
+    "semantic_hash": "cab3c86ee32b910bffee08625e981ad0"
+  },
+  "src/components/pitch/ArrowsOverlay.tsx": {
+    "mtime": 1782483004.602504,
+    "seen": 1788275801.4148915,
+    "ast_hash": "76e3e7dc77ebec3dd3a459b1004c5fe8",
+    "semantic_hash": "76e3e7dc77ebec3dd3a459b1004c5fe8"
+  },
+  "src/components/pitch/PitchSVG.tsx": {
+    "mtime": 1782482991.7121038,
+    "seen": 1788275801.4148915,
+    "ast_hash": "b2e9b11fb857c78f49cbb30bce65043a",
+    "semantic_hash": "b2e9b11fb857c78f49cbb30bce65043a"
+  },
+  "src/components/pitch/formations.ts": {
+    "mtime": 1783793861.988646,
+    "seen": 1788275801.4148915,
+    "ast_hash": "06c1898fd6a53a0730a91510153091f1",
+    "semantic_hash": "06c1898fd6a53a0730a91510153091f1"
+  },
+  "src/components/tabs/CombinadaFechaTab.tsx": {
+    "mtime": 1787665088.4347618,
+    "seen": 1788275801.4148915,
+    "ast_hash": "9d3e8c4092450d0421fce86edf1ba30f",
+    "semantic_hash": "9d3e8c4092450d0421fce86edf1ba30f"
+  },
+  "src/components/tabs/EnVivoTab.tsx": {
+    "mtime": 1783801875.9637623,
+    "seen": 1788275801.4148915,
+    "ast_hash": "47adae5b703ce30951e710a032823bd3",
+    "semantic_hash": "47adae5b703ce30951e710a032823bd3"
+  },
+  "src/components/tabs/FantasyPremierTab.tsx": {
+    "mtime": 1787340060.4293911,
+    "seen": 1788275801.4148915,
+    "ast_hash": "0ef910e5cc54f914170a7e4a41eebff1",
+    "semantic_hash": "0ef910e5cc54f914170a7e4a41eebff1"
+  },
+  "src/components/tabs/GrandTTab.tsx": {
+    "mtime": 1787667434.6163647,
+    "seen": 1788275801.4148915,
+    "ast_hash": "be1c96c7974966f746df835e6f2aaa80",
+    "semantic_hash": "be1c96c7974966f746df835e6f2aaa80"
+  },
+  "src/components/tabs/RefuerzoMagicoTab.tsx": {
+    "mtime": 1788190207.6825104,
+    "seen": 1788275801.4148915,
+    "ast_hash": "d10824a5ca0473f1dd0eb14c1d2256b9",
+    "semantic_hash": "d10824a5ca0473f1dd0eb14c1d2256b9"
+  },
+  "src/components/tabs/TacticoTab.tsx": {
+    "mtime": 1787573318.3781123,
+    "seen": 1788275801.4148915,
+    "ast_hash": "b49e27ed031bb751585248ae2fb4d570",
+    "semantic_hash": "b49e27ed031bb751585248ae2fb4d570"
+  },
+  "src/data/365scores-data-2026.json": {
+    "mtime": 1787316667.5309932,
+    "seen": 1788275801.4148915,
+    "ast_hash": "2fc071cd9050847ae8bf83ec1b870601",
+    "semantic_hash": "2fc071cd9050847ae8bf83ec1b870601"
+  },
+  "src/data/combinada-fecha-data-2026.json": {
+    "mtime": 1787352519.50359,
+    "seen": 1788275801.4148915,
+    "ast_hash": "48338f0df4627902d0dd1727084b2443",
+    "semantic_hash": "48338f0df4627902d0dd1727084b2443"
+  },
+  "src/data/pool-candidatos-refuerzo-magico-2026.json": {
+    "mtime": 1788189706.0189981,
+    "seen": 1788275801.4148915,
+    "ast_hash": "14b1aeaa711fe4181e4435097aa91545",
+    "semantic_hash": "14b1aeaa711fe4181e4435097aa91545"
+  },
+  "src/data/ranking-valor-plantel-2026.json": {
+    "mtime": 1787587552.41239,
+    "seen": 1788275801.4148915,
+    "ast_hash": "901cdf6c4045681c6cd348a5897d0302",
+    "semantic_hash": "901cdf6c4045681c6cd348a5897d0302"
+  },
+  "src/data/refuerzo-magico-data-2026.json": {
+    "mtime": 1787316667.4830413,
+    "seen": 1788275801.4148915,
+    "ast_hash": "2db019b3771af8004e001675d6ab3a61",
+    "semantic_hash": "2db019b3771af8004e001675d6ab3a61"
+  },
+  "src/data/tabla-forma-goles-2026.json": {
+    "mtime": 1787664205.0455782,
+    "seen": 1788275801.4148915,
+    "ast_hash": "eef50e7b919f1b9b2a1afad788f7a638",
+    "semantic_hash": "eef50e7b919f1b9b2a1afad788f7a638"
+  },
+  "src/lib/365scores.ts": {
+    "mtime": 1787316692.0890694,
+    "seen": 1788275801.4148915,
+    "ast_hash": "e27cea35f25f19c8d14d304976136a70",
+    "semantic_hash": "e27cea35f25f19c8d14d304976136a70"
+  },
+  "src/lib/combinada-fecha.ts": {
+    "mtime": 1787666152.803539,
+    "seen": 1788275801.4148915,
+    "ast_hash": "174dcbdc01e0fcec11955dccff582e4f",
+    "semantic_hash": "174dcbdc01e0fcec11955dccff582e4f"
+  },
+  "src/lib/espn.ts": {
+    "mtime": 1787573308.3868833,
+    "seen": 1788275801.4148915,
+    "ast_hash": "af6204d93f14c68809a87be5bc0451d9",
+    "semantic_hash": "af6204d93f14c68809a87be5bc0451d9"
+  },
+  "src/lib/fichajes.ts": {
+    "mtime": 1787269191.888562,
+    "seen": 1788275801.4148915,
+    "ast_hash": "bcd4e4d4dab7babc21d062b3dda7cb11",
+    "semantic_hash": "bcd4e4d4dab7babc21d062b3dda7cb11"
+  },
+  "src/lib/fpl.ts": {
+    "mtime": 1787162904.2247255,
+    "seen": 1788275801.4148915,
+    "ast_hash": "5ef54d30159b2d2243b86c6bd2979c4a",
+    "semantic_hash": "5ef54d30159b2d2243b86c6bd2979c4a"
+  },
+  "src/lib/grandt.ts": {
+    "mtime": 1787146282.308629,
+    "seen": 1788275801.4148915,
+    "ast_hash": "c908f1f2a6b1f20d322b028938b48b65",
+    "semantic_hash": "c908f1f2a6b1f20d322b028938b48b65"
+  },
+  "src/lib/promiedos.ts": {
+    "mtime": 1787667392.436633,
+    "seen": 1788275801.4148915,
+    "ast_hash": "f95fc4925030333a1a67886c50ca8f7c",
+    "semantic_hash": "f95fc4925030333a1a67886c50ca8f7c"
+  },
+  "src/lib/refuerzo-magico.ts": {
+    "mtime": 1788190195.1423833,
+    "seen": 1788275801.4148915,
+    "ast_hash": "a59ab309942174163d7db69391f62a21",
+    "semantic_hash": "a59ab309942174163d7db69391f62a21"
+  },
+  "tsconfig.json": {
+    "mtime": 1782480725.988247,
+    "seen": 1788275801.4148915,
+    "ast_hash": "ee17fd1c97c735e9f3564e3f5251f125",
+    "semantic_hash": "ee17fd1c97c735e9f3564e3f5251f125"
+  }
+}
